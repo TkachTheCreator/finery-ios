@@ -6,14 +6,8 @@ let package = Package(
     platforms: [
         .iOS(.v17)
     ],
-    products: [
-        .library(
-            name: "Finery",
-            targets: ["Finery"]
-        )
-    ],
     targets: [
-        .target(
+        .executableTarget(
             name: "Finery",
             path: "Finery",
             swiftSettings: [
