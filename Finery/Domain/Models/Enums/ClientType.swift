@@ -1,3 +1,5 @@
+import Foundation
+
 enum ClientType: String, Codable, CaseIterable, Sendable {
     case individual = "Физлицо"
     case legal      = "Юрлицо/ИП"
