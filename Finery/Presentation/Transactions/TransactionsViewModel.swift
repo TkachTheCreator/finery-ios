@@ -85,7 +85,6 @@ final class TransactionsViewModel {
             errorMessage = error.localizedDescription
         }
     }
-}
 
     func makeAddTransactionViewModel() -> AddTransactionViewModel {
         AddTransactionViewModel(transactionRepository: transactionRepository)
