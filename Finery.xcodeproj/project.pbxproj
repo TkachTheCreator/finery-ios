@@ -1,0 +1,653 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0599F653DBC5B9EF669DE4E7 /* UserLocalRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F747A35F6E89CF3EFE0629 /* UserLocalRepository.swift */; };
+		082F44E6A0528399DC16BE5F /* ExpenseCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9286A23592206481E6E093FA /* ExpenseCategory.swift */; };
+		0A6150E3A8C6C066DC006C52 /* GetPnLUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 974BD75AB3FE1C6176DB1293 /* GetPnLUseCase.swift */; };
+		139D9B698D395707AF9AF876 /* TransactionRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = E93820A671554C608923316D /* TransactionRepository.swift */; };
+		154314B4625FFD8511918D86 /* PreviewData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12B56BD4CA668CF84630EEE1 /* PreviewData.swift */; };
+		15B3D13568DF23D8F47D1892 /* AddTransactionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C00BB60C8DA88F1771E5540 /* AddTransactionView.swift */; };
+		1F5CFEF8974C8A3AE8CCA601 /* TransactionLocalRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DE470362E77980A05FBBA37 /* TransactionLocalRepository.swift */; };
+		210E596473F221B02402B18B /* InsightRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = F290DAB89D8CFCE0528870E3 /* InsightRow.swift */; };
+		38E4A622E0DB6FF0B1DA2219 /* ClassifyTransactionUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = B84589DEF693D5737501347D /* ClassifyTransactionUseCase.swift */; };
+		3A02770F74D88D2B7E6969E7 /* AnalyticsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4A3D50A4B2CBBE238524D0D /* AnalyticsViewModel.swift */; };
+		3C0CDAA5557803A99A8C721D /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2182632BEFCE4CB0A8A9362F /* OnboardingView.swift */; };
+		3EA59CEC864D0D95A65A44BB /* GetInsightsUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B7428812D629E1EEDF5B7D /* GetInsightsUseCase.swift */; };
+		42F92C1337CD08F72B200AF2 /* TaxCalculatorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9925A0E4CA8F1006122C1BD8 /* TaxCalculatorService.swift */; };
+		4B117A31774BF9F428CFB325 /* TransactionSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51872C806C150DBEB4911CE0 /* TransactionSource.swift */; };
+		4DA6EEBAB8E662AE8B083851 /* PnL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B38440EFFA21F1F82715A28 /* PnL.swift */; };
+		532DD8E6ECC926BCC1FD1509 /* TaxViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC923A07AB37977277909C3D /* TaxViewModel.swift */; };
+		536F84E5A6B17503306735DC /* Insight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E1A9031C01D7ABAC3322EC7 /* Insight.swift */; };
+		53832F634D193A1E432C69C9 /* UserEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BF5014B27266B9CEA6DC11C /* UserEntity.swift */; };
+		5455763DEB51751F2BD30444 /* MonthlyData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F93123DFD18F0824E532091 /* MonthlyData.swift */; };
+		5DDB9EEE1ED1D2F26BE47D49 /* TaxStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = D369C24192D675392A205C4B /* TaxStatus.swift */; };
+		615CA91F82633A7A2C1F40E1 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9712285D88F65D5F9E23430 /* SettingsView.swift */; };
+		6DF61355766320364D5B7694 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9757BE2B397BAF4F9FA65C /* SettingsViewModel.swift */; };
+		73A07650822DCFC310BAAA24 /* AddTransactionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC1DD97467BB97D3809D9D2F /* AddTransactionViewModel.swift */; };
+		762B77DCEDCB65E919D99691 /* DashboardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD3FEDDD06A99D9BC586E2C /* DashboardViewModel.swift */; };
+		76DEB4E0F6633C40309AF3FC /* ClientType.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEA0EF0BBE34BD802AD3109C /* ClientType.swift */; };
+		83A1CEE1D24421BC3A2C5054 /* GetMonthlyDynamicsUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BBDDAAF81E5B7A4C4D22783 /* GetMonthlyDynamicsUseCase.swift */; };
+		855F45860FA1BB1228C677B7 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9FDB18528D5474099877283 /* DashboardView.swift */; };
+		8F9F6A6C899C207AED931882 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 940998E028CB628BB760FF7D /* RootView.swift */; };
+		977403F6A9A4693D5687BDD9 /* CalculateTaxUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21AE10AC2F9610FBD58E82A5 /* CalculateTaxUseCase.swift */; };
+		99749BD373E8E06A3CC8378B /* TaxMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82440E40D8C6C2AE2D27D8A5 /* TaxMode.swift */; };
+		B183A2A671407F2C3CFB56B2 /* AppContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 866B1A5E002A254F53748A3D /* AppContainer.swift */; };
+		B3213706B3839773FB09DBB5 /* TransactionDirection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C21FF8736E7CAAF54FB5048F /* TransactionDirection.swift */; };
+		B3B0734E6DF2C86A4AA73AD2 /* FineryTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = D63DC38B29DA04BE54BB2733 /* FineryTheme.swift */; };
+		CE61AB72C74CD48311DFED14 /* FineryApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94113177E3F1122E055454B2 /* FineryApp.swift */; };
+		CFC26F9E8EE72DC53CA13631 /* MockRepositories.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A4C68A92997653ED71CE4E /* MockRepositories.swift */; };
+		D1E17F9EB7662E4DDC587927 /* TransactionEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBFB152A8697C84E2E8ECF71 /* TransactionEntity.swift */; };
+		D5B323A2400D0070F2213C0D /* Transaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF7D02C675F33D63441B89E /* Transaction.swift */; };
+		D94CCCD1E9570EDA6DF9A8C7 /* TransactionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E139A4F9AFC176D183F3632 /* TransactionsView.swift */; };
+		E9DEF104FE00898537267D34 /* TaxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3B3F7DAC41282629E2C6B2 /* TaxView.swift */; };
+		EF17431F6C6E5E98DAFC0E60 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDCE5CF5E48714BC763B1ED2 /* User.swift */; };
+		F1AE7C2A94B173851217D863 /* AnalyticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B73BE6B840255FE525903F14 /* AnalyticsView.swift */; };
+		F430E274A1D416043C4DCDB8 /* TransactionsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F2C94236A147B2275A4C7B4 /* TransactionsViewModel.swift */; };
+		F950C54839946E228199F9E2 /* IncomeCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6594DF992676C1A5BDA9E7F /* IncomeCategory.swift */; };
+		FAA10A31048A1AD78FC78D3F /* UserRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = A808E46673806C37D5BF707B /* UserRepository.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0C00BB60C8DA88F1771E5540 /* AddTransactionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTransactionView.swift; sourceTree = "<group>"; };
+		12B56BD4CA668CF84630EEE1 /* PreviewData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewData.swift; sourceTree = "<group>"; };
+		1F93123DFD18F0824E532091 /* MonthlyData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthlyData.swift; sourceTree = "<group>"; };
+		2182632BEFCE4CB0A8A9362F /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		21AE10AC2F9610FBD58E82A5 /* CalculateTaxUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculateTaxUseCase.swift; sourceTree = "<group>"; };
+		2BF5014B27266B9CEA6DC11C /* UserEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserEntity.swift; sourceTree = "<group>"; };
+		33A4C68A92997653ED71CE4E /* MockRepositories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockRepositories.swift; sourceTree = "<group>"; };
+		3E1A9031C01D7ABAC3322EC7 /* Insight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Insight.swift; sourceTree = "<group>"; };
+		4E3B3F7DAC41282629E2C6B2 /* TaxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaxView.swift; sourceTree = "<group>"; };
+		51872C806C150DBEB4911CE0 /* TransactionSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionSource.swift; sourceTree = "<group>"; };
+		52B7428812D629E1EEDF5B7D /* GetInsightsUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetInsightsUseCase.swift; sourceTree = "<group>"; };
+		5B9757BE2B397BAF4F9FA65C /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
+		5E139A4F9AFC176D183F3632 /* TransactionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionsView.swift; sourceTree = "<group>"; };
+		5F2C94236A147B2275A4C7B4 /* TransactionsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionsViewModel.swift; sourceTree = "<group>"; };
+		82440E40D8C6C2AE2D27D8A5 /* TaxMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaxMode.swift; sourceTree = "<group>"; };
+		866B1A5E002A254F53748A3D /* AppContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppContainer.swift; sourceTree = "<group>"; };
+		8B38440EFFA21F1F82715A28 /* PnL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PnL.swift; sourceTree = "<group>"; };
+		9286A23592206481E6E093FA /* ExpenseCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpenseCategory.swift; sourceTree = "<group>"; };
+		940998E028CB628BB760FF7D /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		94113177E3F1122E055454B2 /* FineryApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FineryApp.swift; sourceTree = "<group>"; };
+		974BD75AB3FE1C6176DB1293 /* GetPnLUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetPnLUseCase.swift; sourceTree = "<group>"; };
+		9925A0E4CA8F1006122C1BD8 /* TaxCalculatorService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaxCalculatorService.swift; sourceTree = "<group>"; };
+		9AF7D02C675F33D63441B89E /* Transaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transaction.swift; sourceTree = "<group>"; };
+		9BBDDAAF81E5B7A4C4D22783 /* GetMonthlyDynamicsUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetMonthlyDynamicsUseCase.swift; sourceTree = "<group>"; };
+		9DE470362E77980A05FBBA37 /* TransactionLocalRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionLocalRepository.swift; sourceTree = "<group>"; };
+		9F40AEF0915FDE1ADF55A664 /* Finery.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Finery.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A808E46673806C37D5BF707B /* UserRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRepository.swift; sourceTree = "<group>"; };
+		B73BE6B840255FE525903F14 /* AnalyticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsView.swift; sourceTree = "<group>"; };
+		B84589DEF693D5737501347D /* ClassifyTransactionUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassifyTransactionUseCase.swift; sourceTree = "<group>"; };
+		BEA0EF0BBE34BD802AD3109C /* ClientType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientType.swift; sourceTree = "<group>"; };
+		C21FF8736E7CAAF54FB5048F /* TransactionDirection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionDirection.swift; sourceTree = "<group>"; };
+		C9712285D88F65D5F9E23430 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		D369C24192D675392A205C4B /* TaxStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaxStatus.swift; sourceTree = "<group>"; };
+		D63DC38B29DA04BE54BB2733 /* FineryTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FineryTheme.swift; sourceTree = "<group>"; };
+		D6594DF992676C1A5BDA9E7F /* IncomeCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IncomeCategory.swift; sourceTree = "<group>"; };
+		D6F747A35F6E89CF3EFE0629 /* UserLocalRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLocalRepository.swift; sourceTree = "<group>"; };
+		DFD3FEDDD06A99D9BC586E2C /* DashboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewModel.swift; sourceTree = "<group>"; };
+		E4A3D50A4B2CBBE238524D0D /* AnalyticsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsViewModel.swift; sourceTree = "<group>"; };
+		E93820A671554C608923316D /* TransactionRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionRepository.swift; sourceTree = "<group>"; };
+		EBFB152A8697C84E2E8ECF71 /* TransactionEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionEntity.swift; sourceTree = "<group>"; };
+		EC1DD97467BB97D3809D9D2F /* AddTransactionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTransactionViewModel.swift; sourceTree = "<group>"; };
+		F290DAB89D8CFCE0528870E3 /* InsightRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsightRow.swift; sourceTree = "<group>"; };
+		F9FDB18528D5474099877283 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
+		FC923A07AB37977277909C3D /* TaxViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaxViewModel.swift; sourceTree = "<group>"; };
+		FDCE5CF5E48714BC763B1ED2 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		0245ACB5F99A2B7FF52302C3 = {
+			isa = PBXGroup;
+			children = (
+				8FBCCF9833F5AA4643284D82 /* Finery */,
+				D52C16B1DE4768134BF7005C /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		0659E97BCDF2945E7D76FD26 /* SwiftData */ = {
+			isa = PBXGroup;
+			children = (
+				EBFB152A8697C84E2E8ECF71 /* TransactionEntity.swift */,
+				2BF5014B27266B9CEA6DC11C /* UserEntity.swift */,
+			);
+			path = SwiftData;
+			sourceTree = "<group>";
+		};
+		0AE98E9682AA193DD926E0A5 /* Domain */ = {
+			isa = PBXGroup;
+			children = (
+				1C255AFD284A6BCAD2691BF8 /* Models */,
+				920F93EBC91EC087B7552F31 /* Repositories */,
+				36627E3301744F578BC9D5BC /* Services */,
+				1472DC488EEE95C6062AB1A6 /* UseCases */,
+			);
+			path = Domain;
+			sourceTree = "<group>";
+		};
+		1472DC488EEE95C6062AB1A6 /* UseCases */ = {
+			isa = PBXGroup;
+			children = (
+				21AE10AC2F9610FBD58E82A5 /* CalculateTaxUseCase.swift */,
+				B84589DEF693D5737501347D /* ClassifyTransactionUseCase.swift */,
+				52B7428812D629E1EEDF5B7D /* GetInsightsUseCase.swift */,
+				9BBDDAAF81E5B7A4C4D22783 /* GetMonthlyDynamicsUseCase.swift */,
+				974BD75AB3FE1C6176DB1293 /* GetPnLUseCase.swift */,
+			);
+			path = UseCases;
+			sourceTree = "<group>";
+		};
+		1C255AFD284A6BCAD2691BF8 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				3E1A9031C01D7ABAC3322EC7 /* Insight.swift */,
+				1F93123DFD18F0824E532091 /* MonthlyData.swift */,
+				8B38440EFFA21F1F82715A28 /* PnL.swift */,
+				D369C24192D675392A205C4B /* TaxStatus.swift */,
+				9AF7D02C675F33D63441B89E /* Transaction.swift */,
+				FDCE5CF5E48714BC763B1ED2 /* User.swift */,
+				38021F5FB7007C69DDA08E4B /* Enums */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		1D859BB1E5263BF014ADFCDB /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				7DEF06C69FA691FEC83CF934 /* Local */,
+				0659E97BCDF2945E7D76FD26 /* SwiftData */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
+		2A831A591B46393F13E9CAA6 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				F290DAB89D8CFCE0528870E3 /* InsightRow.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		3632FBF2174281E277BFAAA6 /* AddTransaction */ = {
+			isa = PBXGroup;
+			children = (
+				0C00BB60C8DA88F1771E5540 /* AddTransactionView.swift */,
+				EC1DD97467BB97D3809D9D2F /* AddTransactionViewModel.swift */,
+			);
+			path = AddTransaction;
+			sourceTree = "<group>";
+		};
+		36627E3301744F578BC9D5BC /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				9925A0E4CA8F1006122C1BD8 /* TaxCalculatorService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		38021F5FB7007C69DDA08E4B /* Enums */ = {
+			isa = PBXGroup;
+			children = (
+				BEA0EF0BBE34BD802AD3109C /* ClientType.swift */,
+				9286A23592206481E6E093FA /* ExpenseCategory.swift */,
+				D6594DF992676C1A5BDA9E7F /* IncomeCategory.swift */,
+				82440E40D8C6C2AE2D27D8A5 /* TaxMode.swift */,
+				C21FF8736E7CAAF54FB5048F /* TransactionDirection.swift */,
+				51872C806C150DBEB4911CE0 /* TransactionSource.swift */,
+			);
+			path = Enums;
+			sourceTree = "<group>";
+		};
+		38FD56CDB74897A40E2AD040 /* Dashboard */ = {
+			isa = PBXGroup;
+			children = (
+				F9FDB18528D5474099877283 /* DashboardView.swift */,
+				DFD3FEDDD06A99D9BC586E2C /* DashboardViewModel.swift */,
+			);
+			path = Dashboard;
+			sourceTree = "<group>";
+		};
+		423693FC4B12046F813FCF0B /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				2182632BEFCE4CB0A8A9362F /* OnboardingView.swift */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
+		64C33EB15D5B8909E5AF5A98 /* Tax */ = {
+			isa = PBXGroup;
+			children = (
+				4E3B3F7DAC41282629E2C6B2 /* TaxView.swift */,
+				FC923A07AB37977277909C3D /* TaxViewModel.swift */,
+			);
+			path = Tax;
+			sourceTree = "<group>";
+		};
+		6981B8C3897A3FE9152E16A3 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				94113177E3F1122E055454B2 /* FineryApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		6FC703283BBCC44E7764C8A1 /* Transactions */ = {
+			isa = PBXGroup;
+			children = (
+				5E139A4F9AFC176D183F3632 /* TransactionsView.swift */,
+				5F2C94236A147B2275A4C7B4 /* TransactionsViewModel.swift */,
+			);
+			path = Transactions;
+			sourceTree = "<group>";
+		};
+		7DEF06C69FA691FEC83CF934 /* Local */ = {
+			isa = PBXGroup;
+			children = (
+				9DE470362E77980A05FBBA37 /* TransactionLocalRepository.swift */,
+				D6F747A35F6E89CF3EFE0629 /* UserLocalRepository.swift */,
+			);
+			path = Local;
+			sourceTree = "<group>";
+		};
+		8FBCCF9833F5AA4643284D82 /* Finery */ = {
+			isa = PBXGroup;
+			children = (
+				6981B8C3897A3FE9152E16A3 /* App */,
+				1D859BB1E5263BF014ADFCDB /* Data */,
+				0AE98E9682AA193DD926E0A5 /* Domain */,
+				FCFC5D63DCFD1B760DDD602F /* Presentation */,
+				FEAC9A8BEF753AE0FEEE3DC4 /* Preview */,
+			);
+			path = Finery;
+			sourceTree = "<group>";
+		};
+		920F93EBC91EC087B7552F31 /* Repositories */ = {
+			isa = PBXGroup;
+			children = (
+				E93820A671554C608923316D /* TransactionRepository.swift */,
+				A808E46673806C37D5BF707B /* UserRepository.swift */,
+			);
+			path = Repositories;
+			sourceTree = "<group>";
+		};
+		94B62CA32A9D5BD6E537FE64 /* Root */ = {
+			isa = PBXGroup;
+			children = (
+				866B1A5E002A254F53748A3D /* AppContainer.swift */,
+				940998E028CB628BB760FF7D /* RootView.swift */,
+			);
+			path = Root;
+			sourceTree = "<group>";
+		};
+		B2141B802F1F152E5239883B /* Theme */ = {
+			isa = PBXGroup;
+			children = (
+				D63DC38B29DA04BE54BB2733 /* FineryTheme.swift */,
+			);
+			path = Theme;
+			sourceTree = "<group>";
+		};
+		BC3D1227503AAFD37D604514 /* Analytics */ = {
+			isa = PBXGroup;
+			children = (
+				B73BE6B840255FE525903F14 /* AnalyticsView.swift */,
+				E4A3D50A4B2CBBE238524D0D /* AnalyticsViewModel.swift */,
+			);
+			path = Analytics;
+			sourceTree = "<group>";
+		};
+		CCAD105335DAB0871FD914D5 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				C9712285D88F65D5F9E23430 /* SettingsView.swift */,
+				5B9757BE2B397BAF4F9FA65C /* SettingsViewModel.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		D52C16B1DE4768134BF7005C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				9F40AEF0915FDE1ADF55A664 /* Finery.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		FCFC5D63DCFD1B760DDD602F /* Presentation */ = {
+			isa = PBXGroup;
+			children = (
+				3632FBF2174281E277BFAAA6 /* AddTransaction */,
+				BC3D1227503AAFD37D604514 /* Analytics */,
+				2A831A591B46393F13E9CAA6 /* Components */,
+				38FD56CDB74897A40E2AD040 /* Dashboard */,
+				423693FC4B12046F813FCF0B /* Onboarding */,
+				94B62CA32A9D5BD6E537FE64 /* Root */,
+				CCAD105335DAB0871FD914D5 /* Settings */,
+				64C33EB15D5B8909E5AF5A98 /* Tax */,
+				B2141B802F1F152E5239883B /* Theme */,
+				6FC703283BBCC44E7764C8A1 /* Transactions */,
+			);
+			path = Presentation;
+			sourceTree = "<group>";
+		};
+		FEAC9A8BEF753AE0FEEE3DC4 /* Preview */ = {
+			isa = PBXGroup;
+			children = (
+				33A4C68A92997653ED71CE4E /* MockRepositories.swift */,
+				12B56BD4CA668CF84630EEE1 /* PreviewData.swift */,
+			);
+			path = Preview;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		2515D379705AE448BB7D130D /* Finery */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 768E093C107A2CBB87B8F4C3 /* Build configuration list for PBXNativeTarget "Finery" */;
+			buildPhases = (
+				EB4994D0E1EA91A9BBD545C4 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Finery;
+			packageProductDependencies = (
+			);
+			productName = Finery;
+			productReference = 9F40AEF0915FDE1ADF55A664 /* Finery.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		FE88024E604A1C5DF0261666 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					2515D379705AE448BB7D130D = {
+						DevelopmentTeam = "";
+					};
+				};
+			};
+			buildConfigurationList = 6A3A44B4B585BADEE6A2DDFB /* Build configuration list for PBXProject "Finery" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 0245ACB5F99A2B7FF52302C3;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = D52C16B1DE4768134BF7005C /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				2515D379705AE448BB7D130D /* Finery */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		EB4994D0E1EA91A9BBD545C4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				15B3D13568DF23D8F47D1892 /* AddTransactionView.swift in Sources */,
+				73A07650822DCFC310BAAA24 /* AddTransactionViewModel.swift in Sources */,
+				F1AE7C2A94B173851217D863 /* AnalyticsView.swift in Sources */,
+				3A02770F74D88D2B7E6969E7 /* AnalyticsViewModel.swift in Sources */,
+				B183A2A671407F2C3CFB56B2 /* AppContainer.swift in Sources */,
+				977403F6A9A4693D5687BDD9 /* CalculateTaxUseCase.swift in Sources */,
+				38E4A622E0DB6FF0B1DA2219 /* ClassifyTransactionUseCase.swift in Sources */,
+				76DEB4E0F6633C40309AF3FC /* ClientType.swift in Sources */,
+				855F45860FA1BB1228C677B7 /* DashboardView.swift in Sources */,
+				762B77DCEDCB65E919D99691 /* DashboardViewModel.swift in Sources */,
+				082F44E6A0528399DC16BE5F /* ExpenseCategory.swift in Sources */,
+				CE61AB72C74CD48311DFED14 /* FineryApp.swift in Sources */,
+				B3B0734E6DF2C86A4AA73AD2 /* FineryTheme.swift in Sources */,
+				3EA59CEC864D0D95A65A44BB /* GetInsightsUseCase.swift in Sources */,
+				83A1CEE1D24421BC3A2C5054 /* GetMonthlyDynamicsUseCase.swift in Sources */,
+				0A6150E3A8C6C066DC006C52 /* GetPnLUseCase.swift in Sources */,
+				F950C54839946E228199F9E2 /* IncomeCategory.swift in Sources */,
+				536F84E5A6B17503306735DC /* Insight.swift in Sources */,
+				210E596473F221B02402B18B /* InsightRow.swift in Sources */,
+				CFC26F9E8EE72DC53CA13631 /* MockRepositories.swift in Sources */,
+				5455763DEB51751F2BD30444 /* MonthlyData.swift in Sources */,
+				3C0CDAA5557803A99A8C721D /* OnboardingView.swift in Sources */,
+				4DA6EEBAB8E662AE8B083851 /* PnL.swift in Sources */,
+				154314B4625FFD8511918D86 /* PreviewData.swift in Sources */,
+				8F9F6A6C899C207AED931882 /* RootView.swift in Sources */,
+				615CA91F82633A7A2C1F40E1 /* SettingsView.swift in Sources */,
+				6DF61355766320364D5B7694 /* SettingsViewModel.swift in Sources */,
+				42F92C1337CD08F72B200AF2 /* TaxCalculatorService.swift in Sources */,
+				99749BD373E8E06A3CC8378B /* TaxMode.swift in Sources */,
+				5DDB9EEE1ED1D2F26BE47D49 /* TaxStatus.swift in Sources */,
+				E9DEF104FE00898537267D34 /* TaxView.swift in Sources */,
+				532DD8E6ECC926BCC1FD1509 /* TaxViewModel.swift in Sources */,
+				D5B323A2400D0070F2213C0D /* Transaction.swift in Sources */,
+				B3213706B3839773FB09DBB5 /* TransactionDirection.swift in Sources */,
+				D1E17F9EB7662E4DDC587927 /* TransactionEntity.swift in Sources */,
+				1F5CFEF8974C8A3AE8CCA601 /* TransactionLocalRepository.swift in Sources */,
+				139D9B698D395707AF9AF876 /* TransactionRepository.swift in Sources */,
+				4B117A31774BF9F428CFB325 /* TransactionSource.swift in Sources */,
+				D94CCCD1E9570EDA6DF9A8C7 /* TransactionsView.swift in Sources */,
+				F430E274A1D416043C4DCDB8 /* TransactionsViewModel.swift in Sources */,
+				EF17431F6C6E5E98DAFC0E60 /* User.swift in Sources */,
+				53832F634D193A1E432C69C9 /* UserEntity.swift in Sources */,
+				0599F653DBC5B9EF669DE4E7 /* UserLocalRepository.swift in Sources */,
+				FAA10A31048A1AD78FC78D3F /* UserRepository.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		49F1083F16C4892521826D98 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		AF11DBEAFEBFACC91CB75F68 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Finery;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.tkachev.finery;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_STRICT_CONCURRENCY = targeted;
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		E7740104D031861FBCCBA80A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		EADEF6514C3AC2C52820AD0A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Finery;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.tkachev.finery;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_STRICT_CONCURRENCY = targeted;
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		6A3A44B4B585BADEE6A2DDFB /* Build configuration list for PBXProject "Finery" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E7740104D031861FBCCBA80A /* Debug */,
+				49F1083F16C4892521826D98 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		768E093C107A2CBB87B8F4C3 /* Build configuration list for PBXNativeTarget "Finery" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AF11DBEAFEBFACC91CB75F68 /* Debug */,
+				EADEF6514C3AC2C52820AD0A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = FE88024E604A1C5DF0261666 /* Project object */;
+}
