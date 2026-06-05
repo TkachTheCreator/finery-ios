@@ -158,13 +158,13 @@ struct AddTransactionView: View {
                 fieldRow(label: "ТИП КЛИЕНТА") {
                     Menu {
                         ForEach(ClientType.allCases, id: \.self) { type in
-                            Button("\(type.displayName) — \(Int(type.npdRate * 100))%") {
+                            Button("\(type.displayName) — \(NSDecimalNumber(decimal: type.npdRate * 100).intValue)%") {
                                 viewModel.clientType = type
                             }
                         }
                     } label: {
                         HStack(spacing: 4) {
-                            Text("\(viewModel.clientType.displayName) · \(Int(viewModel.clientType.npdRate * 100))%")
+                            Text("\(viewModel.clientType.displayName) · \(NSDecimalNumber(decimal: viewModel.clientType.npdRate * 100).intValue)%")
                                 .font(.system(.body))
                                 .foregroundStyle(FC.ink)
                             Image(systemName: "chevron.up.chevron.down")
