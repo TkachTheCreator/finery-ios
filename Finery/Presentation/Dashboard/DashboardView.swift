@@ -39,18 +39,22 @@ struct DashboardView: View {
                     if visibleCards.contains(0) {
                         incomeHeroCard
                             .transition(AnyTransition.movingParts.move(edge: .bottom))
+                            .pressable()
                     }
                     if visibleCards.contains(1) {
                         taxCard
                             .transition(AnyTransition.movingParts.move(edge: .bottom))
+                            .pressable()
                     }
                     if visibleCards.contains(2) {
                         topSourcesCard
                             .transition(AnyTransition.movingParts.move(edge: .bottom))
+                            .pressable()
                     }
                     if !viewModel.insights.isEmpty {
                         insightsCard
                             .transition(AnyTransition.movingParts.swoosh)
+                            .pressable()
                     }
 
                     Color.clear.frame(height: 90)
@@ -65,7 +69,7 @@ struct DashboardView: View {
         .onAppear {
             guard visibleCards.isEmpty else { return }
             for i in 0..<3 {
-                withAnimation(.spring(response: 0.65, dampingFraction: 0.82).delay(Double(i) * 0.1 + 0.06)) {
+                withAnimation(.spring(response: 0.6, dampingFraction: 0.78).delay(Double(i) * 0.1 + 0.05)) {
                     visibleCards.insert(i)
                 }
             }
@@ -80,13 +84,13 @@ struct DashboardView: View {
 
     private var headerSection: some View {
         HStack(alignment: .center) {
-            VStack(alignment: .leading, spacing: 3) {
+            VStack(alignment: .leading, spacing: 4) {
                 Text(greeting)
-                    .font(.system(.title2, design: .default, weight: .semibold))
+                    .font(.system(.title, design: .default, weight: .bold))
                     .foregroundStyle(FC.ink)
                 Text(currentMonthFull)
-                    .font(.system(.caption, design: .default, weight: .regular))
-                    .tracking(0.3)
+                    .font(.system(.subheadline, design: .default, weight: .regular))
+                    .tracking(0.2)
                     .foregroundStyle(FC.muted)
             }
             Spacer()
@@ -114,7 +118,7 @@ struct DashboardView: View {
                         .foregroundStyle(FC.muted)
                 } else {
                     Text(viewModel.pnl?.totalIncome.rub() ?? "0\u{202F}₽")
-                        .font(.system(size: 46, weight: .bold))
+                        .font(.system(size: 52, weight: .black, design: .default))
                         .monospacedDigit()
                         .foregroundStyle(FC.ink)
                         .contentTransition(.numericText())

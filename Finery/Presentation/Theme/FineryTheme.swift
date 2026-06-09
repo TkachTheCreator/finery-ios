@@ -70,6 +70,37 @@ extension View {
     }
 }
 
+// MARK: - Pressable (Emil Kowalski style)
+
+struct PressableModifier: ViewModifier {
+    @State private var isPressed = false
+    var action: (() -> Void)?
+
+    func body(content: Content) -> some View {
+        content
+            .scaleEffect(isPressed ? 0.96 : 1.0)
+            .animation(.spring(response: 0.25, dampingFraction: 0.7), value: isPressed)
+            .gesture(
+                DragGesture(minimumDistance: 0)
+                    .onChanged { _ in
+                        guard !isPressed else { return }
+                        isPressed = true
+                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                    }
+                    .onEnded { _ in
+                        isPressed = false
+                        action?()
+                    }
+            )
+    }
+}
+
+extension View {
+    func pressable(action: (() -> Void)? = nil) -> some View {
+        modifier(PressableModifier(action: action))
+    }
+}
+
 struct GlassCard: ViewModifier {
     func body(content: Content) -> some View {
         content
