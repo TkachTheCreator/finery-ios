@@ -2,6 +2,7 @@ import SwiftUI
 
 struct TaxView: View {
     @State var viewModel: TaxViewModel
+    @State private var appeared = false
 
     init(viewModel: TaxViewModel) {
         _viewModel = State(wrappedValue: viewModel)
@@ -9,29 +10,38 @@ struct TaxView: View {
 
     var body: some View {
         ZStack {
-            FC.background.ignoresSafeArea()
+            FC.backgroundGradient.ignoresSafeArea()
             ScrollView(showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 0) {
+                VStack(alignment: .leading, spacing: 14) {
                     pageHeader
-                    hairline
+                        .offset(y: appeared ? 0 : -16)
+                        .opacity(appeared ? 1 : 0)
+
                     if let status = viewModel.taxStatus {
-                        taxModeSection(status)
-                        hairline
-                        limitSection(status)
-                        hairline
-                        deadlineSection(status)
-                        hairline
-                        yearSummarySection
-                        hairline
-                        historySection
+                        taxModeCard(status)
+                            .cardAppear(appeared: appeared, delay: 0.08)
+                        limitCard(status)
+                            .cardAppear(appeared: appeared, delay: 0.16)
+                        deadlineCard(status)
+                            .cardAppear(appeared: appeared, delay: 0.24)
+                        yearSummaryCard
+                            .cardAppear(appeared: appeared, delay: 0.32)
+                        historyCard
+                            .cardAppear(appeared: appeared, delay: 0.40)
                     } else if viewModel.isLoading {
                         loadingState
                     }
+
                     Color.clear.frame(height: 40)
                 }
+                .padding(.horizontal, 16)
             }
         }
         .task { await viewModel.load() }
+        .onAppear {
+            guard !appeared else { return }
+            withAnimation(.spring(response: 0.7, dampingFraction: 0.82)) { appeared = true }
+        }
     }
 
     // MARK: Header
@@ -48,13 +58,14 @@ struct TaxView: View {
             }
             Spacer()
         }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 18)
+        .padding(.horizontal, 4)
+        .padding(.top, 20)
+        .padding(.bottom, 4)
     }
 
-    // MARK: Tax Mode
+    // MARK: Tax Mode Card
 
-    private func taxModeSection(_ status: TaxStatus) -> some View {
+    private func taxModeCard(_ status: TaxStatus) -> some View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
                 Text("РЕЖИМ").fLabel()
@@ -67,22 +78,23 @@ struct TaxView: View {
             }
             Spacer()
             ZStack {
-                Rectangle()
-                    .fill(FC.cobalt.opacity(0.1))
+                Circle()
+                    .fill(FC.cobalt.opacity(0.18))
                     .frame(width: 52, height: 52)
                 Text("%")
                     .font(.system(size: 28, weight: .light))
                     .foregroundStyle(FC.cobalt)
             }
+            .shadow(color: FC.cobaltGlow, radius: 10)
         }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 20)
+        .padding(20)
+        .glassCard()
     }
 
-    // MARK: NPD Limit
+    // MARK: NPD Limit Card
 
-    private func limitSection(_ status: TaxStatus) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
+    private func limitCard(_ status: TaxStatus) -> some View {
+        VStack(alignment: .leading, spacing: 14) {
             HStack {
                 Text("ЛИМИТ НПД").fLabel()
                 Spacer()
@@ -100,13 +112,24 @@ struct TaxView: View {
 
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
-                    Rectangle().fill(FC.border.opacity(0.4)).frame(height: 4)
-                    Rectangle()
-                        .fill(trafficColor(status))
-                        .frame(width: geo.size.width * CGFloat(min(status.limitUsedPercent / 100, 1.0)), height: 4)
+                    RoundedRectangle(cornerRadius: 5)
+                        .fill(Color.white.opacity(0.08))
+                        .frame(height: 8)
+                    RoundedRectangle(cornerRadius: 5)
+                        .fill(LinearGradient(
+                            colors: [FC.cobalt, trafficColor(status)],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        ))
+                        .frame(
+                            width: geo.size.width * CGFloat(min(status.limitUsedPercent / 100, 1.0)),
+                            height: 8
+                        )
+                        .shadow(color: FC.cobaltGlow, radius: 8)
+                        .animation(.spring(response: 0.9, dampingFraction: 0.7).delay(0.35), value: status.limitUsedPercent)
                 }
             }
-            .frame(height: 4)
+            .frame(height: 8)
 
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
@@ -115,6 +138,7 @@ struct TaxView: View {
                         .font(.system(.subheadline, design: .default, weight: .semibold))
                         .monospacedDigit()
                         .foregroundStyle(trafficColor(status))
+                        .contentTransition(.numericText())
                 }
                 Spacer()
                 VStack(alignment: .trailing, spacing: 2) {
@@ -135,7 +159,7 @@ struct TaxView: View {
             }
 
             if status.isNearLimit {
-                HStack(spacing: 8) {
+                HStack(spacing: 10) {
                     Image(systemName: "info.circle")
                         .fontWeight(.light)
                         .foregroundStyle(FC.cobalt)
@@ -144,80 +168,85 @@ struct TaxView: View {
                         .foregroundStyle(FC.muted)
                         .fixedSize(horizontal: false, vertical: true)
                 }
-                .padding(12)
-                .background(FC.cobalt.opacity(0.07))
-                .overlay(Rectangle().stroke(FC.cobalt.opacity(0.2), lineWidth: 0.5))
+                .padding(14)
+                .background(FC.cobalt.opacity(0.1))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(FC.cobalt.opacity(0.25), lineWidth: 1)
+                )
+                .clipShape(RoundedRectangle(cornerRadius: 10))
             }
         }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 20)
+        .padding(20)
+        .glassCard()
     }
 
-    // MARK: Deadline
+    // MARK: Deadline Card
 
-    private func deadlineSection(_ status: TaxStatus) -> some View {
+    private func deadlineCard(_ status: TaxStatus) -> some View {
         HStack(spacing: 0) {
-            deadlineCard(
+            deadlineCell(
                 label: "К УПЛАТЕ",
                 value: status.taxDue.rub(),
-                valueColor: status.taxDue > 0 ? FC.danger : FC.muted
+                color: status.taxDue > 0 ? FC.danger : FC.muted
             )
-            Rectangle().fill(FC.border).frame(width: 0.5)
-            deadlineCard(
+            Rectangle().fill(Color.white.opacity(0.1)).frame(width: 1)
+            deadlineCell(
                 label: "ДНЕЙ ОСТАЛОСЬ",
                 value: "\(max(0, status.daysUntilDeadline))",
-                valueColor: status.daysUntilDeadline <= 5 ? FC.danger : FC.ink
+                color: status.daysUntilDeadline <= 5 ? FC.danger : FC.ink
             )
-            Rectangle().fill(FC.border).frame(width: 0.5)
-            deadlineCard(
+            Rectangle().fill(Color.white.opacity(0.1)).frame(width: 1)
+            deadlineCell(
                 label: "ДЕДЛАЙН",
                 value: formattedDeadline(status.nextDeadline),
-                valueColor: FC.ink
+                color: FC.ink
             )
         }
-        .background(FC.surface)
+        .glassCard()
     }
 
-    private func deadlineCard(label: String, value: String, valueColor: Color) -> some View {
+    private func deadlineCell(label: String, value: String, color: Color) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(label).fLabel()
             Text(value)
                 .font(.system(.headline, design: .default, weight: .semibold))
                 .monospacedDigit()
-                .foregroundStyle(valueColor)
+                .foregroundStyle(color)
         }
         .padding(.horizontal, 16)
-        .padding(.vertical, 16)
+        .padding(.vertical, 18)
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
-    // MARK: Year Summary
+    // MARK: Year Summary Card
 
-    private var yearSummarySection: some View {
+    private var yearSummaryCard: some View {
         HStack(spacing: 0) {
-            yearCard(label: "ДОХОД ЗА ГОД", amount: viewModel.totalIncomeYear, color: FC.success)
-            Rectangle().fill(FC.border).frame(width: 0.5)
-            yearCard(label: "НАЛОГ ЗА ГОД", amount: viewModel.totalTaxYear, color: FC.danger)
+            yearCell(label: "ДОХОД ЗА ГОД", amount: viewModel.totalIncomeYear, color: FC.success)
+            Rectangle().fill(Color.white.opacity(0.1)).frame(width: 1)
+            yearCell(label: "НАЛОГ ЗА ГОД",  amount: viewModel.totalTaxYear,   color: FC.danger)
         }
+        .glassCard()
     }
 
-    private func yearCard(label: String, amount: Decimal, color: Color) -> some View {
+    private func yearCell(label: String, amount: Decimal, color: Color) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(label).fLabel()
             Text(amount.rub())
                 .font(.system(.subheadline, design: .default, weight: .semibold))
                 .monospacedDigit()
                 .foregroundStyle(color)
+                .contentTransition(.numericText())
         }
         .padding(.horizontal, 20)
-        .padding(.vertical, 16)
+        .padding(.vertical, 18)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(FC.background)
     }
 
-    // MARK: History
+    // MARK: History Card
 
-    private var historySection: some View {
+    private var historyCard: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("ИСТОРИЯ ПО МЕСЯЦАМ").fLabel()
 
@@ -241,12 +270,14 @@ struct TaxView: View {
                 }
                 .padding(.vertical, 6)
                 if item.id != viewModel.monthlyHistory.reversed().last?.id {
-                    Rectangle().fill(FC.border.opacity(0.5)).frame(height: 0.5)
+                    Rectangle()
+                        .fill(Color.white.opacity(0.07))
+                        .frame(height: 0.5)
                 }
             }
         }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 20)
+        .padding(20)
+        .glassCard()
     }
 
     // MARK: Loading
@@ -260,10 +291,6 @@ struct TaxView: View {
     }
 
     // MARK: Helpers
-
-    private var hairline: some View {
-        Rectangle().fill(FC.border).frame(height: 0.5)
-    }
 
     private func trafficColor(_ status: TaxStatus) -> Color {
         switch status.trafficLight {
@@ -284,6 +311,17 @@ struct TaxView: View {
         let fmt = DateFormatter()
         fmt.dateFormat = "yyyy"
         return fmt.string(from: Date()) + " год"
+    }
+}
+
+// MARK: - Card appear animation helper
+
+private extension View {
+    func cardAppear(appeared: Bool, delay: Double) -> some View {
+        self
+            .offset(y: appeared ? 0 : 60)
+            .opacity(appeared ? 1 : 0)
+            .animation(.spring(response: 0.65, dampingFraction: 0.8).delay(delay), value: appeared)
     }
 }
 

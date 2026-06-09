@@ -3,6 +3,7 @@ import SwiftUI
 struct TransactionsView: View {
     @State var viewModel: TransactionsViewModel
     @State private var showAdd = false
+    @State private var appeared = false
 
     init(viewModel: TransactionsViewModel) {
         _viewModel = State(wrappedValue: viewModel)
@@ -10,17 +11,23 @@ struct TransactionsView: View {
 
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
-            FC.background.ignoresSafeArea()
+            FC.backgroundGradient.ignoresSafeArea()
 
             VStack(spacing: 0) {
                 filterBar
-                hairline
-                summaryRow
-                hairline
+                    .offset(y: appeared ? 0 : -20)
+                    .opacity(appeared ? 1 : 0)
+
+                summaryCard
+                    .padding(.horizontal, 16)
+                    .padding(.top, 12)
+                    .offset(y: appeared ? 0 : 30)
+                    .opacity(appeared ? 1 : 0)
+                    .animation(.spring(response: 0.6, dampingFraction: 0.8).delay(0.1), value: appeared)
 
                 if viewModel.isLoading {
                     Spacer()
-                    ProgressView().tint(FC.cobalt)
+                    ProgressView().tint(FC.cobalt).padding(.vertical, 60)
                     Spacer()
                 } else if viewModel.grouped.isEmpty {
                     emptyState
@@ -32,6 +39,10 @@ struct TransactionsView: View {
             addButton
         }
         .task { await viewModel.load() }
+        .onAppear {
+            guard !appeared else { return }
+            withAnimation(.spring(response: 0.65, dampingFraction: 0.82)) { appeared = true }
+        }
         .onChange(of: viewModel.period) { _, _ in Task { await viewModel.load() } }
         .sheet(isPresented: $showAdd) {
             AddTransactionView(
@@ -45,59 +56,80 @@ struct TransactionsView: View {
 
     private var filterBar: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 6) {
+            HStack(spacing: 8) {
                 ForEach(TimePeriod.allCases, id: \.self) { p in
                     periodChip(p)
                 }
                 Rectangle()
-                    .fill(FC.border)
-                    .frame(width: 0.5, height: 20)
-                directionChip(nil, label: "Все")
-                directionChip(.income, label: "Доходы")
+                    .fill(Color.white.opacity(0.12))
+                    .frame(width: 1, height: 20)
+                directionChip(nil,      label: "Все")
+                directionChip(.income,  label: "Доходы")
                 directionChip(.expense, label: "Расходы")
             }
-            .padding(.horizontal, 20)
+            .padding(.horizontal, 16)
             .padding(.vertical, 12)
         }
-        .background(FC.background)
     }
 
     private func periodChip(_ p: TimePeriod) -> some View {
         let selected = viewModel.period == p
-        return Button(p.rawValue) { viewModel.period = p }
-            .font(.system(.caption, design: .default, weight: selected ? .semibold : .regular))
-            .foregroundStyle(selected ? .white : FC.ink)
-            .padding(.horizontal, 12)
-            .padding(.vertical, 6)
-            .background(selected ? FC.cobalt : FC.surface)
-            .overlay(Rectangle().stroke(FC.border, lineWidth: 0.5))
+        return Button(p.rawValue) {
+            withAnimation(.spring(response: 0.35, dampingFraction: 0.75)) { viewModel.period = p }
+        }
+        .font(.system(.caption, design: .default, weight: selected ? .semibold : .regular))
+        .foregroundStyle(selected ? .white : FC.muted)
+        .padding(.horizontal, 14)
+        .padding(.vertical, 7)
+        .background(
+            Capsule()
+                .fill(selected ? FC.cobalt : Color.white.opacity(0.08))
+                .shadow(color: selected ? FC.cobaltGlow : .clear, radius: 8)
+        )
+        .overlay(
+            Capsule().stroke(
+                selected ? Color.clear : Color.white.opacity(0.15),
+                lineWidth: 1
+            )
+        )
     }
 
     private func directionChip(_ dir: TransactionDirection?, label: String) -> some View {
         let selected = viewModel.directionFilter == dir
         let activeColor: Color = dir == .income ? FC.success : dir == .expense ? FC.danger : FC.cobalt
-        return Button(label) { viewModel.directionFilter = dir }
-            .font(.system(.caption, design: .default, weight: selected ? .semibold : .regular))
-            .foregroundStyle(selected ? .white : FC.ink)
-            .padding(.horizontal, 12)
-            .padding(.vertical, 6)
-            .background(selected ? activeColor : FC.surface)
-            .overlay(Rectangle().stroke(FC.border, lineWidth: 0.5))
+        return Button(label) {
+            withAnimation(.spring(response: 0.35, dampingFraction: 0.75)) { viewModel.directionFilter = dir }
+        }
+        .font(.system(.caption, design: .default, weight: selected ? .semibold : .regular))
+        .foregroundStyle(selected ? .white : FC.muted)
+        .padding(.horizontal, 14)
+        .padding(.vertical, 7)
+        .background(
+            Capsule()
+                .fill(selected ? activeColor : Color.white.opacity(0.08))
+                .shadow(color: selected ? activeColor.opacity(0.4) : .clear, radius: 8)
+        )
+        .overlay(
+            Capsule().stroke(
+                selected ? Color.clear : Color.white.opacity(0.15),
+                lineWidth: 1
+            )
+        )
     }
 
-    // MARK: Summary Row
+    // MARK: Summary Card
 
-    private var summaryRow: some View {
+    private var summaryCard: some View {
         HStack {
-            summaryItem(label: "ДОХОДЫ", amount: viewModel.totalIncome, color: FC.success)
+            summaryItem(label: "ДОХОДЫ",  amount: viewModel.totalIncome,   color: FC.success)
             Spacer()
-            Rectangle().fill(FC.border).frame(width: 0.5, height: 28)
+            Rectangle().fill(Color.white.opacity(0.12)).frame(width: 1, height: 32)
             Spacer()
             summaryItem(label: "РАСХОДЫ", amount: viewModel.totalExpenses, color: FC.danger)
         }
         .padding(.horizontal, 20)
-        .padding(.vertical, 12)
-        .background(FC.surface)
+        .padding(.vertical, 14)
+        .glassCardSmall()
     }
 
     private func summaryItem(label: String, amount: Decimal, color: Color) -> some View {
@@ -107,6 +139,7 @@ struct TransactionsView: View {
                 .font(.system(.footnote, design: .default, weight: .semibold))
                 .monospacedDigit()
                 .foregroundStyle(color)
+                .contentTransition(.numericText())
         }
     }
 
@@ -118,9 +151,9 @@ struct TransactionsView: View {
                 Section {
                     ForEach(group.items) { tx in
                         TransactionRow(transaction: tx)
-                            .listRowBackground(FC.background)
-                            .listRowInsets(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20))
-                            .listRowSeparatorTint(FC.border)
+                            .listRowBackground(Color.clear)
+                            .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                            .listRowSeparator(.hidden)
                             .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                                 Button(role: .destructive) {
                                     Task { await viewModel.delete(id: tx.id) }
@@ -133,24 +166,25 @@ struct TransactionsView: View {
                     Text(dayLabel(group.date))
                         .fLabel()
                         .padding(.top, 14)
-                        .padding(.bottom, 6)
+                        .padding(.bottom, 4)
                         .listRowInsets(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20))
                 }
+                .listSectionSeparator(.hidden)
             }
         }
         .listStyle(.plain)
-        .background(FC.background)
         .scrollContentBackground(.hidden)
+        .background(Color.clear)
     }
 
-    // MARK: Empty
+    // MARK: Empty State
 
     private var emptyState: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: 14) {
             Spacer()
             Image(systemName: "tray")
-                .font(.system(size: 40, weight: .light))
-                .foregroundStyle(FC.border)
+                .font(.system(size: 40, weight: .ultraLight))
+                .foregroundStyle(FC.muted)
             Text("Нет транзакций")
                 .font(.system(.headline, design: .default, weight: .regular))
                 .foregroundStyle(FC.muted)
@@ -164,22 +198,25 @@ struct TransactionsView: View {
     // MARK: FAB
 
     private var addButton: some View {
-        Button { showAdd = true } label: {
+        Button {
+            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+            showAdd = true
+        } label: {
             Image(systemName: "plus")
                 .fontWeight(.semibold)
                 .foregroundStyle(.white)
-                .frame(width: 52, height: 52)
-                .background(FC.cobalt)
+                .frame(width: 56, height: 56)
+                .background(
+                    Circle()
+                        .fill(FC.cobalt)
+                        .shadow(color: FC.cobaltGlow, radius: 14, x: 0, y: 6)
+                )
         }
         .padding(.trailing, 20)
         .padding(.bottom, 36)
     }
 
     // MARK: Helpers
-
-    private var hairline: some View {
-        Rectangle().fill(FC.border).frame(height: 0.5)
-    }
 
     private func dayLabel(_ date: Date) -> String {
         let cal = Calendar.current
@@ -196,13 +233,16 @@ struct TransactionsView: View {
 
 struct TransactionRow: View {
     let transaction: Transaction
+    @State private var pressed = false
 
     var body: some View {
         HStack(spacing: 12) {
             ZStack {
-                Rectangle()
-                    .fill(transaction.direction == .income ? FC.success.opacity(0.12) : FC.danger.opacity(0.12))
-                    .frame(width: 36, height: 36)
+                Circle()
+                    .fill(transaction.direction == .income
+                          ? FC.success.opacity(0.18)
+                          : FC.danger.opacity(0.18))
+                    .frame(width: 38, height: 38)
                 Image(systemName: iconName)
                     .fontWeight(.light)
                     .imageScale(.small)
@@ -240,6 +280,12 @@ struct TransactionRow: View {
             }
         }
         .padding(.vertical, 10)
+        .padding(.horizontal, 14)
+        .glassCardSmall()
+        .scaleEffect(pressed ? 0.97 : 1)
+        .onLongPressGesture(minimumDuration: 0, pressing: { isPressing in
+            withAnimation(.spring(response: 0.25, dampingFraction: 0.7)) { pressed = isPressing }
+        }, perform: {})
     }
 
     private var iconName: String {
@@ -251,11 +297,8 @@ struct TransactionRow: View {
     }
 
     private var categoryLabel: String? {
-        if transaction.direction == .income {
-            return transaction.incomeCategory?.displayName
-        } else {
-            return transaction.expenseCategory?.displayName
-        }
+        if transaction.direction == .income { return transaction.incomeCategory?.displayName }
+        else { return transaction.expenseCategory?.displayName }
     }
 
     private func shortTime(_ date: Date) -> String {

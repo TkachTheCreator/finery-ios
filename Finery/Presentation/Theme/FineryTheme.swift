@@ -3,15 +3,23 @@ import SwiftUI
 // MARK: - Colors
 
 enum FC {
-    static let background = Color(h: "F5F0E8")
-    static let surface    = Color(h: "EDE8DC")
-    static let cobalt     = Color(h: "0047AB")
-    static let ink        = Color(h: "1A1A18")
-    static let muted      = Color(h: "6B6560")
-    static let border     = Color(h: "C8C0B0")
-    static let danger     = Color(h: "C0392B")
-    static let success    = Color(h: "1A7A4A")
-    static let amber      = Color(h: "B07800")
+    static let background = Color(h: "0A0E1A")
+    static let surface    = Color(h: "131629")
+    static let cobalt     = Color(h: "4A9EFF")
+    static let ink        = Color(h: "F0F4FF")
+    static let muted      = Color(h: "8B9CC8")
+    static let border     = Color(h: "2A3252")
+    static let danger     = Color(h: "FF5B5B")
+    static let success    = Color(h: "34D399")
+    static let amber      = Color(h: "FBBF24")
+
+    static let backgroundGradient = LinearGradient(
+        colors: [Color(h: "0A0E1A"), Color(h: "1A1035")],
+        startPoint: .topLeading,
+        endPoint: .bottomTrailing
+    )
+
+    static let cobaltGlow = Color(h: "4A9EFF").opacity(0.45)
 }
 
 extension Color {
@@ -51,5 +59,28 @@ extension View {
             .tracking(1.4)
             .textCase(.uppercase)
             .foregroundStyle(FC.muted)
+    }
+
+    func glassCard(cornerRadius: CGFloat = 20) -> some View {
+        modifier(GlassCardModifier(cornerRadius: cornerRadius))
+    }
+
+    func glassCardSmall() -> some View {
+        modifier(GlassCardModifier(cornerRadius: 14))
+    }
+}
+
+struct GlassCardModifier: ViewModifier {
+    var cornerRadius: CGFloat = 20
+
+    func body(content: Content) -> some View {
+        content
+            .background(.ultraThinMaterial)
+            .overlay(
+                RoundedRectangle(cornerRadius: cornerRadius)
+                    .stroke(.white.opacity(0.18), lineWidth: 1)
+            )
+            .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
+            .shadow(color: .black.opacity(0.25), radius: 20, x: 0, y: 8)
     }
 }

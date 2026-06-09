@@ -63,6 +63,7 @@ struct RootView: View {
                 .tabItem { Label("Настройки", systemImage: "gearshape") }
         }
         .tint(FC.cobalt)
+        .preferredColorScheme(.dark)
     }
 
     // MARK: Boot

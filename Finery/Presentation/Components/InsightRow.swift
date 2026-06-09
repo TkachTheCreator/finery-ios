@@ -4,36 +4,38 @@ struct InsightRow: View {
     let insight: Insight
 
     var body: some View {
-        HStack(spacing: 0) {
-            Rectangle()
+        HStack(alignment: .top, spacing: 12) {
+            RoundedRectangle(cornerRadius: 3)
                 .fill(accentColor)
-                .frame(width: 2)
+                .frame(width: 3)
+                .shadow(color: accentColor.opacity(0.6), radius: 4)
 
-            HStack(alignment: .top, spacing: 10) {
-                VStack(alignment: .leading, spacing: 3) {
-                    Text(insight.title)
-                        .font(.system(.subheadline, design: .default, weight: .semibold))
-                        .foregroundStyle(FC.ink)
-                    Text(insight.body)
-                        .font(.system(.caption, design: .default, weight: .regular))
-                        .foregroundStyle(FC.muted)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-                Spacer()
-                Image(systemName: iconName)
-                    .imageScale(.small)
-                    .fontWeight(.light)
-                    .foregroundStyle(accentColor)
-                    .padding(.top, 2)
+            VStack(alignment: .leading, spacing: 3) {
+                Text(insight.title)
+                    .font(.system(.subheadline, design: .default, weight: .semibold))
+                    .foregroundStyle(FC.ink)
+                Text(insight.body)
+                    .font(.system(.caption, design: .default, weight: .regular))
+                    .foregroundStyle(FC.muted)
+                    .fixedSize(horizontal: false, vertical: true)
             }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 10)
-            .background(FC.surface)
+
+            Spacer()
+
+            Image(systemName: iconName)
+                .imageScale(.small)
+                .fontWeight(.light)
+                .foregroundStyle(accentColor)
+                .padding(.top, 2)
         }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 12)
+        .background(accentColor.opacity(0.07))
         .overlay(
-            Rectangle()
-                .stroke(FC.border, lineWidth: 0.5)
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(accentColor.opacity(0.2), lineWidth: 1)
         )
+        .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 
     private var accentColor: Color {
@@ -46,17 +48,17 @@ struct InsightRow: View {
 
     private var iconName: String {
         switch insight.type {
-        case .taxDeadline:      "calendar.badge.exclamationmark"
-        case .limitWarning:     "exclamationmark.triangle"
-        case .incomeGrowth:     "arrow.up.right"
-        case .lowMargin:        "arrow.down.right"
-        case .concentrationRisk:"chart.pie"
+        case .taxDeadline:       "calendar.badge.exclamationmark"
+        case .limitWarning:      "exclamationmark.triangle"
+        case .incomeGrowth:      "arrow.up.right"
+        case .lowMargin:         "arrow.down.right"
+        case .concentrationRisk: "chart.pie"
         }
     }
 }
 
 #Preview {
-    VStack(spacing: 6) {
+    VStack(spacing: 8) {
         InsightRow(insight: Insight(type: .taxDeadline, title: "Дедлайн налога",
                                    body: "Налог 8 700 ₽ нужно оплатить через 5 дней.", severity: .warning))
         InsightRow(insight: Insight(type: .limitWarning, title: "Лимит НПД",
@@ -65,5 +67,5 @@ struct InsightRow: View {
                                    body: "Доход в этом месяце на 57% выше прошлого.", severity: .info))
     }
     .padding()
-    .background(FC.background)
+    .background(FC.backgroundGradient)
 }
