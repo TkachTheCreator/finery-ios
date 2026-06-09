@@ -78,14 +78,14 @@ struct PressableModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .scaleEffect(isPressed ? 0.96 : 1.0)
-            .animation(.spring(response: 0.25, dampingFraction: 0.7), value: isPressed)
+            .scaleEffect(isPressed ? 0.97 : 1.0)
+            .animation(.spring(duration: 0.3), value: isPressed)
             .gesture(
                 DragGesture(minimumDistance: 0)
                     .onChanged { _ in
                         guard !isPressed else { return }
                         isPressed = true
-                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                     }
                     .onEnded { _ in
                         isPressed = false

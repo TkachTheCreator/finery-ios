@@ -117,7 +117,7 @@ struct TaxView: View {
                         .frame(height: 8)
                     RoundedRectangle(cornerRadius: 5)
                         .fill(LinearGradient(
-                            colors: [FC.cobalt, trafficColor(status)],
+                            colors: [FC.success, FC.amber, FC.danger],
                             startPoint: .leading,
                             endPoint: .trailing
                         ))
@@ -125,8 +125,8 @@ struct TaxView: View {
                             width: geo.size.width * CGFloat(min(status.limitUsedPercent / 100, 1.0)),
                             height: 8
                         )
-                        .shadow(color: FC.cobaltGlow, radius: 8)
-                        .animation(.spring(response: 0.9, dampingFraction: 0.7).delay(0.35), value: status.limitUsedPercent)
+                        .shadow(color: trafficColor(status).opacity(0.5), radius: 8)
+                        .animation(.spring(response: 1.0, dampingFraction: 0.8), value: status.limitUsedPercent)
                 }
             }
             .frame(height: 8)

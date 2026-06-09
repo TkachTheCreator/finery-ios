@@ -1,4 +1,5 @@
 import SwiftUI
+import Pow
 
 struct OnboardingView: View {
     var onComplete: (User) -> Void
@@ -31,13 +32,19 @@ struct OnboardingView: View {
                     .opacity(appeared ? 1 : 0)
                     .offset(y: appeared ? 0 : -12)
 
-                TabView(selection: $step) {
-                    stepWhoAreYou.tag(0)
-                    stepTaxMode.tag(1)
-                    stepName.tag(2)
+                ZStack {
+                    if step == 0 {
+                        stepWhoAreYou
+                            .transition(AnyTransition.movingParts.iris(origin: .center))
+                    } else if step == 1 {
+                        stepTaxMode
+                            .transition(AnyTransition.movingParts.iris(origin: .center))
+                    } else {
+                        stepName
+                            .transition(AnyTransition.movingParts.iris(origin: .center))
+                    }
                 }
-                .tabViewStyle(.page(indexDisplayMode: .never))
-                .animation(.spring(response: 0.5, dampingFraction: 0.82), value: step)
+                .animation(.spring(response: 0.55, dampingFraction: 0.82), value: step)
 
                 bottomControls
                     .padding(.bottom, 48)
@@ -251,7 +258,7 @@ struct OnboardingView: View {
         HStack {
             if step > 0 {
                 Button("Назад") {
-                    withAnimation(.spring(response: 0.45, dampingFraction: 0.8)) { step -= 1 }
+                    withAnimation(.spring(response: 0.55, dampingFraction: 0.82)) { step -= 1 }
                 }
                 .font(.system(.body, design: .default, weight: .regular))
                 .foregroundStyle(FC.muted)
@@ -262,7 +269,7 @@ struct OnboardingView: View {
             Button {
                 UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                 if step < totalSteps - 1 {
-                    withAnimation(.spring(response: 0.45, dampingFraction: 0.8)) { step += 1 }
+                    withAnimation(.spring(response: 0.55, dampingFraction: 0.82)) { step += 1 }
                 } else {
                     complete()
                 }

@@ -38,17 +38,17 @@ struct DashboardView: View {
 
                     if visibleCards.contains(0) {
                         incomeHeroCard
-                            .transition(AnyTransition.movingParts.move(edge: .bottom))
+                            .transition(AnyTransition.movingParts.skid)
                             .pressable()
                     }
                     if visibleCards.contains(1) {
                         taxCard
-                            .transition(AnyTransition.movingParts.move(edge: .bottom))
+                            .transition(AnyTransition.movingParts.skid)
                             .pressable()
                     }
                     if visibleCards.contains(2) {
                         topSourcesCard
-                            .transition(AnyTransition.movingParts.move(edge: .bottom))
+                            .transition(AnyTransition.movingParts.skid)
                             .pressable()
                     }
                     if !viewModel.insights.isEmpty {
