@@ -7,6 +7,6 @@ struct FineryApp: App {
         WindowGroup {
             RootView()
         }
-        .modelContainer(for: [TransactionEntity.self, UserEntity.self], inMemory: false)
+        .modelContainer(for: [TransactionEntity.self, UserEntity.self], inMemory: false, isAutosaveEnabled: false)
     }
 }
