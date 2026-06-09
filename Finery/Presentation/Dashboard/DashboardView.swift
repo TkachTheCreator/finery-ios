@@ -95,6 +95,7 @@ struct DashboardView: View {
         }
         .padding(20)
         .glassCard()
+        .animation(.spring(duration: 0.6), value: viewModel.isLoading)
         .offset(y: appeared ? 0 : 60)
         .opacity(appeared ? 1 : 0)
         .animation(.spring(response: 0.65, dampingFraction: 0.8).delay(0.08), value: appeared)
@@ -156,6 +157,7 @@ struct DashboardView: View {
         }
         .padding(20)
         .glassCard()
+        .animation(.spring(duration: 0.6), value: viewModel.isLoading)
         .offset(y: appeared ? 0 : 60)
         .opacity(appeared ? 1 : 0)
         .animation(.spring(response: 0.65, dampingFraction: 0.8).delay(0.16), value: appeared)
@@ -210,6 +212,7 @@ struct DashboardView: View {
         }
         .padding(20)
         .glassCard()
+        .animation(.spring(duration: 0.6), value: viewModel.isLoading)
         .offset(y: appeared ? 0 : 60)
         .opacity(appeared ? 1 : 0)
         .animation(.spring(response: 0.65, dampingFraction: 0.8).delay(0.24), value: appeared)
@@ -253,6 +256,7 @@ struct DashboardView: View {
         }
         .padding(20)
         .glassCard()
+        .animation(.spring(duration: 0.6), value: viewModel.isLoading)
         .offset(y: appeared ? 0 : 60)
         .opacity(appeared ? 1 : 0)
         .animation(.spring(response: 0.65, dampingFraction: 0.8).delay(0.32), value: appeared)
