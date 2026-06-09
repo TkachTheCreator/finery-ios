@@ -7,6 +7,7 @@ struct OnboardingView: View {
     @State private var selectedUserType = UserType.freelancer
     @State private var selectedTaxMode  = TaxMode.npd
     @State private var name = ""
+    @State private var appeared = false
 
     @FocusState private var nameFocused: Bool
 
@@ -14,11 +15,21 @@ struct OnboardingView: View {
 
     var body: some View {
         ZStack {
-            FC.background.ignoresSafeArea()
+            FC.backgroundGradient.ignoresSafeArea()
+
+            // Subtle glow orb behind content
+            Circle()
+                .fill(FC.cobalt.opacity(0.12))
+                .frame(width: 320, height: 320)
+                .blur(radius: 80)
+                .offset(x: -60, y: -120)
+                .ignoresSafeArea()
 
             VStack(spacing: 0) {
                 progressBar
-                    .padding(.top, 20)
+                    .padding(.top, 24)
+                    .opacity(appeared ? 1 : 0)
+                    .offset(y: appeared ? 0 : -12)
 
                 TabView(selection: $step) {
                     stepWhoAreYou.tag(0)
@@ -26,11 +37,17 @@ struct OnboardingView: View {
                     stepName.tag(2)
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
-                .animation(.easeInOut(duration: 0.3), value: step)
+                .animation(.spring(response: 0.5, dampingFraction: 0.82), value: step)
 
                 bottomControls
                     .padding(.bottom, 48)
+                    .opacity(appeared ? 1 : 0)
+                    .offset(y: appeared ? 0 : 20)
+                    .animation(.spring(response: 0.6, dampingFraction: 0.8).delay(0.2), value: appeared)
             }
+        }
+        .onAppear {
+            withAnimation(.spring(response: 0.6, dampingFraction: 0.82).delay(0.1)) { appeared = true }
         }
         .onChange(of: step) { _, newStep in
             if newStep == 2 { nameFocused = true }
@@ -42,13 +59,19 @@ struct OnboardingView: View {
     private var progressBar: some View {
         HStack(spacing: 6) {
             ForEach(0..<totalSteps, id: \.self) { i in
-                Rectangle()
-                    .fill(i <= step ? FC.cobalt : FC.border)
-                    .frame(height: 2)
-                    .animation(.easeInOut(duration: 0.25), value: step)
+                RoundedRectangle(cornerRadius: 2)
+                    .fill(
+                        i <= step
+                        ? LinearGradient(colors: [FC.cobalt, Color(h: "7AB8FF")],
+                                         startPoint: .leading, endPoint: .trailing)
+                        : LinearGradient(colors: [Color.white.opacity(0.12), Color.white.opacity(0.12)],
+                                         startPoint: .leading, endPoint: .trailing)
+                    )
+                    .frame(height: 3)
+                    .animation(.spring(response: 0.4, dampingFraction: 0.8), value: step)
             }
         }
-        .padding(.horizontal, 20)
+        .padding(.horizontal, 24)
     }
 
     // MARK: Step 1 — Who Are You
@@ -72,20 +95,22 @@ struct OnboardingView: View {
 
             Spacer()
         }
-        .padding(.horizontal, 20)
+        .padding(.horizontal, 24)
         .padding(.top, 40)
     }
 
     private func userTypeCard(_ type: UserType) -> some View {
         let selected = selectedUserType == type
         return Button {
-            withAnimation(.easeInOut(duration: 0.15)) { selectedUserType = type }
+            withAnimation(.spring(response: 0.35, dampingFraction: 0.75)) { selectedUserType = type }
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
         } label: {
             HStack(spacing: 14) {
                 ZStack {
-                    Rectangle()
-                        .fill(selected ? FC.cobalt : FC.surface)
-                        .frame(width: 40, height: 40)
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(selected ? FC.cobalt : Color.white.opacity(0.1))
+                        .frame(width: 42, height: 42)
+                        .shadow(color: selected ? FC.cobaltGlow : .clear, radius: 10)
                     Image(systemName: userTypeIcon(type))
                         .fontWeight(.light)
                         .foregroundStyle(selected ? .white : FC.muted)
@@ -99,21 +124,25 @@ struct OnboardingView: View {
                         .foregroundStyle(FC.muted)
                 }
                 Spacer()
-                Image(systemName: selected ? "checkmark" : "")
+                Image(systemName: "checkmark")
                     .fontWeight(.semibold)
                     .imageScale(.small)
                     .foregroundStyle(FC.cobalt)
+                    .opacity(selected ? 1 : 0)
+                    .scaleEffect(selected ? 1 : 0.5)
                     .frame(width: 16)
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 14)
-            .background(FC.background)
+            .glassCardSmall()
             .overlay(
-                Rectangle()
-                    .stroke(selected ? FC.cobalt : FC.border, lineWidth: selected ? 1.5 : 0.5)
+                RoundedRectangle(cornerRadius: 14)
+                    .stroke(selected ? FC.cobalt.opacity(0.6) : Color.clear, lineWidth: 1.5)
             )
         }
         .buttonStyle(.plain)
+        .scaleEffect(selected ? 1.02 : 1)
+        .animation(.spring(response: 0.35, dampingFraction: 0.7), value: selected)
     }
 
     // MARK: Step 2 — Tax Mode
@@ -137,20 +166,22 @@ struct OnboardingView: View {
 
             Spacer()
         }
-        .padding(.horizontal, 20)
+        .padding(.horizontal, 24)
         .padding(.top, 40)
     }
 
     private func taxModeCard(_ mode: TaxMode) -> some View {
         let selected = selectedTaxMode == mode
         return Button {
-            withAnimation(.easeInOut(duration: 0.15)) { selectedTaxMode = mode }
+            withAnimation(.spring(response: 0.35, dampingFraction: 0.75)) { selectedTaxMode = mode }
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
         } label: {
             HStack(spacing: 14) {
                 ZStack {
-                    Rectangle()
-                        .fill(selected ? FC.cobalt : FC.surface)
-                        .frame(width: 40, height: 40)
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(selected ? FC.cobalt : Color.white.opacity(0.1))
+                        .frame(width: 42, height: 42)
+                        .shadow(color: selected ? FC.cobaltGlow : .clear, radius: 10)
                     Text("%")
                         .font(.system(.headline, weight: .light))
                         .foregroundStyle(selected ? .white : FC.muted)
@@ -165,21 +196,25 @@ struct OnboardingView: View {
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 Spacer()
-                Image(systemName: selected ? "checkmark" : "")
+                Image(systemName: "checkmark")
                     .fontWeight(.semibold)
                     .imageScale(.small)
                     .foregroundStyle(FC.cobalt)
+                    .opacity(selected ? 1 : 0)
+                    .scaleEffect(selected ? 1 : 0.5)
                     .frame(width: 16)
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 14)
-            .background(FC.background)
+            .glassCardSmall()
             .overlay(
-                Rectangle()
-                    .stroke(selected ? FC.cobalt : FC.border, lineWidth: selected ? 1.5 : 0.5)
+                RoundedRectangle(cornerRadius: 14)
+                    .stroke(selected ? FC.cobalt.opacity(0.6) : Color.clear, lineWidth: 1.5)
             )
         }
         .buttonStyle(.plain)
+        .scaleEffect(selected ? 1.02 : 1)
+        .animation(.spring(response: 0.35, dampingFraction: 0.7), value: selected)
     }
 
     // MARK: Step 3 — Name
@@ -195,20 +230,18 @@ struct OnboardingView: View {
                     .foregroundStyle(FC.muted)
             }
 
-            VStack(alignment: .leading, spacing: 0) {
-                TextField("Имя", text: $name)
-                    .font(.system(.title2, design: .default, weight: .regular))
-                    .foregroundStyle(FC.ink)
-                    .focused($nameFocused)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 14)
-                    .background(FC.background)
-                    .overlay(Rectangle().stroke(FC.border, lineWidth: 0.5))
-            }
+            TextField("Имя", text: $name)
+                .font(.system(.title2, design: .default, weight: .regular))
+                .foregroundStyle(FC.ink)
+                .focused($nameFocused)
+                .tint(FC.cobalt)
+                .padding(.horizontal, 18)
+                .padding(.vertical, 16)
+                .glassCardSmall()
 
             Spacer()
         }
-        .padding(.horizontal, 20)
+        .padding(.horizontal, 24)
         .padding(.top, 40)
     }
 
@@ -218,7 +251,7 @@ struct OnboardingView: View {
         HStack {
             if step > 0 {
                 Button("Назад") {
-                    withAnimation { step -= 1 }
+                    withAnimation(.spring(response: 0.45, dampingFraction: 0.8)) { step -= 1 }
                 }
                 .font(.system(.body, design: .default, weight: .regular))
                 .foregroundStyle(FC.muted)
@@ -227,8 +260,9 @@ struct OnboardingView: View {
             Spacer()
 
             Button {
+                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                 if step < totalSteps - 1 {
-                    withAnimation { step += 1 }
+                    withAnimation(.spring(response: 0.45, dampingFraction: 0.8)) { step += 1 }
                 } else {
                     complete()
                 }
@@ -236,13 +270,17 @@ struct OnboardingView: View {
                 Text(step == totalSteps - 1 ? "Начать" : "Далее")
                     .font(.system(.body, design: .default, weight: .semibold))
                     .foregroundStyle(.white)
-                    .padding(.horizontal, 32)
-                    .padding(.vertical, 14)
-                    .background(canProceed ? FC.cobalt : FC.border)
+                    .padding(.horizontal, 36)
+                    .padding(.vertical, 15)
+                    .background(
+                        Capsule()
+                            .fill(canProceed ? FC.cobalt : Color.white.opacity(0.15))
+                            .shadow(color: canProceed ? FC.cobaltGlow : .clear, radius: 14, x: 0, y: 6)
+                    )
             }
             .disabled(!canProceed)
         }
-        .padding(.horizontal, 20)
+        .padding(.horizontal, 24)
     }
 
     // MARK: Helpers
