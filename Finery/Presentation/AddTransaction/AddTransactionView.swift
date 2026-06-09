@@ -1,4 +1,5 @@
 import SwiftUI
+import Pow
 
 struct AddTransactionView: View {
     @State var viewModel: AddTransactionViewModel
@@ -257,6 +258,13 @@ struct AddTransactionView: View {
             .background(viewModel.canSave ? FC.cobalt : FC.border)
         }
         .disabled(!viewModel.canSave || viewModel.isSaving)
+        .changeEffect(
+            .spray(origin: UnitPoint(x: 0.5, y: 0.5)) {
+                Image(systemName: "checkmark.circle.fill")
+                    .foregroundStyle(FC.success)
+            },
+            value: viewModel.didSave
+        )
     }
 
     private var hairline: some View {

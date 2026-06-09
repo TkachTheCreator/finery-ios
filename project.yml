@@ -13,6 +13,9 @@ packages:
   Shimmer:
     url: https://github.com/markiv/SwiftUI-Shimmer.git
     from: "1.5.0"
+  Pow:
+    url: https://github.com/EmergeTools/Pow
+    from: "1.0.0"
 
 targets:
   Finery:
@@ -26,6 +29,7 @@ targets:
     dependencies:
       - package: Lottie
       - package: Shimmer
+      - package: Pow
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.tkachev.finery
