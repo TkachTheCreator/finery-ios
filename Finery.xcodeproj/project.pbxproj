@@ -45,6 +45,7 @@
 		B3B0734E6DF2C86A4AA73AD2 /* FineryTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = D63DC38B29DA04BE54BB2733 /* FineryTheme.swift */; };
 		CE61AB72C74CD48311DFED14 /* FineryApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94113177E3F1122E055454B2 /* FineryApp.swift */; };
 		CFC26F9E8EE72DC53CA13631 /* MockRepositories.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A4C68A92997653ED71CE4E /* MockRepositories.swift */; };
+		D01F67461C845B0820DAB27D /* Pow in Frameworks */ = {isa = PBXBuildFile; productRef = CA9FE20FDDBC787F3252883A /* Pow */; };
 		D1E17F9EB7662E4DDC587927 /* TransactionEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBFB152A8697C84E2E8ECF71 /* TransactionEntity.swift */; };
 		D5B323A2400D0070F2213C0D /* Transaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF7D02C675F33D63441B89E /* Transaction.swift */; };
 		D94CCCD1E9570EDA6DF9A8C7 /* TransactionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E139A4F9AFC176D183F3632 /* TransactionsView.swift */; };
@@ -114,6 +115,7 @@
 			files = (
 				447D6B5CA8337259EC304907 /* Lottie in Frameworks */,
 				F5A4780A6555EA06DF2D87DA /* Shimmer in Frameworks */,
+				D01F67461C845B0820DAB27D /* Pow in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -392,6 +394,7 @@
 			packageProductDependencies = (
 				43249DC6BB94489E878746F4 /* Lottie */,
 				B3B07C11F2BB4F4E4D734903 /* Shimmer */,
+				CA9FE20FDDBC787F3252883A /* Pow */,
 			);
 			productName = Finery;
 			productReference = 9F40AEF0915FDE1ADF55A664 /* Finery.app */;
@@ -422,6 +425,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				4A7FC0F2C863160CF2E61A96 /* XCRemoteSwiftPackageReference "lottie-spm" */,
+				1A9518D79164457F63C73E5C /* XCRemoteSwiftPackageReference "Pow" */,
 				23718BB423B8DF84592CDC66 /* XCRemoteSwiftPackageReference "SwiftUI-Shimmer" */,
 			);
 			preferredProjectObjectVersion = 77;
@@ -698,6 +702,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		1A9518D79164457F63C73E5C /* XCRemoteSwiftPackageReference "Pow" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/EmergeTools/Pow";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
 		23718BB423B8DF84592CDC66 /* XCRemoteSwiftPackageReference "SwiftUI-Shimmer" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/markiv/SwiftUI-Shimmer.git";
@@ -726,6 +738,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 23718BB423B8DF84592CDC66 /* XCRemoteSwiftPackageReference "SwiftUI-Shimmer" */;
 			productName = Shimmer;
+		};
+		CA9FE20FDDBC787F3252883A /* Pow */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1A9518D79164457F63C73E5C /* XCRemoteSwiftPackageReference "Pow" */;
+			productName = Pow;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

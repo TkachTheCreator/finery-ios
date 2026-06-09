@@ -1,5 +1,6 @@
 import SwiftUI
 import Shimmer
+import Pow
 
 private struct ScrollOffsetKey: PreferenceKey {
     static var defaultValue: CGFloat = 0
@@ -8,7 +9,7 @@ private struct ScrollOffsetKey: PreferenceKey {
 
 struct DashboardView: View {
     @State var viewModel: DashboardViewModel
-    @State private var appeared = false
+    @State private var visibleCards: Set<Int> = []
     @State private var scrollOffset: CGFloat = 0
     @State private var initialScrollOffset: CGFloat? = nil
 
@@ -18,7 +19,6 @@ struct DashboardView: View {
 
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
-            // Parallax background — moves at 0.3x scroll speed
             FC.backgroundGradient
                 .ignoresSafeArea()
                 .scaleEffect(x: 1, y: 1.5, anchor: .top)
@@ -26,7 +26,6 @@ struct DashboardView: View {
 
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 14) {
-                    // Scroll offset detector (zero height)
                     GeometryReader { geo in
                         Color.clear.preference(
                             key: ScrollOffsetKey.self,
@@ -36,23 +35,40 @@ struct DashboardView: View {
                     .frame(height: 0)
 
                     headerSection
-                    incomeHeroCard
-                    taxCard
-                    topSourcesCard
+
+                    if visibleCards.contains(0) {
+                        incomeHeroCard
+                            .transition(AnyTransition.movingParts.move(edge: .bottom))
+                    }
+                    if visibleCards.contains(1) {
+                        taxCard
+                            .transition(AnyTransition.movingParts.move(edge: .bottom))
+                    }
+                    if visibleCards.contains(2) {
+                        topSourcesCard
+                            .transition(AnyTransition.movingParts.move(edge: .bottom))
+                    }
                     if !viewModel.insights.isEmpty {
                         insightsCard
+                            .transition(AnyTransition.movingParts.swoosh)
                     }
+
                     Color.clear.frame(height: 90)
                 }
                 .padding(.horizontal, 16)
+                .animation(.spring(response: 0.6, dampingFraction: 0.85), value: viewModel.insights.isEmpty)
             }
 
             addButton
         }
         .task { await viewModel.load() }
         .onAppear {
-            guard !appeared else { return }
-            withAnimation(.spring(response: 0.7, dampingFraction: 0.82)) { appeared = true }
+            guard visibleCards.isEmpty else { return }
+            for i in 0..<3 {
+                withAnimation(.spring(response: 0.65, dampingFraction: 0.82).delay(Double(i) * 0.1 + 0.06)) {
+                    visibleCards.insert(i)
+                }
+            }
         }
         .onPreferenceChange(ScrollOffsetKey.self) { value in
             if initialScrollOffset == nil { initialScrollOffset = value }
@@ -82,8 +98,6 @@ struct DashboardView: View {
         .padding(.horizontal, 4)
         .padding(.top, 20)
         .padding(.bottom, 4)
-        .offset(y: appeared ? 0 : -16)
-        .opacity(appeared ? 1 : 0)
     }
 
     // MARK: - Income Hero Card
@@ -119,9 +133,6 @@ struct DashboardView: View {
         .padding(20)
         .glassCard()
         .animation(.spring(duration: 0.6), value: viewModel.isLoading)
-        .offset(y: appeared ? 0 : 60)
-        .opacity(appeared ? 1 : 0)
-        .animation(.spring(response: 0.65, dampingFraction: 0.8).delay(0.08), value: appeared)
     }
 
     @ViewBuilder
@@ -181,9 +192,6 @@ struct DashboardView: View {
         .padding(20)
         .glassCard()
         .animation(.spring(duration: 0.6), value: viewModel.isLoading)
-        .offset(y: appeared ? 0 : 60)
-        .opacity(appeared ? 1 : 0)
-        .animation(.spring(response: 0.65, dampingFraction: 0.8).delay(0.16), value: appeared)
     }
 
     private var deadlineRow: some View {
@@ -236,9 +244,6 @@ struct DashboardView: View {
         .padding(20)
         .glassCard()
         .animation(.spring(duration: 0.6), value: viewModel.isLoading)
-        .offset(y: appeared ? 0 : 60)
-        .opacity(appeared ? 1 : 0)
-        .animation(.spring(response: 0.65, dampingFraction: 0.8).delay(0.24), value: appeared)
     }
 
     @ViewBuilder
@@ -280,9 +285,6 @@ struct DashboardView: View {
         .padding(20)
         .glassCard()
         .animation(.spring(duration: 0.6), value: viewModel.isLoading)
-        .offset(y: appeared ? 0 : 60)
-        .opacity(appeared ? 1 : 0)
-        .animation(.spring(response: 0.65, dampingFraction: 0.8).delay(0.32), value: appeared)
     }
 
     // MARK: - FAB
@@ -349,8 +351,8 @@ struct DashboardView: View {
         viewModel.userName.isEmpty ? "Привет" : "Привет, \(viewModel.userName)"
     }
 
-    private var currentMonthFull: String        { formatted(Date(), "LLLL yyyy") }
-    private var currentMonthShortUpper: String  { formatted(Date(), "LLLL").uppercased() }
+    private var currentMonthFull: String       { formatted(Date(), "LLLL yyyy") }
+    private var currentMonthShortUpper: String { formatted(Date(), "LLLL").uppercased() }
     private var nextMonthGenitive: String {
         let next = Calendar.current.date(byAdding: .month, value: 1, to: Date())!
         return formatted(next, "LLLL")
