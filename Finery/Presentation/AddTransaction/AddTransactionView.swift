@@ -6,6 +6,7 @@ struct AddTransactionView: View {
 
     @Environment(\.dismiss) private var dismiss
     @FocusState private var amountFocused: Bool
+    @State private var showSuccess = false
 
     init(viewModel: AddTransactionViewModel, onSave: (() -> Void)? = nil) {
         _viewModel = State(wrappedValue: viewModel)
@@ -36,7 +37,29 @@ struct AddTransactionView: View {
         .onChange(of: viewModel.didSave) { _, saved in
             if saved {
                 onSave?()
-                dismiss()
+                UINotificationFeedbackGenerator().notificationOccurred(.success)
+                withAnimation(.spring(response: 0.4, dampingFraction: 0.75)) {
+                    showSuccess = true
+                }
+                Task {
+                    try? await Task.sleep(for: .seconds(1.6))
+                    dismiss()
+                }
+            }
+        }
+        .overlay {
+            if showSuccess {
+                ZStack {
+                    Color.black.opacity(0.55).ignoresSafeArea()
+                    VStack(spacing: 10) {
+                        LottieSuccessView()
+                            .frame(width: 160, height: 160)
+                        Text("Сохранено!")
+                            .font(.system(.headline, design: .default, weight: .semibold))
+                            .foregroundStyle(.white)
+                    }
+                }
+                .transition(.opacity.combined(with: .scale(scale: 0.9)))
             }
         }
     }

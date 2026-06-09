@@ -1,8 +1,16 @@
 import SwiftUI
+import Shimmer
+
+private struct ScrollOffsetKey: PreferenceKey {
+    static var defaultValue: CGFloat = 0
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) { value = nextValue() }
+}
 
 struct DashboardView: View {
     @State var viewModel: DashboardViewModel
     @State private var appeared = false
+    @State private var scrollOffset: CGFloat = 0
+    @State private var initialScrollOffset: CGFloat? = nil
 
     init(viewModel: DashboardViewModel) {
         _viewModel = State(wrappedValue: viewModel)
@@ -10,10 +18,23 @@ struct DashboardView: View {
 
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
-            FC.backgroundGradient.ignoresSafeArea()
+            // Parallax background — moves at 0.3x scroll speed
+            FC.backgroundGradient
+                .ignoresSafeArea()
+                .scaleEffect(x: 1, y: 1.5, anchor: .top)
+                .offset(y: scrollOffset * 0.3)
 
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 14) {
+                    // Scroll offset detector (zero height)
+                    GeometryReader { geo in
+                        Color.clear.preference(
+                            key: ScrollOffsetKey.self,
+                            value: geo.frame(in: .global).minY
+                        )
+                    }
+                    .frame(height: 0)
+
                     headerSection
                     incomeHeroCard
                     taxCard
@@ -31,9 +52,11 @@ struct DashboardView: View {
         .task { await viewModel.load() }
         .onAppear {
             guard !appeared else { return }
-            withAnimation(.spring(response: 0.7, dampingFraction: 0.82)) {
-                appeared = true
-            }
+            withAnimation(.spring(response: 0.7, dampingFraction: 0.82)) { appeared = true }
+        }
+        .onPreferenceChange(ScrollOffsetKey.self) { value in
+            if initialScrollOffset == nil { initialScrollOffset = value }
+            scrollOffset = value - (initialScrollOffset ?? value)
         }
     }
 
@@ -291,12 +314,14 @@ struct DashboardView: View {
     private var skeletonRow: some View {
         HStack {
             RoundedRectangle(cornerRadius: 4)
-                .fill(Color.white.opacity(0.08))
+                .fill(Color.white.opacity(0.12))
                 .frame(width: 140, height: 13)
+                .shimmering(active: true, duration: 1.5, bounce: false)
             Spacer()
             RoundedRectangle(cornerRadius: 4)
-                .fill(Color.white.opacity(0.08))
+                .fill(Color.white.opacity(0.12))
                 .frame(width: 60, height: 13)
+                .shimmering(active: true, duration: 1.5, bounce: false)
         }
         .padding(.vertical, 6)
     }

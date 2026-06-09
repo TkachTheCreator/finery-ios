@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		047DC8F0070E27C21E7E3C3D /* success.json in Resources */ = {isa = PBXBuildFile; fileRef = DCE055888C0EC773FBED99DC /* success.json */; };
 		0599F653DBC5B9EF669DE4E7 /* UserLocalRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F747A35F6E89CF3EFE0629 /* UserLocalRepository.swift */; };
 		082F44E6A0528399DC16BE5F /* ExpenseCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9286A23592206481E6E093FA /* ExpenseCategory.swift */; };
 		0A6150E3A8C6C066DC006C52 /* GetPnLUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 974BD75AB3FE1C6176DB1293 /* GetPnLUseCase.swift */; };
@@ -20,12 +21,14 @@
 		3C0CDAA5557803A99A8C721D /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2182632BEFCE4CB0A8A9362F /* OnboardingView.swift */; };
 		3EA59CEC864D0D95A65A44BB /* GetInsightsUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B7428812D629E1EEDF5B7D /* GetInsightsUseCase.swift */; };
 		42F92C1337CD08F72B200AF2 /* TaxCalculatorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9925A0E4CA8F1006122C1BD8 /* TaxCalculatorService.swift */; };
+		447D6B5CA8337259EC304907 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 43249DC6BB94489E878746F4 /* Lottie */; };
 		4B117A31774BF9F428CFB325 /* TransactionSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51872C806C150DBEB4911CE0 /* TransactionSource.swift */; };
 		4DA6EEBAB8E662AE8B083851 /* PnL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B38440EFFA21F1F82715A28 /* PnL.swift */; };
 		532DD8E6ECC926BCC1FD1509 /* TaxViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC923A07AB37977277909C3D /* TaxViewModel.swift */; };
 		536F84E5A6B17503306735DC /* Insight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E1A9031C01D7ABAC3322EC7 /* Insight.swift */; };
 		53832F634D193A1E432C69C9 /* UserEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BF5014B27266B9CEA6DC11C /* UserEntity.swift */; };
 		5455763DEB51751F2BD30444 /* MonthlyData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F93123DFD18F0824E532091 /* MonthlyData.swift */; };
+		58B22BC0114CF4DC17035316 /* LottieSuccessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 400E887DDE95D38E6E31F0E5 /* LottieSuccessView.swift */; };
 		5DDB9EEE1ED1D2F26BE47D49 /* TaxStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = D369C24192D675392A205C4B /* TaxStatus.swift */; };
 		615CA91F82633A7A2C1F40E1 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9712285D88F65D5F9E23430 /* SettingsView.swift */; };
 		6DF61355766320364D5B7694 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9757BE2B397BAF4F9FA65C /* SettingsViewModel.swift */; };
@@ -49,6 +52,7 @@
 		EF17431F6C6E5E98DAFC0E60 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDCE5CF5E48714BC763B1ED2 /* User.swift */; };
 		F1AE7C2A94B173851217D863 /* AnalyticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B73BE6B840255FE525903F14 /* AnalyticsView.swift */; };
 		F430E274A1D416043C4DCDB8 /* TransactionsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F2C94236A147B2275A4C7B4 /* TransactionsViewModel.swift */; };
+		F5A4780A6555EA06DF2D87DA /* Shimmer in Frameworks */ = {isa = PBXBuildFile; productRef = B3B07C11F2BB4F4E4D734903 /* Shimmer */; };
 		F950C54839946E228199F9E2 /* IncomeCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6594DF992676C1A5BDA9E7F /* IncomeCategory.swift */; };
 		FAA10A31048A1AD78FC78D3F /* UserRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = A808E46673806C37D5BF707B /* UserRepository.swift */; };
 /* End PBXBuildFile section */
@@ -62,6 +66,7 @@
 		2BF5014B27266B9CEA6DC11C /* UserEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserEntity.swift; sourceTree = "<group>"; };
 		33A4C68A92997653ED71CE4E /* MockRepositories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockRepositories.swift; sourceTree = "<group>"; };
 		3E1A9031C01D7ABAC3322EC7 /* Insight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Insight.swift; sourceTree = "<group>"; };
+		400E887DDE95D38E6E31F0E5 /* LottieSuccessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LottieSuccessView.swift; sourceTree = "<group>"; };
 		4E3B3F7DAC41282629E2C6B2 /* TaxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaxView.swift; sourceTree = "<group>"; };
 		51872C806C150DBEB4911CE0 /* TransactionSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionSource.swift; sourceTree = "<group>"; };
 		52B7428812D629E1EEDF5B7D /* GetInsightsUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetInsightsUseCase.swift; sourceTree = "<group>"; };
@@ -90,6 +95,7 @@
 		D63DC38B29DA04BE54BB2733 /* FineryTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FineryTheme.swift; sourceTree = "<group>"; };
 		D6594DF992676C1A5BDA9E7F /* IncomeCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IncomeCategory.swift; sourceTree = "<group>"; };
 		D6F747A35F6E89CF3EFE0629 /* UserLocalRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLocalRepository.swift; sourceTree = "<group>"; };
+		DCE055888C0EC773FBED99DC /* success.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = success.json; sourceTree = "<group>"; };
 		DFD3FEDDD06A99D9BC586E2C /* DashboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewModel.swift; sourceTree = "<group>"; };
 		E4A3D50A4B2CBBE238524D0D /* AnalyticsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsViewModel.swift; sourceTree = "<group>"; };
 		E93820A671554C608923316D /* TransactionRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionRepository.swift; sourceTree = "<group>"; };
@@ -100,6 +106,18 @@
 		FC923A07AB37977277909C3D /* TaxViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaxViewModel.swift; sourceTree = "<group>"; };
 		FDCE5CF5E48714BC763B1ED2 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A2B26546D7B8B377D961F595 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				447D6B5CA8337259EC304907 /* Lottie in Frameworks */,
+				F5A4780A6555EA06DF2D87DA /* Shimmer in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		0245ACB5F99A2B7FF52302C3 = {
@@ -169,6 +187,7 @@
 			isa = PBXGroup;
 			children = (
 				F290DAB89D8CFCE0528870E3 /* InsightRow.swift */,
+				400E887DDE95D38E6E31F0E5 /* LottieSuccessView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -263,6 +282,7 @@
 				0AE98E9682AA193DD926E0A5 /* Domain */,
 				FCFC5D63DCFD1B760DDD602F /* Presentation */,
 				FEAC9A8BEF753AE0FEEE3DC4 /* Preview */,
+				C1118DE2B272EBCC96E524CD /* Resources */,
 			);
 			path = Finery;
 			sourceTree = "<group>";
@@ -300,6 +320,14 @@
 				E4A3D50A4B2CBBE238524D0D /* AnalyticsViewModel.swift */,
 			);
 			path = Analytics;
+			sourceTree = "<group>";
+		};
+		C1118DE2B272EBCC96E524CD /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				DCE055888C0EC773FBED99DC /* success.json */,
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 		CCAD105335DAB0871FD914D5 /* Settings */ = {
@@ -353,6 +381,8 @@
 			buildConfigurationList = 768E093C107A2CBB87B8F4C3 /* Build configuration list for PBXNativeTarget "Finery" */;
 			buildPhases = (
 				EB4994D0E1EA91A9BBD545C4 /* Sources */,
+				75EE556DCBB1DFFE053A2812 /* Resources */,
+				A2B26546D7B8B377D961F595 /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -360,6 +390,8 @@
 			);
 			name = Finery;
 			packageProductDependencies = (
+				43249DC6BB94489E878746F4 /* Lottie */,
+				B3B07C11F2BB4F4E4D734903 /* Shimmer */,
 			);
 			productName = Finery;
 			productReference = 9F40AEF0915FDE1ADF55A664 /* Finery.app */;
@@ -388,6 +420,10 @@
 			);
 			mainGroup = 0245ACB5F99A2B7FF52302C3;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				4A7FC0F2C863160CF2E61A96 /* XCRemoteSwiftPackageReference "lottie-spm" */,
+				23718BB423B8DF84592CDC66 /* XCRemoteSwiftPackageReference "SwiftUI-Shimmer" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = D52C16B1DE4768134BF7005C /* Products */;
 			projectDirPath = "";
@@ -397,6 +433,17 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		75EE556DCBB1DFFE053A2812 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				047DC8F0070E27C21E7E3C3D /* success.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		EB4994D0E1EA91A9BBD545C4 /* Sources */ = {
@@ -422,6 +469,7 @@
 				F950C54839946E228199F9E2 /* IncomeCategory.swift in Sources */,
 				536F84E5A6B17503306735DC /* Insight.swift in Sources */,
 				210E596473F221B02402B18B /* InsightRow.swift in Sources */,
+				58B22BC0114CF4DC17035316 /* LottieSuccessView.swift in Sources */,
 				CFC26F9E8EE72DC53CA13631 /* MockRepositories.swift in Sources */,
 				5455763DEB51751F2BD30444 /* MonthlyData.swift in Sources */,
 				3C0CDAA5557803A99A8C721D /* OnboardingView.swift in Sources */,
@@ -648,6 +696,38 @@
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		23718BB423B8DF84592CDC66 /* XCRemoteSwiftPackageReference "SwiftUI-Shimmer" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/markiv/SwiftUI-Shimmer.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.5.0;
+			};
+		};
+		4A7FC0F2C863160CF2E61A96 /* XCRemoteSwiftPackageReference "lottie-spm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/airbnb/lottie-spm.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.5.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		43249DC6BB94489E878746F4 /* Lottie */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4A7FC0F2C863160CF2E61A96 /* XCRemoteSwiftPackageReference "lottie-spm" */;
+			productName = Lottie;
+		};
+		B3B07C11F2BB4F4E4D734903 /* Shimmer */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 23718BB423B8DF84592CDC66 /* XCRemoteSwiftPackageReference "SwiftUI-Shimmer" */;
+			productName = Shimmer;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = FE88024E604A1C5DF0261666 /* Project object */;
 }
