@@ -4,9 +4,9 @@ import SwiftUI
 
 enum FC {
     static let background = Color(h: "0A0E1A")
-    static let surface    = Color(h: "131629")
+    static let surface    = Color.white.opacity(0.08)
     static let cobalt     = Color(h: "4A9EFF")
-    static let ink        = Color(h: "F0F4FF")
+    static let ink        = Color.white
     static let muted      = Color(h: "8B9CC8")
     static let border     = Color(h: "2A3252")
     static let danger     = Color(h: "FF5B5B")
@@ -15,8 +15,8 @@ enum FC {
 
     static let backgroundGradient = LinearGradient(
         colors: [Color(h: "0A0E1A"), Color(h: "1A1035")],
-        startPoint: .topLeading,
-        endPoint: .bottomTrailing
+        startPoint: .top,
+        endPoint: .bottom
     )
 
     static let cobaltGlow = Color(h: "4A9EFF").opacity(0.45)
@@ -70,6 +70,16 @@ extension View {
     }
 }
 
+struct GlassCard: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .background(.ultraThinMaterial)
+            .overlay(RoundedRectangle(cornerRadius: 20).stroke(.white.opacity(0.25), lineWidth: 1))
+            .clipShape(RoundedRectangle(cornerRadius: 20))
+            .shadow(color: .black.opacity(0.3), radius: 15)
+    }
+}
+
 struct GlassCardModifier: ViewModifier {
     var cornerRadius: CGFloat = 20
 
@@ -78,9 +88,9 @@ struct GlassCardModifier: ViewModifier {
             .background(.ultraThinMaterial)
             .overlay(
                 RoundedRectangle(cornerRadius: cornerRadius)
-                    .stroke(.white.opacity(0.18), lineWidth: 1)
+                    .stroke(.white.opacity(0.25), lineWidth: 1)
             )
             .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
-            .shadow(color: .black.opacity(0.25), radius: 20, x: 0, y: 8)
+            .shadow(color: .black.opacity(0.3), radius: 15)
     }
 }
