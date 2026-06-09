@@ -14,12 +14,12 @@ let package = Package(
     targets: [
         .executableTarget(
             name: "Finery",
-            path: "Finery",
             dependencies: [
                 .product(name: "Pow",     package: "Pow"),
                 .product(name: "Lottie",  package: "lottie-spm"),
                 .product(name: "Shimmer", package: "SwiftUI-Shimmer"),
             ],
+            path: "Finery",
             swiftSettings: [
                 .enableExperimentalFeature("StrictConcurrency")
             ]
