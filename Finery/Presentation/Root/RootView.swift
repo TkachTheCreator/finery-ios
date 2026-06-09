@@ -1,6 +1,7 @@
 import SwiftUI
 import SwiftData
 
+@MainActor
 struct RootView: View {
     @Environment(\.modelContext) private var modelContext
 
@@ -37,7 +38,7 @@ struct RootView: View {
                     }
             } else {
                 FC.background.ignoresSafeArea()
-                    .task { await boot() }
+                    .onAppear { boot() }
             }
         }
     }
@@ -66,7 +67,7 @@ struct RootView: View {
 
     // MARK: Boot
 
-    private func boot() async {
+    private func boot() {
         let c = AppContainer(modelContext: modelContext)
         container = c
 
@@ -74,7 +75,7 @@ struct RootView: View {
         if !onboardingDone {
             showOnboarding = true
         } else {
-            await c.dashboard.load()
+            Task { await c.dashboard.load() }
         }
     }
 }
