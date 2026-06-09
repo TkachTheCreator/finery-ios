@@ -259,7 +259,7 @@ struct AddTransactionView: View {
         }
         .disabled(!viewModel.canSave || viewModel.isSaving)
         .changeEffect(
-            .spray(origin: UnitPoint(x: 0.5, y: 0.5)) {
+            .spray(origin: .center) {
                 Image(systemName: "checkmark.circle.fill")
                     .foregroundStyle(FC.success)
             },

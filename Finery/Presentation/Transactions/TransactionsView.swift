@@ -1,4 +1,6 @@
 import SwiftUI
+import Shimmer
+import Pow
 
 struct TransactionsView: View {
     @State var viewModel: TransactionsViewModel
@@ -26,18 +28,19 @@ struct TransactionsView: View {
                     .animation(.spring(response: 0.6, dampingFraction: 0.8).delay(0.1), value: appeared)
 
                 if viewModel.isLoading {
-                    Spacer()
-                    ProgressView().tint(FC.cobalt).padding(.vertical, 60)
-                    Spacer()
+                    shimmerRows
+                        .transition(.opacity)
                 } else if viewModel.grouped.isEmpty {
                     emptyState
                 } else {
                     transactionList
+                        .transition(AnyTransition.movingParts.swoosh)
                 }
             }
 
             addButton
         }
+        .animation(.spring(response: 0.5, dampingFraction: 0.85), value: viewModel.isLoading)
         .task { await viewModel.load() }
         .onAppear {
             guard !appeared else { return }
@@ -175,6 +178,49 @@ struct TransactionsView: View {
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
         .background(Color.clear)
+    }
+
+    // MARK: Shimmer Skeleton
+
+    private var shimmerRows: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 8) {
+                ForEach(0..<6, id: \.self) { _ in
+                    HStack(spacing: 12) {
+                        Circle()
+                            .fill(Color.white.opacity(0.12))
+                            .frame(width: 38, height: 38)
+                            .shimmering(active: true, duration: 1.4)
+                        VStack(alignment: .leading, spacing: 6) {
+                            RoundedRectangle(cornerRadius: 4)
+                                .fill(Color.white.opacity(0.12))
+                                .frame(width: 130, height: 12)
+                                .shimmering(active: true, duration: 1.4)
+                            RoundedRectangle(cornerRadius: 4)
+                                .fill(Color.white.opacity(0.08))
+                                .frame(width: 80, height: 10)
+                                .shimmering(active: true, duration: 1.4)
+                        }
+                        Spacer()
+                        VStack(alignment: .trailing, spacing: 6) {
+                            RoundedRectangle(cornerRadius: 4)
+                                .fill(Color.white.opacity(0.12))
+                                .frame(width: 65, height: 12)
+                                .shimmering(active: true, duration: 1.4)
+                            RoundedRectangle(cornerRadius: 4)
+                                .fill(Color.white.opacity(0.08))
+                                .frame(width: 36, height: 10)
+                                .shimmering(active: true, duration: 1.4)
+                        }
+                    }
+                    .padding(.vertical, 10)
+                    .padding(.horizontal, 14)
+                    .glassCardSmall()
+                }
+            }
+            .padding(.horizontal, 16)
+            .padding(.top, 12)
+        }
     }
 
     // MARK: Empty State
