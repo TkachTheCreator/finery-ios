@@ -238,13 +238,15 @@ private extension IncomeCategory {
 
     init?(apiValue: String) {
         switch apiValue {
-        case "boosty":      self = .boosty
-        case "donations":   self = .donations
-        case "advertising": self = .advertising
-        case "freelance":   self = .freelance
-        case "platforms":   self = .platforms
-        case "education":   self = .education
-        default:            self = .other
+        case "boosty":                      self = .boosty
+        case "donations":                   self = .donations
+        case "advertising":                 self = .advertising
+        case "freelance", "services",
+             "consulting":                  self = .freelance
+        case "platforms", "content",
+             "sales":                       self = .platforms
+        case "education", "teaching":       self = .education
+        default:                            self = .other
         }
     }
 }
@@ -265,14 +267,14 @@ private extension ExpenseCategory {
 
     init?(apiValue: String) {
         switch apiValue {
-        case "tools":         self = .tools
-        case "advertising":   self = .advertising
-        case "equipment":     self = .equipment
-        case "team":          self = .team
-        case "food":          self = .food
-        case "transport":     self = .transport
-        case "communication": self = .communication
-        default:              self = .other
+        case "tools", "software":           self = .tools
+        case "advertising", "marketing":    self = .advertising
+        case "equipment", "office":         self = .equipment
+        case "team", "salary":              self = .team
+        case "food":                        self = .food
+        case "transport":                   self = .transport
+        case "communication":               self = .communication
+        default:                            self = .other
         }
     }
 }

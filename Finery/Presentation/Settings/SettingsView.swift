@@ -27,6 +27,14 @@ struct SettingsView: View {
         }
         .task { await viewModel.load() }
         .overlay(savedToast, alignment: .bottom)
+        .alert("Ошибка сохранения", isPresented: Binding(
+            get: { viewModel.errorMessage != nil },
+            set: { if !$0 { viewModel.errorMessage = nil } }
+        )) {
+            Button("OK", role: .cancel) { viewModel.errorMessage = nil }
+        } message: {
+            Text(viewModel.errorMessage ?? "")
+        }
     }
 
     // MARK: Header

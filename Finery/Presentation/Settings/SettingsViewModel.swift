@@ -8,6 +8,7 @@ final class SettingsViewModel {
     var user = User()
     var isSaving = false
     var savedFeedback = false
+    var errorMessage: String?
 
     private let userRepository: any UserRepository
 
@@ -25,11 +26,14 @@ final class SettingsViewModel {
         isSaving = true
         defer { isSaving = false }
         do {
+            errorMessage = nil
             try await userRepository.updateUser(user)
             savedFeedback = true
             try? await Task.sleep(for: .seconds(1.5))
             savedFeedback = false
-        } catch {}
+        } catch {
+            errorMessage = error.localizedDescription
+        }
     }
 }
 

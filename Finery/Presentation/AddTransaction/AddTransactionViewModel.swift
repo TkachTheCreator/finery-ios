@@ -74,7 +74,9 @@ final class AddTransactionViewModel {
 
         do {
             if APIClient.shared.isAuthenticated {
-                _ = try await APIClient.shared.createTransaction(transaction)
+                let synced = try await APIClient.shared.createTransaction(transaction)
+                // Persist locally so TransactionsView and Analytics see it immediately
+                try? await transactionRepository.save(synced)
             } else {
                 try await transactionRepository.save(transaction)
             }

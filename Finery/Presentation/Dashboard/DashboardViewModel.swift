@@ -62,17 +62,24 @@ final class DashboardViewModel {
             async let taxTask      = APIClient.shared.getTaxStatus(year: year, taxMode: taxMode)
             async let insightsTask = getInsights.execute(referenceDate: referenceDate)
             async let userTask     = userRepository.fetchUser()
+            async let txnsTask     = transactionRepository.fetch(from: startOfMonth, to: endOfMonth)
 
-            let (p, t, i, u) = try await (pnlTask, taxTask, insightsTask, userTask)
+            let (p, t, i, u, txns) = try await (pnlTask, taxTask, insightsTask, userTask, txnsTask)
 
             pnl        = p
             taxStatus  = t
             insights   = i
             userName   = u?.name ?? ""
-            topSources = []          // populated when transactions are synced locally
+            topSources = topIncomeSources(from: txns)
         } catch {
             errorMessage = error.localizedDescription
         }
+    }
+
+    // MARK: Factory
+
+    func makeAddTransactionViewModel() -> AddTransactionViewModel {
+        AddTransactionViewModel(transactionRepository: transactionRepository)
     }
 
     // MARK: Helpers
