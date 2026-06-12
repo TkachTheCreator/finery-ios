@@ -22,8 +22,10 @@
 		3EA59CEC864D0D95A65A44BB /* GetInsightsUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B7428812D629E1EEDF5B7D /* GetInsightsUseCase.swift */; };
 		42F92C1337CD08F72B200AF2 /* TaxCalculatorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9925A0E4CA8F1006122C1BD8 /* TaxCalculatorService.swift */; };
 		447D6B5CA8337259EC304907 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 43249DC6BB94489E878746F4 /* Lottie */; };
+		46A5C4A951725A7ACCCEC222 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A7AB35CED17D75500E5AF1 /* APIClient.swift */; };
 		4B117A31774BF9F428CFB325 /* TransactionSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51872C806C150DBEB4911CE0 /* TransactionSource.swift */; };
 		4DA6EEBAB8E662AE8B083851 /* PnL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B38440EFFA21F1F82715A28 /* PnL.swift */; };
+		53249838281A74655483AFB7 /* VoiceInputManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62B4BED05BA08985B221A10E /* VoiceInputManager.swift */; };
 		532DD8E6ECC926BCC1FD1509 /* TaxViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC923A07AB37977277909C3D /* TaxViewModel.swift */; };
 		536F84E5A6B17503306735DC /* Insight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E1A9031C01D7ABAC3322EC7 /* Insight.swift */; };
 		53832F634D193A1E432C69C9 /* UserEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BF5014B27266B9CEA6DC11C /* UserEntity.swift */; };
@@ -37,12 +39,15 @@
 		76DEB4E0F6633C40309AF3FC /* ClientType.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEA0EF0BBE34BD802AD3109C /* ClientType.swift */; };
 		83A1CEE1D24421BC3A2C5054 /* GetMonthlyDynamicsUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BBDDAAF81E5B7A4C4D22783 /* GetMonthlyDynamicsUseCase.swift */; };
 		855F45860FA1BB1228C677B7 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9FDB18528D5474099877283 /* DashboardView.swift */; };
+		8D0140B10201060ACBAD81ED /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90EB6D6C94F4C5C5E5716B66 /* LoginView.swift */; };
 		8F9F6A6C899C207AED931882 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 940998E028CB628BB760FF7D /* RootView.swift */; };
 		977403F6A9A4693D5687BDD9 /* CalculateTaxUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21AE10AC2F9610FBD58E82A5 /* CalculateTaxUseCase.swift */; };
 		99749BD373E8E06A3CC8378B /* TaxMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82440E40D8C6C2AE2D27D8A5 /* TaxMode.swift */; };
+		ADE05D6F2C7A8BB1596F7047 /* CashFlowForecast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 037A0F1ACA321DF3BE7740A4 /* CashFlowForecast.swift */; };
 		B183A2A671407F2C3CFB56B2 /* AppContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 866B1A5E002A254F53748A3D /* AppContainer.swift */; };
 		B3213706B3839773FB09DBB5 /* TransactionDirection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C21FF8736E7CAAF54FB5048F /* TransactionDirection.swift */; };
 		B3B0734E6DF2C86A4AA73AD2 /* FineryTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = D63DC38B29DA04BE54BB2733 /* FineryTheme.swift */; };
+		BBE61F28FF7F44CA4B840E0A /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E262ACD8872F105202BFDD43 /* AuthViewModel.swift */; };
 		CE61AB72C74CD48311DFED14 /* FineryApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94113177E3F1122E055454B2 /* FineryApp.swift */; };
 		CFC26F9E8EE72DC53CA13631 /* MockRepositories.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A4C68A92997653ED71CE4E /* MockRepositories.swift */; };
 		D01F67461C845B0820DAB27D /* Pow in Frameworks */ = {isa = PBXBuildFile; productRef = CA9FE20FDDBC787F3252883A /* Pow */; };
@@ -54,14 +59,13 @@
 		F1AE7C2A94B173851217D863 /* AnalyticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B73BE6B840255FE525903F14 /* AnalyticsView.swift */; };
 		F430E274A1D416043C4DCDB8 /* TransactionsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F2C94236A147B2275A4C7B4 /* TransactionsViewModel.swift */; };
 		F5A4780A6555EA06DF2D87DA /* Shimmer in Frameworks */ = {isa = PBXBuildFile; productRef = B3B07C11F2BB4F4E4D734903 /* Shimmer */; };
+		F7554B4154E8B9D123B58552 /* FineryPDFGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A22F96E80B26D493834CA4 /* FineryPDFGenerator.swift */; };
 		F950C54839946E228199F9E2 /* IncomeCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6594DF992676C1A5BDA9E7F /* IncomeCategory.swift */; };
 		FAA10A31048A1AD78FC78D3F /* UserRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = A808E46673806C37D5BF707B /* UserRepository.swift */; };
-		CD055A9A828A40BC83D2DA62 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C673FA441DD4E94AECC0FF1 /* APIClient.swift */; };
-		DAB10FB8A3F648BCAB60411A /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DA4DD51C725427F814C9F43 /* AuthViewModel.swift */; };
-		22845CC936224C5390F39FE6 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478EB2F4DCF74875A8608176 /* LoginView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		037A0F1ACA321DF3BE7740A4 /* CashFlowForecast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CashFlowForecast.swift; sourceTree = "<group>"; };
 		0C00BB60C8DA88F1771E5540 /* AddTransactionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTransactionView.swift; sourceTree = "<group>"; };
 		12B56BD4CA668CF84630EEE1 /* PreviewData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewData.swift; sourceTree = "<group>"; };
 		1F93123DFD18F0824E532091 /* MonthlyData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthlyData.swift; sourceTree = "<group>"; };
@@ -69,6 +73,7 @@
 		21AE10AC2F9610FBD58E82A5 /* CalculateTaxUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculateTaxUseCase.swift; sourceTree = "<group>"; };
 		2BF5014B27266B9CEA6DC11C /* UserEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserEntity.swift; sourceTree = "<group>"; };
 		33A4C68A92997653ED71CE4E /* MockRepositories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockRepositories.swift; sourceTree = "<group>"; };
+		38A22F96E80B26D493834CA4 /* FineryPDFGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FineryPDFGenerator.swift; sourceTree = "<group>"; };
 		3E1A9031C01D7ABAC3322EC7 /* Insight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Insight.swift; sourceTree = "<group>"; };
 		400E887DDE95D38E6E31F0E5 /* LottieSuccessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LottieSuccessView.swift; sourceTree = "<group>"; };
 		4E3B3F7DAC41282629E2C6B2 /* TaxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaxView.swift; sourceTree = "<group>"; };
@@ -77,9 +82,11 @@
 		5B9757BE2B397BAF4F9FA65C /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
 		5E139A4F9AFC176D183F3632 /* TransactionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionsView.swift; sourceTree = "<group>"; };
 		5F2C94236A147B2275A4C7B4 /* TransactionsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionsViewModel.swift; sourceTree = "<group>"; };
+		62B4BED05BA08985B221A10E /* VoiceInputManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceInputManager.swift; sourceTree = "<group>"; };
 		82440E40D8C6C2AE2D27D8A5 /* TaxMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaxMode.swift; sourceTree = "<group>"; };
 		866B1A5E002A254F53748A3D /* AppContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppContainer.swift; sourceTree = "<group>"; };
 		8B38440EFFA21F1F82715A28 /* PnL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PnL.swift; sourceTree = "<group>"; };
+		90EB6D6C94F4C5C5E5716B66 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		9286A23592206481E6E093FA /* ExpenseCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpenseCategory.swift; sourceTree = "<group>"; };
 		940998E028CB628BB760FF7D /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		94113177E3F1122E055454B2 /* FineryApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FineryApp.swift; sourceTree = "<group>"; };
@@ -101,17 +108,16 @@
 		D6F747A35F6E89CF3EFE0629 /* UserLocalRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLocalRepository.swift; sourceTree = "<group>"; };
 		DCE055888C0EC773FBED99DC /* success.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = success.json; sourceTree = "<group>"; };
 		DFD3FEDDD06A99D9BC586E2C /* DashboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewModel.swift; sourceTree = "<group>"; };
+		E262ACD8872F105202BFDD43 /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
 		E4A3D50A4B2CBBE238524D0D /* AnalyticsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsViewModel.swift; sourceTree = "<group>"; };
 		E93820A671554C608923316D /* TransactionRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionRepository.swift; sourceTree = "<group>"; };
 		EBFB152A8697C84E2E8ECF71 /* TransactionEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionEntity.swift; sourceTree = "<group>"; };
 		EC1DD97467BB97D3809D9D2F /* AddTransactionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTransactionViewModel.swift; sourceTree = "<group>"; };
 		F290DAB89D8CFCE0528870E3 /* InsightRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsightRow.swift; sourceTree = "<group>"; };
+		F7A7AB35CED17D75500E5AF1 /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
 		F9FDB18528D5474099877283 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
 		FC923A07AB37977277909C3D /* TaxViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaxViewModel.swift; sourceTree = "<group>"; };
 		FDCE5CF5E48714BC763B1ED2 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
-		2C673FA441DD4E94AECC0FF1 /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
-		9DA4DD51C725427F814C9F43 /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
-		478EB2F4DCF74875A8608176 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -134,6 +140,15 @@
 				8FBCCF9833F5AA4643284D82 /* Finery */,
 				D52C16B1DE4768134BF7005C /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		026D4551C3670886D07E6F10 /* Auth */ = {
+			isa = PBXGroup;
+			children = (
+				E262ACD8872F105202BFDD43 /* AuthViewModel.swift */,
+				90EB6D6C94F4C5C5E5716B66 /* LoginView.swift */,
+			);
+			path = Auth;
 			sourceTree = "<group>";
 		};
 		0659E97BCDF2945E7D76FD26 /* SwiftData */ = {
@@ -171,6 +186,7 @@
 		1C255AFD284A6BCAD2691BF8 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				037A0F1ACA321DF3BE7740A4 /* CashFlowForecast.swift */,
 				3E1A9031C01D7ABAC3322EC7 /* Insight.swift */,
 				1F93123DFD18F0824E532091 /* MonthlyData.swift */,
 				8B38440EFFA21F1F82715A28 /* PnL.swift */,
@@ -205,6 +221,7 @@
 			children = (
 				0C00BB60C8DA88F1771E5540 /* AddTransactionView.swift */,
 				EC1DD97467BB97D3809D9D2F /* AddTransactionViewModel.swift */,
+				62B4BED05BA08985B221A10E /* VoiceInputManager.swift */,
 			);
 			path = AddTransaction;
 			sourceTree = "<group>";
@@ -212,6 +229,7 @@
 		36627E3301744F578BC9D5BC /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				38A22F96E80B26D493834CA4 /* FineryPDFGenerator.swift */,
 				9925A0E4CA8F1006122C1BD8 /* TaxCalculatorService.swift */,
 			);
 			path = Services;
@@ -288,7 +306,7 @@
 				6981B8C3897A3FE9152E16A3 /* App */,
 				1D859BB1E5263BF014ADFCDB /* Data */,
 				0AE98E9682AA193DD926E0A5 /* Domain */,
-				47EC49A1CE5542018558CDC0 /* Network */,
+				B988225B1B3FB7AF3F7A89C2 /* Network */,
 				FCFC5D63DCFD1B760DDD602F /* Presentation */,
 				FEAC9A8BEF753AE0FEEE3DC4 /* Preview */,
 				C1118DE2B272EBCC96E524CD /* Resources */,
@@ -320,6 +338,14 @@
 				D63DC38B29DA04BE54BB2733 /* FineryTheme.swift */,
 			);
 			path = Theme;
+			sourceTree = "<group>";
+		};
+		B988225B1B3FB7AF3F7A89C2 /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				F7A7AB35CED17D75500E5AF1 /* APIClient.swift */,
+			);
+			path = Network;
 			sourceTree = "<group>";
 		};
 		BC3D1227503AAFD37D604514 /* Analytics */ = {
@@ -360,8 +386,8 @@
 			isa = PBXGroup;
 			children = (
 				3632FBF2174281E277BFAAA6 /* AddTransaction */,
-				B8F42037CCBD45B89F5EA03A /* Auth */,
 				BC3D1227503AAFD37D604514 /* Analytics */,
+				026D4551C3670886D07E6F10 /* Auth */,
 				2A831A591B46393F13E9CAA6 /* Components */,
 				38FD56CDB74897A40E2AD040 /* Dashboard */,
 				423693FC4B12046F813FCF0B /* Onboarding */,
@@ -381,23 +407,6 @@
 				12B56BD4CA668CF84630EEE1 /* PreviewData.swift */,
 			);
 			path = Preview;
-			sourceTree = "<group>";
-		};
-		B8F42037CCBD45B89F5EA03A /* Auth */ = {
-			isa = PBXGroup;
-			children = (
-				9DA4DD51C725427F814C9F43 /* AuthViewModel.swift */,
-				478EB2F4DCF74875A8608176 /* LoginView.swift */,
-			);
-			path = Auth;
-			sourceTree = "<group>";
-		};
-		47EC49A1CE5542018558CDC0 /* Network */ = {
-			isa = PBXGroup;
-			children = (
-				2C673FA441DD4E94AECC0FF1 /* APIClient.swift */,
-			);
-			path = Network;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -479,18 +488,22 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				46A5C4A951725A7ACCCEC222 /* APIClient.swift in Sources */,
 				15B3D13568DF23D8F47D1892 /* AddTransactionView.swift in Sources */,
 				73A07650822DCFC310BAAA24 /* AddTransactionViewModel.swift in Sources */,
 				F1AE7C2A94B173851217D863 /* AnalyticsView.swift in Sources */,
 				3A02770F74D88D2B7E6969E7 /* AnalyticsViewModel.swift in Sources */,
 				B183A2A671407F2C3CFB56B2 /* AppContainer.swift in Sources */,
+				BBE61F28FF7F44CA4B840E0A /* AuthViewModel.swift in Sources */,
 				977403F6A9A4693D5687BDD9 /* CalculateTaxUseCase.swift in Sources */,
+				ADE05D6F2C7A8BB1596F7047 /* CashFlowForecast.swift in Sources */,
 				38E4A622E0DB6FF0B1DA2219 /* ClassifyTransactionUseCase.swift in Sources */,
 				76DEB4E0F6633C40309AF3FC /* ClientType.swift in Sources */,
 				855F45860FA1BB1228C677B7 /* DashboardView.swift in Sources */,
 				762B77DCEDCB65E919D99691 /* DashboardViewModel.swift in Sources */,
 				082F44E6A0528399DC16BE5F /* ExpenseCategory.swift in Sources */,
 				CE61AB72C74CD48311DFED14 /* FineryApp.swift in Sources */,
+				F7554B4154E8B9D123B58552 /* FineryPDFGenerator.swift in Sources */,
 				B3B0734E6DF2C86A4AA73AD2 /* FineryTheme.swift in Sources */,
 				3EA59CEC864D0D95A65A44BB /* GetInsightsUseCase.swift in Sources */,
 				83A1CEE1D24421BC3A2C5054 /* GetMonthlyDynamicsUseCase.swift in Sources */,
@@ -498,6 +511,7 @@
 				F950C54839946E228199F9E2 /* IncomeCategory.swift in Sources */,
 				536F84E5A6B17503306735DC /* Insight.swift in Sources */,
 				210E596473F221B02402B18B /* InsightRow.swift in Sources */,
+				8D0140B10201060ACBAD81ED /* LoginView.swift in Sources */,
 				58B22BC0114CF4DC17035316 /* LottieSuccessView.swift in Sources */,
 				CFC26F9E8EE72DC53CA13631 /* MockRepositories.swift in Sources */,
 				5455763DEB51751F2BD30444 /* MonthlyData.swift in Sources */,
@@ -524,9 +538,7 @@
 				53832F634D193A1E432C69C9 /* UserEntity.swift in Sources */,
 				0599F653DBC5B9EF669DE4E7 /* UserLocalRepository.swift in Sources */,
 				FAA10A31048A1AD78FC78D3F /* UserRepository.swift in Sources */,
-				CD055A9A828A40BC83D2DA62 /* APIClient.swift in Sources */,
-				DAB10FB8A3F648BCAB60411A /* AuthViewModel.swift in Sources */,
-				22845CC936224C5390F39FE6 /* LoginView.swift in Sources */,
+				53249838281A74655483AFB7 /* VoiceInputManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -599,6 +611,8 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Finery;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Finery использует микрофон для голосового ввода транзакций";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Finery распознаёт речь чтобы автоматически заполнять поля транзакции";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
@@ -689,6 +703,8 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Finery;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Finery использует микрофон для голосового ввода транзакций";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Finery распознаёт речь чтобы автоматически заполнять поля транзакции";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
