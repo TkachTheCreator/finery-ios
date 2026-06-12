@@ -130,7 +130,7 @@ struct TaxView: View {
                             height: 8
                         )
                         .shadow(color: trafficColor(status).opacity(0.5), radius: 8)
-                        .animation(.spring(response: 1.0, dampingFraction: 0.8), value: status.limitUsedPercent)
+                        .animation(.fineryCard.delay(0.2), value: status.limitUsedPercent)
                 }
             }
             .frame(height: 8)
@@ -419,7 +419,7 @@ private extension View {
         self
             .offset(y: appeared ? 0 : 60)
             .opacity(appeared ? 1 : 0)
-            .animation(.spring(response: 0.65, dampingFraction: 0.8).delay(delay), value: appeared)
+            .animation(.fineryCard.delay(delay), value: appeared)
     }
 }
 

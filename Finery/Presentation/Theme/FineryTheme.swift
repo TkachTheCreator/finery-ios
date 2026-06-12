@@ -19,7 +19,9 @@ enum FC {
         endPoint: .bottom
     )
 
-    static let cobaltGlow = Color(h: "4A9EFF").opacity(0.45)
+    static let cobaltGlow    = Color(h: "4A9EFF").opacity(0.45)
+    static let successGlow   = Color(h: "34D399").opacity(0.35)
+    static let dangerGlow    = Color(h: "FF5B5B").opacity(0.35)
 }
 
 extension Color {
@@ -31,6 +33,19 @@ extension Color {
         let b = Double(int         & 0xFF) / 255
         self.init(red: r, green: g, blue: b)
     }
+}
+
+// MARK: - Animation presets (per ui-ux-pro-max: 150-300ms micro, spring ease-out entry)
+
+extension Animation {
+    /// 200ms snappy spring — for tab switches, button presses
+    static let fineryMicro   = Animation.spring(response: 0.28, dampingFraction: 0.7)
+    /// 350ms smooth spring — for card entrance, sheet appear
+    static let fineryCard    = Animation.spring(response: 0.48, dampingFraction: 0.82)
+    /// 550ms settled spring — for page-level transitions
+    static let fineryPage    = Animation.spring(response: 0.55, dampingFraction: 0.88)
+    /// Number roll — numeric text content transition
+    static let fineryNumber  = Animation.spring(response: 0.42, dampingFraction: 0.8)
 }
 
 // MARK: - Number formatting
@@ -68,9 +83,14 @@ extension View {
     func glassCardSmall() -> some View {
         modifier(GlassCardModifier(cornerRadius: 14))
     }
+
+    /// Card with ambient glow — use for key data cards on Dashboard
+    func glassCardGlow(_ glowColor: Color = FC.cobaltGlow, cornerRadius: CGFloat = 20) -> some View {
+        modifier(GlassCardGlowModifier(glowColor: glowColor, cornerRadius: cornerRadius))
+    }
 }
 
-// MARK: - Pressable (Emil Kowalski style)
+// MARK: - Pressable (scale 0.97 + haptic, per ui-ux-pro-max active states)
 
 struct PressableModifier: ViewModifier {
     @State private var isPressed = false
@@ -78,14 +98,15 @@ struct PressableModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .scaleEffect(isPressed ? 0.97 : 1.0)
-            .animation(.spring(duration: 0.3), value: isPressed)
+            .scaleEffect(isPressed ? 0.965 : 1.0)
+            .brightness(isPressed ? -0.04 : 0)
+            .animation(.fineryMicro, value: isPressed)
             .gesture(
                 DragGesture(minimumDistance: 0)
                     .onChanged { _ in
                         guard !isPressed else { return }
                         isPressed = true
-                        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                        UIImpactFeedbackGenerator(style: .soft).impactOccurred()
                     }
                     .onEnded { _ in
                         isPressed = false
@@ -101,13 +122,25 @@ extension View {
     }
 }
 
+// MARK: - Glass Card (enhanced backdrop blur layering)
+
 struct GlassCard: ViewModifier {
     func body(content: Content) -> some View {
         content
             .background(.ultraThinMaterial)
-            .overlay(RoundedRectangle(cornerRadius: 20).stroke(.white.opacity(0.25), lineWidth: 1))
+            .overlay(
+                RoundedRectangle(cornerRadius: 20)
+                    .stroke(
+                        LinearGradient(
+                            colors: [.white.opacity(0.28), .white.opacity(0.06)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 1
+                    )
+            )
             .clipShape(RoundedRectangle(cornerRadius: 20))
-            .shadow(color: .black.opacity(0.3), radius: 15)
+            .shadow(color: .black.opacity(0.38), radius: 18, y: 6)
     }
 }
 
@@ -119,9 +152,42 @@ struct GlassCardModifier: ViewModifier {
             .background(.ultraThinMaterial)
             .overlay(
                 RoundedRectangle(cornerRadius: cornerRadius)
-                    .stroke(.white.opacity(0.25), lineWidth: 1)
+                    .stroke(
+                        LinearGradient(
+                            colors: [.white.opacity(0.28), .white.opacity(0.06)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 1
+                    )
             )
             .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
-            .shadow(color: .black.opacity(0.3), radius: 15)
+            .shadow(color: .black.opacity(0.38), radius: 18, y: 6)
+    }
+}
+
+// MARK: - Glass Card with ambient glow
+
+struct GlassCardGlowModifier: ViewModifier {
+    var glowColor: Color
+    var cornerRadius: CGFloat
+
+    func body(content: Content) -> some View {
+        content
+            .background(.ultraThinMaterial)
+            .overlay(
+                RoundedRectangle(cornerRadius: cornerRadius)
+                    .stroke(
+                        LinearGradient(
+                            colors: [.white.opacity(0.30), .white.opacity(0.07)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 1
+                    )
+            )
+            .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
+            .shadow(color: .black.opacity(0.38), radius: 18, y: 6)
+            .shadow(color: glowColor, radius: 22, y: 4)
     }
 }
