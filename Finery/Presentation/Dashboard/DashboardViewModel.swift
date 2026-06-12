@@ -14,6 +14,7 @@ final class DashboardViewModel {
     var userName: String = ""
     var isLoading = false
     var errorMessage: String?
+    var needsAuth = false
 
     // MARK: Dependencies
 
@@ -42,26 +43,33 @@ final class DashboardViewModel {
     func load(referenceDate: Date = Date()) async {
         isLoading = true
         defer { isLoading = false }
+        needsAuth = false
+
+        guard APIClient.shared.isAuthenticated else {
+            needsAuth = true
+            return
+        }
 
         let calendar = Calendar.current
         let startOfMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: referenceDate))!
         let startOfNext  = calendar.date(byAdding: .month, value: 1, to: startOfMonth)!
         let endOfMonth   = calendar.date(byAdding: .second, value: -1, to: startOfNext)!
+        let year         = calendar.component(.year, from: referenceDate)
+        let taxMode      = (try? await userRepository.fetchUser())?.taxMode ?? .npd
 
         do {
-            async let pnlTask      = getPnL.execute(from: startOfMonth, to: endOfMonth)
-            async let taxTask      = calculateTax.execute(for: referenceDate)
+            async let pnlTask      = APIClient.shared.getPnL(from: startOfMonth, to: endOfMonth)
+            async let taxTask      = APIClient.shared.getTaxStatus(year: year, taxMode: taxMode)
             async let insightsTask = getInsights.execute(referenceDate: referenceDate)
             async let userTask     = userRepository.fetchUser()
-            async let txnsTask     = transactionRepository.fetch(from: startOfMonth, to: endOfMonth)
 
-            let (p, t, i, u, txns) = try await (pnlTask, taxTask, insightsTask, userTask, txnsTask)
+            let (p, t, i, u) = try await (pnlTask, taxTask, insightsTask, userTask)
 
-            pnl         = p
-            taxStatus   = t
-            insights    = i
-            userName    = u?.name ?? ""
-            topSources  = topIncomeSources(from: txns)
+            pnl        = p
+            taxStatus  = t
+            insights   = i
+            userName   = u?.name ?? ""
+            topSources = []          // populated when transactions are synced locally
         } catch {
             errorMessage = error.localizedDescription
         }

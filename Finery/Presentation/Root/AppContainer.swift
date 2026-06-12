@@ -7,6 +7,7 @@ import Observation
 @MainActor
 final class AppContainer {
 
+    let auth:         AuthViewModel
     let dashboard:    DashboardViewModel
     let transactions: TransactionsViewModel
     let analytics:    AnalyticsViewModel
@@ -19,6 +20,8 @@ final class AppContainer {
     init(modelContext: ModelContext) {
         let txRepo  = TransactionLocalRepository(modelContext: modelContext)
         let usrRepo = UserLocalRepository(modelContext: modelContext)
+
+        auth = AuthViewModel(userRepository: usrRepo)
         let calc    = TaxCalculatorService()
 
         transactionRepository = txRepo
