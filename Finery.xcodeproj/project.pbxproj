@@ -57,6 +57,8 @@
 		F950C54839946E228199F9E2 /* IncomeCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6594DF992676C1A5BDA9E7F /* IncomeCategory.swift */; };
 		FAA10A31048A1AD78FC78D3F /* UserRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = A808E46673806C37D5BF707B /* UserRepository.swift */; };
 		CD055A9A828A40BC83D2DA62 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C673FA441DD4E94AECC0FF1 /* APIClient.swift */; };
+		DAB10FB8A3F648BCAB60411A /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DA4DD51C725427F814C9F43 /* AuthViewModel.swift */; };
+		22845CC936224C5390F39FE6 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478EB2F4DCF74875A8608176 /* LoginView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -108,6 +110,8 @@
 		FC923A07AB37977277909C3D /* TaxViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaxViewModel.swift; sourceTree = "<group>"; };
 		FDCE5CF5E48714BC763B1ED2 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		2C673FA441DD4E94AECC0FF1 /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
+		9DA4DD51C725427F814C9F43 /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
+		478EB2F4DCF74875A8608176 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -356,6 +360,7 @@
 			isa = PBXGroup;
 			children = (
 				3632FBF2174281E277BFAAA6 /* AddTransaction */,
+				B8F42037CCBD45B89F5EA03A /* Auth */,
 				BC3D1227503AAFD37D604514 /* Analytics */,
 				2A831A591B46393F13E9CAA6 /* Components */,
 				38FD56CDB74897A40E2AD040 /* Dashboard */,
@@ -376,6 +381,15 @@
 				12B56BD4CA668CF84630EEE1 /* PreviewData.swift */,
 			);
 			path = Preview;
+			sourceTree = "<group>";
+		};
+		B8F42037CCBD45B89F5EA03A /* Auth */ = {
+			isa = PBXGroup;
+			children = (
+				9DA4DD51C725427F814C9F43 /* AuthViewModel.swift */,
+				478EB2F4DCF74875A8608176 /* LoginView.swift */,
+			);
+			path = Auth;
 			sourceTree = "<group>";
 		};
 		47EC49A1CE5542018558CDC0 /* Network */ = {
@@ -511,6 +525,8 @@
 				0599F653DBC5B9EF669DE4E7 /* UserLocalRepository.swift in Sources */,
 				FAA10A31048A1AD78FC78D3F /* UserRepository.swift in Sources */,
 				CD055A9A828A40BC83D2DA62 /* APIClient.swift in Sources */,
+				DAB10FB8A3F648BCAB60411A /* AuthViewModel.swift in Sources */,
+				22845CC936224C5390F39FE6 /* LoginView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

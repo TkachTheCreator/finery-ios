@@ -73,7 +73,11 @@ final class AddTransactionViewModel {
         )
 
         do {
-            try await transactionRepository.save(transaction)
+            if APIClient.shared.isAuthenticated {
+                _ = try await APIClient.shared.createTransaction(transaction)
+            } else {
+                try await transactionRepository.save(transaction)
+            }
             didSave = true
         } catch {
             errorMessage = error.localizedDescription

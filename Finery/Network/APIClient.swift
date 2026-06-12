@@ -307,7 +307,7 @@ actor APIClient {
     private let baseURL = URL(string: "http://localhost:8000")!
     private let session: URLSession
 
-    var isAuthenticated: Bool {
+    nonisolated var isAuthenticated: Bool {
         KeychainStore.load() != nil
     }
 
@@ -342,7 +342,7 @@ actor APIClient {
         return (dto.accessToken, dto.user.toDomain())
     }
 
-    func logout() {
+    nonisolated func logout() {
         KeychainStore.delete()
     }
 

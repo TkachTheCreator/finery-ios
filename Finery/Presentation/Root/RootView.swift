@@ -6,21 +6,17 @@ struct RootView: View {
     @Environment(\.modelContext) private var modelContext
 
     @State private var container: AppContainer?
-    @State private var showOnboarding = false
+    @State private var showLogin = false
     @State private var showAddTransaction = false
 
     var body: some View {
         Group {
             if let c = container {
                 mainTabView(c)
-                    .sheet(isPresented: $showOnboarding) {
-                        OnboardingView { user in
-                            Task {
-                                try? await c.userRepository.saveUser(user)
-                                UserDefaults.standard.set(true, forKey: "finery_onboarding_done")
-                                showOnboarding = false
-                                await c.dashboard.load()
-                            }
+                    .fullScreenCover(isPresented: $showLogin) {
+                        LoginView(viewModel: c.auth) {
+                            showLogin = false
+                            Task { await c.dashboard.load() }
                         }
                     }
                     .sheet(isPresented: $showAddTransaction) {
@@ -35,6 +31,9 @@ struct RootView: View {
                                 }
                             }
                         )
+                    }
+                    .onChange(of: c.dashboard.needsAuth) { _, needed in
+                        if needed { showLogin = true }
                     }
             } else {
                 FC.background.ignoresSafeArea()
@@ -72,12 +71,11 @@ struct RootView: View {
         let c = AppContainer(modelContext: modelContext)
         container = c
 
-        let onboardingDone = UserDefaults.standard.bool(forKey: "finery_onboarding_done")
-        if !onboardingDone {
-            showOnboarding = true
-        } else {
-            Task { await c.dashboard.load() }
+        if !APIClient.shared.isAuthenticated {
+            showLogin = true
+            return
         }
+        Task { await c.dashboard.load() }
     }
 }
 
