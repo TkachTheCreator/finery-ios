@@ -26,7 +26,7 @@ struct DashboardView: View {
                 .offset(y: scrollOffset * 0.3)
 
             ScrollView(showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 14) {
+                VStack(alignment: .leading, spacing: 16) {
                     GeometryReader { geo in
                         Color.clear.preference(
                             key: ScrollOffsetKey.self,
@@ -39,29 +39,41 @@ struct DashboardView: View {
 
                     if visibleCards.contains(0) {
                         incomeHeroCard
-                            .transition(AnyTransition.movingParts.skid)
+                            .transition(.asymmetric(
+                                insertion: .opacity.combined(with: .offset(y: 28)),
+                                removal:   .opacity
+                            ))
                             .pressable()
                     }
                     if visibleCards.contains(1) {
                         taxCard
-                            .transition(AnyTransition.movingParts.skid)
+                            .transition(.asymmetric(
+                                insertion: .opacity.combined(with: .offset(y: 28)),
+                                removal:   .opacity
+                            ))
                             .pressable()
                     }
                     if visibleCards.contains(2) {
                         topSourcesCard
-                            .transition(AnyTransition.movingParts.skid)
+                            .transition(.asymmetric(
+                                insertion: .opacity.combined(with: .offset(y: 28)),
+                                removal:   .opacity
+                            ))
                             .pressable()
                     }
                     if !viewModel.insights.isEmpty {
                         insightsCard
-                            .transition(AnyTransition.movingParts.swoosh)
+                            .transition(.asymmetric(
+                                insertion: .opacity.combined(with: .offset(y: 20)),
+                                removal:   .opacity
+                            ))
                             .pressable()
                     }
 
-                    Color.clear.frame(height: 90)
+                    Color.clear.frame(height: 110)
                 }
                 .padding(.horizontal, 16)
-                .animation(.spring(response: 0.6, dampingFraction: 0.85), value: viewModel.insights.isEmpty)
+                .animation(.fineryCard, value: viewModel.insights.isEmpty)
             }
 
             addButton
@@ -76,7 +88,7 @@ struct DashboardView: View {
         .onAppear {
             guard visibleCards.isEmpty else { return }
             for i in 0..<3 {
-                withAnimation(.spring(response: 0.6, dampingFraction: 0.78).delay(Double(i) * 0.1 + 0.05)) {
+                withAnimation(.fineryCard.delay(Double(i) * 0.08 + 0.04)) {
                     visibleCards.insert(i)
                 }
             }
@@ -128,8 +140,8 @@ struct DashboardView: View {
                         .font(.system(size: 52, weight: .black, design: .default))
                         .monospacedDigit()
                         .foregroundStyle(FC.ink)
-                        .contentTransition(.numericText())
-                        .animation(.spring(response: 0.5, dampingFraction: 0.8), value: viewModel.pnl?.totalIncome)
+                        .contentTransition(.numericText(countsDown: false))
+                        .animation(.fineryNumber, value: viewModel.pnl?.totalIncome)
                 }
             }
 
@@ -142,8 +154,8 @@ struct DashboardView: View {
             }
         }
         .padding(20)
-        .glassCard()
-        .animation(.spring(duration: 0.6), value: viewModel.isLoading)
+        .glassCardGlow(FC.cobaltGlow.opacity(0.6))
+        .animation(.fineryCard, value: viewModel.isLoading)
     }
 
     @ViewBuilder
@@ -202,7 +214,7 @@ struct DashboardView: View {
         }
         .padding(20)
         .glassCard()
-        .animation(.spring(duration: 0.6), value: viewModel.isLoading)
+        .animation(.fineryCard, value: viewModel.isLoading)
     }
 
     private var deadlineRow: some View {
@@ -254,7 +266,7 @@ struct DashboardView: View {
         }
         .padding(20)
         .glassCard()
-        .animation(.spring(duration: 0.6), value: viewModel.isLoading)
+        .animation(.fineryCard, value: viewModel.isLoading)
     }
 
     @ViewBuilder
@@ -295,7 +307,7 @@ struct DashboardView: View {
         }
         .padding(20)
         .glassCard()
-        .animation(.spring(duration: 0.6), value: viewModel.isLoading)
+        .animation(.fineryCard, value: viewModel.isLoading)
     }
 
     // MARK: - FAB
@@ -320,7 +332,7 @@ struct DashboardView: View {
             )
         }
         .padding(.trailing, 20)
-        .padding(.bottom, 36)
+        .padding(.bottom, 108)
     }
 
     // MARK: - Helpers
