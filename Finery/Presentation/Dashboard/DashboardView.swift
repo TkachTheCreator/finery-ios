@@ -12,6 +12,7 @@ struct DashboardView: View {
     @State private var visibleCards: Set<Int> = []
     @State private var scrollOffset: CGFloat = 0
     @State private var initialScrollOffset: CGFloat? = nil
+    @State private var showAdd = false
 
     init(viewModel: DashboardViewModel) {
         _viewModel = State(wrappedValue: viewModel)
@@ -66,6 +67,12 @@ struct DashboardView: View {
             addButton
         }
         .task { await viewModel.load() }
+        .sheet(isPresented: $showAdd) {
+            AddTransactionView(
+                viewModel: viewModel.makeAddTransactionViewModel(),
+                onSave: { Task { await viewModel.load() } }
+            )
+        }
         .onAppear {
             guard visibleCards.isEmpty else { return }
             for i in 0..<3 {
@@ -295,7 +302,8 @@ struct DashboardView: View {
 
     private var addButton: some View {
         Button {
-            // TODO: показать AddTransactionView
+            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+            showAdd = true
         } label: {
             HStack(spacing: 8) {
                 Image(systemName: "plus").fontWeight(.semibold)

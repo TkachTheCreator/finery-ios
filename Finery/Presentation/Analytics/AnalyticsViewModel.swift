@@ -11,6 +11,7 @@ final class AnalyticsViewModel {
     var currentMonthIncome:   Decimal = 0
     var previousMonthIncome:  Decimal = 0
     var isLoading = false
+    var errorMessage: String?
 
     var incomeChange: Double {
         guard previousMonthIncome > 0 else { return 0 }
@@ -57,7 +58,9 @@ final class AnalyticsViewModel {
 
             incomeBreakdown  = breakdown(from: current.filter { $0.direction == .income  })
             expenseBreakdown = expenseBreakdownCalc(from: current.filter { $0.direction == .expense })
-        } catch {}
+        } catch {
+            errorMessage = error.localizedDescription
+        }
     }
 
     private func breakdown(from transactions: [Transaction]) -> [(category: IncomeCategory, amount: Decimal, percent: Double)] {

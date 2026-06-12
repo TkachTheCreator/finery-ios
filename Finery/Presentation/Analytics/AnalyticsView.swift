@@ -39,6 +39,14 @@ struct AnalyticsView: View {
             }
         }
         .task { await viewModel.load() }
+        .alert("Ошибка загрузки", isPresented: Binding(
+            get: { viewModel.errorMessage != nil },
+            set: { if !$0 { viewModel.errorMessage = nil } }
+        )) {
+            Button("OK", role: .cancel) { viewModel.errorMessage = nil }
+        } message: {
+            Text(viewModel.errorMessage ?? "")
+        }
     }
 
     // MARK: Header
