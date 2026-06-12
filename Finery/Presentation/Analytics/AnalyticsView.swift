@@ -1,5 +1,6 @@
 import SwiftUI
 import Charts
+import UIKit
 
 struct AnalyticsView: View {
     @State var viewModel: AnalyticsViewModel
@@ -47,6 +48,12 @@ struct AnalyticsView: View {
         } message: {
             Text(viewModel.errorMessage ?? "")
         }
+        .sheet(isPresented: $viewModel.showingPDFShare) {
+            if let data = viewModel.exportedPDFData {
+                ShareSheet(data: data, filename: "finery-report.pdf")
+                    .ignoresSafeArea()
+            }
+        }
     }
 
     // MARK: Header
@@ -62,6 +69,23 @@ struct AnalyticsView: View {
                     .foregroundStyle(FC.muted)
             }
             Spacer()
+            Button {
+                viewModel.generatePDF()
+            } label: {
+                HStack(spacing: 6) {
+                    Image(systemName: "square.and.arrow.up")
+                        .fontWeight(.medium)
+                        .imageScale(.small)
+                    Text("Экспорт")
+                        .font(.system(.caption, design: .default, weight: .semibold))
+                }
+                .foregroundStyle(FC.cobalt)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 7)
+                .background(FC.cobalt.opacity(0.12))
+                .clipShape(Capsule())
+                .overlay(Capsule().stroke(FC.cobalt.opacity(0.25), lineWidth: 1))
+            }
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 18)
@@ -252,6 +276,22 @@ struct AnalyticsView: View {
         fmt.locale = Locale(identifier: "ru_RU")
         return fmt.string(from: Date()).capitalized
     }
+}
+
+// MARK: - Share Sheet
+
+private struct ShareSheet: UIViewControllerRepresentable {
+    let data: Data
+    let filename: String
+
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent(filename)
+        try? data.write(to: url)
+        let vc = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+        return vc
+    }
+
+    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
 }
 
 #Preview {

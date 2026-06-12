@@ -10,8 +10,11 @@ final class AnalyticsViewModel {
     var expenseBreakdown: [(category: ExpenseCategory, amount: Decimal, percent: Double)] = []
     var currentMonthIncome:   Decimal = 0
     var previousMonthIncome:  Decimal = 0
+    var totalTax: Decimal = 0
     var isLoading = false
     var errorMessage: String?
+    var exportedPDFData: Data?
+    var showingPDFShare = false
 
     var incomeChange: Double {
         guard previousMonthIncome > 0 else { return 0 }
@@ -55,6 +58,7 @@ final class AnalyticsViewModel {
 
             currentMonthIncome  = current.filter { $0.direction == .income  }.reduce(0) { $0 + $1.amount }
             previousMonthIncome = prev.filter    { $0.direction == .income  }.reduce(0) { $0 + $1.amount }
+            totalTax = months.reduce(0) { $0 + $1.taxAmount }
 
             incomeBreakdown  = breakdown(from: current.filter { $0.direction == .income  })
             expenseBreakdown = expenseBreakdownCalc(from: current.filter { $0.direction == .expense })
@@ -62,6 +66,37 @@ final class AnalyticsViewModel {
             errorMessage = error.localizedDescription
         }
     }
+
+    // MARK: - PDF Export
+
+    func generatePDF() {
+        let fmt = DateFormatter()
+        fmt.dateFormat = "LLLL yyyy"
+        fmt.locale = Locale(identifier: "ru_RU")
+        let periodLabel = fmt.string(from: Date()).capitalized
+
+        let totalIncome   = monthlyData.reduce(0) { $0 + $1.income }
+        let totalExpenses = monthlyData.reduce(0) { $0 + $1.expenses }
+        let netProfit     = totalIncome - totalExpenses - totalTax
+
+        let incomeRows = incomeBreakdown.map { (name: $0.category.displayName, amount: $0.amount, percent: $0.percent) }
+        let monthlyRows = monthlyData.map { (label: $0.monthLabel, income: $0.income, expenses: $0.expenses) }
+
+        let reportData = FineryPDFGenerator.ReportData(
+            periodLabel: periodLabel,
+            income: totalIncome,
+            expenses: totalExpenses,
+            taxAmount: totalTax,
+            netProfit: netProfit,
+            incomeBreakdown: incomeRows,
+            monthlyData: monthlyRows
+        )
+
+        exportedPDFData = FineryPDFGenerator().generate(data: reportData)
+        showingPDFShare = exportedPDFData != nil
+    }
+
+    // MARK: - Breakdown helpers
 
     private func breakdown(from transactions: [Transaction]) -> [(category: IncomeCategory, amount: Decimal, percent: Double)] {
         let total = transactions.reduce(Decimal(0)) { $0 + $1.amount }

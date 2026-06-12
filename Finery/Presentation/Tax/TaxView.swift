@@ -24,10 +24,14 @@ struct TaxView: View {
                             .cardAppear(appeared: appeared, delay: 0.16)
                         deadlineCard(status)
                             .cardAppear(appeared: appeared, delay: 0.24)
+                        if let forecast = viewModel.cashFlowForecast {
+                            cashFlowCard(forecast)
+                                .cardAppear(appeared: appeared, delay: 0.30)
+                        }
                         yearSummaryCard
-                            .cardAppear(appeared: appeared, delay: 0.32)
+                            .cardAppear(appeared: appeared, delay: 0.38)
                         historyCard
-                            .cardAppear(appeared: appeared, delay: 0.40)
+                            .cardAppear(appeared: appeared, delay: 0.46)
                     } else if viewModel.isLoading {
                         loadingState
                     }
@@ -217,6 +221,100 @@ struct TaxView: View {
         .padding(.horizontal, 16)
         .padding(.vertical, 18)
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    // MARK: Cash Flow Forecast Card
+
+    private func cashFlowCard(_ forecast: CashFlowForecast) -> some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack {
+                Text("ПРОГНОЗ КАССОВОГО РАЗРЫВА").fLabel()
+                Spacer()
+                if forecast.willGoNegativeIn30Days {
+                    HStack(spacing: 4) {
+                        Image(systemName: "exclamationmark.triangle")
+                            .fontWeight(.light)
+                            .imageScale(.small)
+                        Text("Риск разрыва")
+                            .font(.system(.caption, design: .default, weight: .semibold))
+                    }
+                    .foregroundStyle(FC.danger)
+                }
+            }
+
+            HStack(spacing: 0) {
+                forecastCell(
+                    label: "ТЕКУЩИЙ БАЛАНС",
+                    value: forecast.currentBalance.rub(),
+                    color: forecast.currentBalance >= 0 ? FC.success : FC.danger
+                )
+                Rectangle().fill(Color.white.opacity(0.1)).frame(width: 1)
+                forecastCell(
+                    label: "ХВАТИТ НА",
+                    value: forecast.daysUntilNegative.map { "\($0) дн." } ?? "∞",
+                    color: forecastDaysColor(forecast)
+                )
+                Rectangle().fill(Color.white.opacity(0.1)).frame(width: 1)
+                forecastCell(
+                    label: "РАСХОДЫ/МЕС",
+                    value: forecast.avgMonthlyExpenses.rub(),
+                    color: FC.muted
+                )
+            }
+            .background(Color.white.opacity(0.04))
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+
+            // Average income trend
+            HStack(spacing: 10) {
+                Image(systemName: forecast.willGoNegativeIn30Days ? "arrow.down.circle" : "chart.line.uptrend.xyaxis")
+                    .fontWeight(.light)
+                    .foregroundStyle(forecast.willGoNegativeIn30Days ? FC.danger : FC.cobalt)
+                let avgIncome = forecast.avgMonthlyIncome
+                let avgExpenses = forecast.avgMonthlyExpenses
+                if forecast.willGoNegativeIn30Days {
+                    Text("Средний расход (\(avgExpenses.rub())/мес) превышает доход (\(avgIncome.rub())/мес). Пора сократить траты.")
+                        .font(.system(.caption))
+                        .foregroundStyle(FC.muted)
+                        .fixedSize(horizontal: false, vertical: true)
+                } else {
+                    Text("Среднемесячный доход за 3 мес: \(avgIncome.rub()). Финансовая подушка в норме.")
+                        .font(.system(.caption))
+                        .foregroundStyle(FC.muted)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+            .padding(14)
+            .background(forecast.willGoNegativeIn30Days ? FC.danger.opacity(0.1) : FC.cobalt.opacity(0.08))
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(forecast.willGoNegativeIn30Days ? FC.danger.opacity(0.3) : FC.cobalt.opacity(0.2), lineWidth: 1)
+            )
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+        }
+        .padding(20)
+        .glassCard()
+    }
+
+    private func forecastCell(label: String, value: String, color: Color) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(label).fLabel()
+            Text(value)
+                .font(.system(.subheadline, design: .default, weight: .semibold))
+                .monospacedDigit()
+                .foregroundStyle(color)
+                .minimumScaleFactor(0.7)
+                .lineLimit(1)
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 14)
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private func forecastDaysColor(_ forecast: CashFlowForecast) -> Color {
+        guard let days = forecast.daysUntilNegative else { return FC.success }
+        if days <= 7  { return FC.danger }
+        if days <= 30 { return FC.amber }
+        return FC.success
     }
 
     // MARK: Year Summary Card

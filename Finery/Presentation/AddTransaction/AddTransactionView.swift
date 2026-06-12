@@ -1,5 +1,6 @@
 import SwiftUI
 import Pow
+import Speech
 
 struct AddTransactionView: View {
     @State var viewModel: AddTransactionViewModel
@@ -134,15 +135,51 @@ struct AddTransactionView: View {
         }
     }
 
+    // MARK: Mic Button
+
+    private var micButton: some View {
+        let voice = viewModel.voice
+        let isRecording: Bool
+        if case .recording = voice.state { isRecording = true } else { isRecording = false }
+
+        return Button {
+            voice.toggle()
+            if case .idle = voice.state {
+                viewModel.applyVoiceResult()
+            }
+        } label: {
+            ZStack {
+                Circle()
+                    .fill(isRecording ? FC.danger.opacity(0.18) : FC.cobalt.opacity(0.12))
+                    .frame(width: 36, height: 36)
+                    .overlay(
+                        Circle()
+                            .stroke(isRecording ? FC.danger.opacity(0.5) : FC.cobalt.opacity(0.3), lineWidth: 1)
+                    )
+                Image(systemName: isRecording ? "stop.circle" : "mic")
+                    .font(.system(size: 15, weight: .medium))
+                    .foregroundStyle(isRecording ? FC.danger : FC.cobalt)
+            }
+            .scaleEffect(isRecording ? 1.1 : 1.0)
+            .animation(.spring(response: 0.3), value: isRecording)
+        }
+        .onChange(of: voice.recognizedText) { _, _ in
+            if case .idle = voice.state { viewModel.applyVoiceResult() }
+        }
+    }
+
     // MARK: Form Fields
 
     private var formFields: some View {
         VStack(spacing: 0) {
             fieldRow(label: "ОПИСАНИЕ") {
-                TextField("За что оплата", text: $viewModel.description)
-                    .font(.system(.body))
-                    .foregroundStyle(FC.ink)
-                    .onChange(of: viewModel.description) { _, _ in viewModel.onDescriptionChanged() }
+                HStack(spacing: 10) {
+                    TextField("За что оплата", text: $viewModel.description)
+                        .font(.system(.body))
+                        .foregroundStyle(FC.ink)
+                        .onChange(of: viewModel.description) { _, _ in viewModel.onDescriptionChanged() }
+                    micButton
+                }
             }
             hairline
 

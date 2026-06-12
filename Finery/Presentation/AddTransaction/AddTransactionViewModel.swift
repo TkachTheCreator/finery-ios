@@ -21,6 +21,8 @@ final class AddTransactionViewModel {
     var didSave       = false
     var errorMessage: String?
 
+    let voice = VoiceInputManager()
+
     private let transactionRepository: any TransactionRepository
     private let classifier = ClassifyTransactionUseCase()
 
@@ -53,6 +55,16 @@ final class AddTransactionViewModel {
         let result = classifier.execute(description: description, direction: direction)
         if let cat = result.income  { incomeCategory  = cat }
         if let cat = result.expense { expenseCategory = cat }
+    }
+
+    func applyVoiceResult() {
+        let text = voice.recognizedText
+        guard !text.isEmpty else { return }
+        if description.isEmpty { description = text }
+        if let amount = voice.parsedAmount, amountText.isEmpty {
+            amountText = "\(NSDecimalNumber(decimal: amount).intValue)"
+        }
+        onDescriptionChanged()
     }
 
     func save() async {

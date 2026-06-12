@@ -45,7 +45,8 @@ final class AppContainer {
 
         tax = TaxViewModel(
             calculateTax:      CalculateTaxUseCase(transactionRepository: txRepo, userRepository: usrRepo, taxCalculator: calc),
-            getMonthlyDynamics: GetMonthlyDynamicsUseCase(transactionRepository: txRepo, userRepository: usrRepo, taxCalculator: calc)
+            getMonthlyDynamics: GetMonthlyDynamicsUseCase(transactionRepository: txRepo, userRepository: usrRepo, taxCalculator: calc),
+            transactionRepository: txRepo
         )
 
         settings = SettingsViewModel(userRepository: usrRepo)
