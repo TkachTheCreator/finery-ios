@@ -61,8 +61,6 @@ struct FloatingTabBar: View {
         let selected = selection == tab
 
         Button {
-            guard selection != tab else { return }
-            UIImpactFeedbackGenerator(style: .light).impactOccurred()
             withAnimation(.fineryMicro) {
                 selection = tab
             }

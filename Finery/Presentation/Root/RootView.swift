@@ -9,6 +9,7 @@ struct RootView: View {
     @State private var showLogin = false
     @State private var showSplash = true
     @State private var selectedTab: FineryTab = .dashboard
+    @State private var previousTab: FineryTab = .dashboard
 
     var body: some View {
         ZStack {
@@ -52,30 +53,40 @@ struct RootView: View {
     // MARK: Main Layout
 
     private func mainView(_ c: AppContainer) -> some View {
-        ZStack(alignment: .bottom) {
+        let forward = selectedTab.rawValue > previousTab.rawValue
+        let tabBinding = Binding<FineryTab>(
+            get: { selectedTab },
+            set: { newTab in
+                guard newTab != selectedTab else { return }
+                HapticManager.light()
+                previousTab = selectedTab
+                selectedTab = newTab
+            }
+        )
+        return ZStack(alignment: .bottom) {
             Group {
                 switch selectedTab {
                 case .dashboard:
                     DashboardView(viewModel: c.dashboard)
-                        .transition(tabTransition(forward: true))
+                        .transition(tabTransition(forward: forward))
                 case .transactions:
                     TransactionsView(viewModel: c.transactions)
-                        .transition(tabTransition(forward: selectedTab.rawValue > 1))
+                        .transition(tabTransition(forward: forward))
                 case .analytics:
                     AnalyticsView(viewModel: c.analytics)
-                        .transition(tabTransition(forward: selectedTab.rawValue > 2))
+                        .transition(tabTransition(forward: forward))
                 case .tax:
                     TaxView(viewModel: c.tax)
-                        .transition(tabTransition(forward: selectedTab.rawValue > 3))
+                        .transition(tabTransition(forward: forward))
                 case .settings:
                     SettingsView(viewModel: c.settings)
-                        .transition(tabTransition(forward: true))
+                        .transition(tabTransition(forward: forward))
                 }
             }
             .id(selectedTab)
             .animation(.spring(response: 0.40, dampingFraction: 0.84), value: selectedTab)
 
-            FloatingTabBar(selection: $selectedTab)
+            FloatingTabBar(selection: tabBinding)
                 .padding(.bottom, 20)
         }
         .ignoresSafeArea(edges: .bottom)

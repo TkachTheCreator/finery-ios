@@ -39,7 +39,7 @@ struct AddTransactionView: View {
         .onChange(of: viewModel.didSave) { _, saved in
             if saved {
                 onSave?()
-                UINotificationFeedbackGenerator().notificationOccurred(.success)
+                HapticManager.success()
                 withAnimation(.spring(response: 0.4, dampingFraction: 0.75)) {
                     showSuccess = true
                 }
@@ -293,6 +293,7 @@ struct AddTransactionView: View {
             .frame(maxWidth: .infinity)
             .padding(.vertical, 16)
             .background(viewModel.canSave ? FC.cobalt : FC.border)
+            .clipShape(RoundedRectangle(cornerRadius: 14))
         }
         .disabled(!viewModel.canSave || viewModel.isSaving)
         .changeEffect(

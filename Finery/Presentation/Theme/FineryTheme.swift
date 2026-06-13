@@ -12,7 +12,7 @@ enum FC {
     static let muted       = Color(h: "8B7D5A")
     static let success     = Color(h: "1A6B3C")
     static let danger      = Color(h: "B03A2E")
-    static let amber       = Color(h: "C17F24")
+    static let amber       = Color(h: "9B6B00")
 
     static let backgroundGradient = LinearGradient(
         colors: [Color(h: "F5EFE0"), Color(h: "EDE4CE")],
@@ -102,7 +102,7 @@ struct PressableModifier: ViewModifier {
                     .onChanged { _ in
                         guard !isPressed else { return }
                         isPressed = true
-                        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                        HapticManager.impact()
                     }
                     .onEnded { _ in
                         isPressed = false
@@ -184,4 +184,36 @@ extension View {
         self.overlay(active ? AnyView(SkeletonView()) : AnyView(EmptyView()))
             .clipShape(RoundedRectangle(cornerRadius: 6))
     }
+}
+
+// MARK: - Button modifiers
+
+struct FineryPrimaryButton: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .font(.system(.body, design: .rounded, weight: .semibold))
+            .foregroundStyle(.white)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 16)
+            .background(FC.cobalt)
+            .clipShape(RoundedRectangle(cornerRadius: 14))
+    }
+}
+
+struct FinerySecondaryButton: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .font(.system(.body, design: .rounded, weight: .medium))
+            .foregroundStyle(FC.cobalt)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 16)
+            .background(FC.surface)
+            .clipShape(RoundedRectangle(cornerRadius: 14))
+            .overlay(RoundedRectangle(cornerRadius: 14).stroke(FC.border, lineWidth: 1))
+    }
+}
+
+extension View {
+    func fineryPrimaryButton() -> some View { modifier(FineryPrimaryButton()) }
+    func finerySecondaryButton() -> some View { modifier(FinerySecondaryButton()) }
 }

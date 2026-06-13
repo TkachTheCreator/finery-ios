@@ -110,7 +110,7 @@ struct OnboardingView: View {
         let selected = selectedUserType == type
         return Button {
             withAnimation(.spring(response: 0.35, dampingFraction: 0.75)) { selectedUserType = type }
-            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            HapticManager.light()
         } label: {
             HStack(spacing: 14) {
                 ZStack {
@@ -181,7 +181,7 @@ struct OnboardingView: View {
         let selected = selectedTaxMode == mode
         return Button {
             withAnimation(.spring(response: 0.35, dampingFraction: 0.75)) { selectedTaxMode = mode }
-            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            HapticManager.light()
         } label: {
             HStack(spacing: 14) {
                 ZStack {
@@ -267,7 +267,7 @@ struct OnboardingView: View {
             Spacer()
 
             Button {
-                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                HapticManager.impact()
                 if step < totalSteps - 1 {
                     withAnimation(.spring(response: 0.55, dampingFraction: 0.82)) { step += 1 }
                 } else {
