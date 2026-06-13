@@ -2,17 +2,10 @@ import SwiftUI
 import Shimmer
 import Pow
 
-private struct ScrollOffsetKey: PreferenceKey {
-    nonisolated(unsafe) static var defaultValue: CGFloat = 0
-    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) { value = nextValue() }
-}
-
 struct DashboardView: View {
     @State var viewModel: DashboardViewModel
-    @State private var appeared        = false
+    @State private var appeared       = false
     @State private var progressShown  = false
-    @State private var scrollOffset:  CGFloat = 0
-    @State private var initialOffset: CGFloat?
     @State private var showAdd        = false
 
     init(viewModel: DashboardViewModel) {
@@ -24,20 +17,12 @@ struct DashboardView: View {
             FC.background.ignoresSafeArea()
 
             ScrollView(showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 16) {
-                    GeometryReader { geo in
-                        Color.clear.preference(
-                            key: ScrollOffsetKey.self,
-                            value: geo.frame(in: .global).minY
-                        )
-                    }
-                    .frame(height: 0)
-
+                VStack(alignment: .leading, spacing: 12) {
                     headerSection
                     cardStack
-                    Color.clear.frame(height: 110)
+                    Color.clear.frame(height: 32)
                 }
-                .padding(.horizontal, 16)
+                .padding(.horizontal, 20)
             }
 
             addButton
@@ -48,18 +33,11 @@ struct DashboardView: View {
                 viewModel: viewModel.makeAddTransactionViewModel(),
                 onSave: { Task { await viewModel.load() } }
             )
-            .transition(.move(edge: .bottom).combined(with: .opacity))
         }
         .onAppear {
             guard !appeared else { return }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) { appeared = true }
-            }
+            withAnimation(.spring(response: 0.5, dampingFraction: 0.82)) { appeared = true }
             withAnimation(.easeOut(duration: 1.2).delay(0.5)) { progressShown = true }
-        }
-        .onPreferenceChange(ScrollOffsetKey.self) { value in
-            if initialOffset == nil { initialOffset = value }
-            scrollOffset = value - (initialOffset ?? value)
         }
     }
 
@@ -67,9 +45,9 @@ struct DashboardView: View {
 
     private var headerSection: some View {
         HStack(alignment: .center) {
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 2) {
                 Text(greeting)
-                    .font(.system(.title, design: .rounded, weight: .bold))
+                    .font(.system(.title2, design: .rounded, weight: .bold))
                     .foregroundStyle(FC.ink)
                 Text(currentMonthFull)
                     .font(.system(.subheadline, design: .rounded, weight: .regular))
@@ -81,94 +59,95 @@ struct DashboardView: View {
                 .imageScale(.medium)
                 .foregroundStyle(FC.muted)
         }
-        .padding(.horizontal, 4)
-        .padding(.top, 20)
+        .padding(.top, 16)
         .padding(.bottom, 4)
-        .offset(y: appeared ? 0 : -16)
+        .offset(y: appeared ? 0 : -12)
         .opacity(appeared ? 1 : 0)
-        .animation(.fineryCard, value: appeared)
+        .animation(.spring(response: 0.5, dampingFraction: 0.82), value: appeared)
     }
 
-    // MARK: - Staggered Card Stack
+    // MARK: - Card Stack
 
     @ViewBuilder
     private var cardStack: some View {
         incomeHeroCard
-            .offset(y: appeared ? 0 : 32)
+            .offset(y: appeared ? 0 : 24)
             .opacity(appeared ? 1 : 0)
-            .animation(.spring(response: 0.55, dampingFraction: 0.8).delay(0.05), value: appeared)
-            .pressable()
+            .animation(.spring(response: 0.5, dampingFraction: 0.82).delay(0.05), value: appeared)
 
         taxCard
-            .offset(y: appeared ? 0 : 32)
+            .offset(y: appeared ? 0 : 24)
             .opacity(appeared ? 1 : 0)
-            .animation(.spring(response: 0.55, dampingFraction: 0.8).delay(0.15), value: appeared)
-            .pressable()
+            .animation(.spring(response: 0.5, dampingFraction: 0.82).delay(0.15), value: appeared)
 
         topSourcesCard
-            .offset(y: appeared ? 0 : 32)
+            .offset(y: appeared ? 0 : 24)
             .opacity(appeared ? 1 : 0)
-            .animation(.spring(response: 0.55, dampingFraction: 0.8).delay(0.25), value: appeared)
-            .pressable()
+            .animation(.spring(response: 0.5, dampingFraction: 0.82).delay(0.25), value: appeared)
 
         if !viewModel.insights.isEmpty {
             insightsCard
-                .offset(y: appeared ? 0 : 32)
+                .offset(y: appeared ? 0 : 24)
                 .opacity(appeared ? 1 : 0)
-                .animation(.spring(response: 0.55, dampingFraction: 0.8).delay(0.35), value: appeared)
-                .pressable()
+                .animation(.spring(response: 0.5, dampingFraction: 0.82).delay(0.35), value: appeared)
         }
     }
 
-    // MARK: - Income Hero Card
+    // MARK: - Income Hero Card (Cobalt)
 
     private var incomeHeroCard: some View {
-        VStack(alignment: .leading, spacing: 18) {
+        VStack(alignment: .leading, spacing: 16) {
             Text("ДОХОД ЗА \(currentMonthShortUpper)")
-                .fLabel()
+                .font(.system(.caption2, design: .rounded, weight: .semibold))
+                .tracking(1.4)
+                .textCase(.uppercase)
+                .foregroundStyle(.white.opacity(0.65))
 
             Group {
                 if viewModel.isLoading {
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(FC.border)
+                        .fill(.white.opacity(0.2))
                         .frame(width: 200, height: 52)
-                        .skeleton(active: true)
                 } else {
                     Text(viewModel.pnl?.totalIncome.rub() ?? "0\u{202F}₽")
-                        .font(.system(size: 52, weight: .black, design: .rounded))
+                        .font(.system(size: 46, weight: .bold, design: .rounded))
                         .monospacedDigit()
-                        .foregroundStyle(FC.ink)
+                        .foregroundStyle(.white)
                         .contentTransition(.numericText(countsDown: false))
                         .animation(.fineryNumber, value: viewModel.pnl?.totalIncome)
                 }
             }
 
             HStack(alignment: .top, spacing: 0) {
-                miniMetric(label: "РАСХОДЫ",  value: viewModel.pnl?.totalExpenses, color: FC.danger,   align: .leading)
+                miniMetric(label: "РАСХОДЫ", value: viewModel.pnl?.totalExpenses, align: .leading)
                 Spacer()
-                miniMetric(label: "НАЛОГ",    value: viewModel.pnl?.taxAmount,     color: FC.muted,    align: .center)
+                miniMetric(label: "НАЛОГ",   value: viewModel.pnl?.taxAmount,     align: .center)
                 Spacer()
-                miniMetric(label: "ЧИСТАЯ",   value: viewModel.pnl?.netProfit,     color: FC.success,  align: .trailing)
+                miniMetric(label: "ЧИСТАЯ",  value: viewModel.pnl?.netProfit,     align: .trailing)
             }
         }
         .padding(20)
-        .glassCardGlow(FC.cobaltGlow.opacity(0.5))
+        .background(FC.cobalt)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
     }
 
     @ViewBuilder
-    private func miniMetric(label: String, value: Decimal?, color: Color, align: HorizontalAlignment) -> some View {
+    private func miniMetric(label: String, value: Decimal?, align: HorizontalAlignment) -> some View {
         VStack(alignment: align, spacing: 4) {
-            Text(label).fLabel()
+            Text(label)
+                .font(.system(.caption2, design: .rounded, weight: .semibold))
+                .tracking(1.4)
+                .textCase(.uppercase)
+                .foregroundStyle(.white.opacity(0.6))
             if viewModel.isLoading {
                 RoundedRectangle(cornerRadius: 4)
-                    .fill(FC.border)
-                    .frame(width: 70, height: 13)
-                    .skeleton(active: true)
+                    .fill(.white.opacity(0.2))
+                    .frame(width: 60, height: 12)
             } else {
                 Text(value?.rub() ?? "—")
-                    .font(.system(.footnote, design: .rounded, weight: .medium))
+                    .font(.system(.footnote, design: .rounded, weight: .semibold))
                     .monospacedDigit()
-                    .foregroundStyle(color)
+                    .foregroundStyle(.white.opacity(0.9))
                     .contentTransition(.numericText())
                     .animation(.fineryNumber, value: value)
             }
@@ -193,20 +172,19 @@ struct DashboardView: View {
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
                     RoundedRectangle(cornerRadius: 4)
-                        .fill(FC.border.opacity(0.6))
-                        .frame(height: 6)
+                        .fill(FC.border)
+                        .frame(height: 5)
                     RoundedRectangle(cornerRadius: 4)
                         .fill(LinearGradient(
                             colors: [FC.cobalt, trafficColor],
                             startPoint: .leading,
                             endPoint: .trailing
                         ))
-                        .frame(width: geo.size.width * (progressShown ? limitFraction : 0), height: 6)
-                        .shadow(color: FC.cobaltGlow, radius: 6)
+                        .frame(width: geo.size.width * (progressShown ? limitFraction : 0), height: 5)
                         .animation(.easeOut(duration: 1.2), value: progressShown)
                 }
             }
-            .frame(height: 6)
+            .frame(height: 5)
 
             if let status = viewModel.taxStatus {
                 Text("Использовано \(status.yearlyIncome.rub()) из \(TaxStatus.npdYearLimit.rub())")
@@ -217,14 +195,16 @@ struct DashboardView: View {
             deadlineRow
         }
         .padding(20)
-        .glassCard()
+        .background(FC.surface)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .overlay(RoundedRectangle(cornerRadius: 16).stroke(FC.border, lineWidth: 0.5))
     }
 
     private var deadlineRow: some View {
         HStack(spacing: 6) {
             Image(systemName: "calendar")
                 .fontWeight(.light)
-                .imageScale(.small)
+                .imageScale(.medium)
                 .foregroundStyle(FC.muted)
             Text("Следующий налог: ")
                 .font(.system(.caption, design: .rounded, weight: .regular))
@@ -235,7 +215,7 @@ struct DashboardView: View {
                     .monospacedDigit()
                     .foregroundStyle(FC.ink)
             }
-            Text(" · до 28 \(nextMonthGenitive)")
+            Text("· до 28 \(nextMonthGenitive)")
                 .font(.system(.caption, design: .rounded, weight: .regular))
                 .foregroundStyle(FC.muted)
         }
@@ -254,6 +234,7 @@ struct DashboardView: View {
                 HStack {
                     Image(systemName: "tray")
                         .fontWeight(.light)
+                        .imageScale(.medium)
                         .foregroundStyle(FC.muted)
                     Text("Нет данных за этот месяц")
                         .font(.system(.subheadline, design: .rounded))
@@ -264,13 +245,15 @@ struct DashboardView: View {
                 ForEach(Array(viewModel.topSources.enumerated()), id: \.element.category) { index, item in
                     sourceRow(rank: index + 1, category: item.category, amount: item.amount)
                     if index < viewModel.topSources.count - 1 {
-                        Rectangle().fill(FC.border.opacity(0.6)).frame(height: 0.5)
+                        Rectangle().fill(FC.border.opacity(0.5)).frame(height: 0.5)
                     }
                 }
             }
         }
         .padding(20)
-        .glassCard()
+        .background(FC.surface)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .overlay(RoundedRectangle(cornerRadius: 16).stroke(FC.border, lineWidth: 0.5))
     }
 
     @ViewBuilder
@@ -283,15 +266,15 @@ struct DashboardView: View {
                 .frame(width: 14, alignment: .center)
             Image(systemName: category.iconName)
                 .fontWeight(.light)
-                .imageScale(.small)
+                .imageScale(.medium)
                 .foregroundStyle(FC.cobalt)
-                .frame(width: 18)
+                .frame(width: 20)
             Text(category.displayName)
                 .font(.system(.subheadline, design: .rounded, weight: .regular))
                 .foregroundStyle(FC.ink)
             Spacer()
             Text(amount.rub())
-                .font(.system(.subheadline, design: .rounded, weight: .medium))
+                .font(.system(.subheadline, design: .rounded, weight: .semibold))
                 .monospacedDigit()
                 .foregroundStyle(FC.success)
         }
@@ -310,18 +293,22 @@ struct DashboardView: View {
             }
         }
         .padding(20)
-        .glassCard()
+        .background(FC.surface)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .overlay(RoundedRectangle(cornerRadius: 16).stroke(FC.border, lineWidth: 0.5))
     }
 
     // MARK: - FAB
 
     private var addButton: some View {
         Button {
-            HapticManager.impact()
+            HapticManager.impact(.medium)
             showAdd = true
         } label: {
             HStack(spacing: 8) {
-                Image(systemName: "plus").fontWeight(.semibold)
+                Image(systemName: "plus")
+                    .fontWeight(.semibold)
+                    .imageScale(.medium)
                 Text("Добавить")
                     .font(.system(.subheadline, design: .rounded, weight: .semibold))
             }
@@ -331,11 +318,11 @@ struct DashboardView: View {
             .background(
                 Capsule()
                     .fill(FC.cobalt)
-                    .shadow(color: FC.cobaltGlow, radius: 14, x: 0, y: 5)
+                    .shadow(color: FC.cobaltGlow, radius: 12, x: 0, y: 4)
             )
         }
         .padding(.trailing, 20)
-        .padding(.bottom, 108)
+        .padding(.bottom, 24)
     }
 
     // MARK: - Skeleton
@@ -344,18 +331,18 @@ struct DashboardView: View {
         HStack {
             RoundedRectangle(cornerRadius: 4)
                 .fill(FC.border)
-                .frame(width: 140, height: 13)
+                .frame(width: 130, height: 12)
                 .skeleton(active: true)
             Spacer()
             RoundedRectangle(cornerRadius: 4)
                 .fill(FC.border)
-                .frame(width: 60, height: 13)
+                .frame(width: 60, height: 12)
                 .skeleton(active: true)
         }
         .padding(.vertical, 6)
     }
 
-    // MARK: - Helpers
+    // MARK: - Computed
 
     private var trafficColor: Color {
         switch viewModel.taxStatus?.trafficLight {
@@ -380,12 +367,8 @@ struct DashboardView: View {
         viewModel.userName.isEmpty ? "Привет" : "Привет, \(viewModel.userName)"
     }
 
-    private var currentMonthFull: String {
-        formatted(Date(), "LLLL yyyy")
-    }
-    private var currentMonthShortUpper: String {
-        formatted(Date(), "LLLL").uppercased()
-    }
+    private var currentMonthFull: String { formatted(Date(), "LLLL yyyy") }
+    private var currentMonthShortUpper: String { formatted(Date(), "LLLL").uppercased() }
     private var nextMonthGenitive: String {
         let next = Calendar.current.date(byAdding: .month, value: 1, to: Date())!
         return formatted(next, "LLLL")

@@ -8,7 +8,7 @@ struct RootView: View {
     @State private var container: AppContainer?
     @State private var showLogin = false
     @State private var showSplash = true
-    @State private var selectedTab: FineryTab = .dashboard
+    @State private var selectedTab: Int = 0
 
     var body: some View {
         ZStack {
@@ -22,23 +22,35 @@ struct RootView: View {
                     )
                     .zIndex(2)
             } else if let c = container {
-                mainView(c)
-                    .transition(
-                        .asymmetric(
-                            insertion: .move(edge: .bottom).combined(with: .opacity),
-                            removal:   .opacity
-                        )
-                    )
-                    .zIndex(1)
-                    .fullScreenCover(isPresented: $showLogin) {
-                        LoginView(viewModel: c.auth) {
-                            showLogin = false
-                            Task { await c.dashboard.load() }
-                        }
+                TabView(selection: $selectedTab) {
+                    DashboardView(viewModel: c.dashboard)
+                        .tabItem { Label("Главная", systemImage: "house") }
+                        .tag(0)
+                    TransactionsView(viewModel: c.transactions)
+                        .tabItem { Label("Операции", systemImage: "list.bullet") }
+                        .tag(1)
+                    AnalyticsView(viewModel: c.analytics)
+                        .tabItem { Label("Аналитика", systemImage: "chart.bar") }
+                        .tag(2)
+                    TaxView(viewModel: c.tax)
+                        .tabItem { Label("Налоги", systemImage: "percent") }
+                        .tag(3)
+                    SettingsView(viewModel: c.settings)
+                        .tabItem { Label("Настройки", systemImage: "gearshape") }
+                        .tag(4)
+                }
+                .tint(FC.cobalt)
+                .onChange(of: selectedTab) { _, _ in HapticManager.light() }
+                .zIndex(1)
+                .fullScreenCover(isPresented: $showLogin) {
+                    LoginView(viewModel: c.auth) {
+                        showLogin = false
+                        Task { await c.dashboard.load() }
                     }
-                    .onChange(of: c.dashboard.needsAuth) { _, needed in
-                        if needed { showLogin = true }
-                    }
+                }
+                .onChange(of: c.dashboard.needsAuth) { _, needed in
+                    if needed { showLogin = true }
+                }
             } else {
                 Color(h: "F5EFE0").ignoresSafeArea()
                     .onAppear { boot() }
@@ -47,46 +59,6 @@ struct RootView: View {
         }
         .animation(.fineryPage, value: showSplash)
         .fontDesign(.rounded)
-    }
-
-    // MARK: Main Layout
-
-    private func mainView(_ c: AppContainer) -> some View {
-        let tabBinding = Binding<FineryTab>(
-            get: { selectedTab },
-            set: { newTab in
-                guard newTab != selectedTab else { return }
-                HapticManager.light()
-                selectedTab = newTab
-            }
-        )
-        return ZStack(alignment: .bottom) {
-            FC.background.ignoresSafeArea()
-
-            DashboardView(viewModel: c.dashboard)
-                .opacity(selectedTab == .dashboard ? 1 : 0)
-                .allowsHitTesting(selectedTab == .dashboard)
-
-            TransactionsView(viewModel: c.transactions)
-                .opacity(selectedTab == .transactions ? 1 : 0)
-                .allowsHitTesting(selectedTab == .transactions)
-
-            AnalyticsView(viewModel: c.analytics)
-                .opacity(selectedTab == .analytics ? 1 : 0)
-                .allowsHitTesting(selectedTab == .analytics)
-
-            TaxView(viewModel: c.tax)
-                .opacity(selectedTab == .tax ? 1 : 0)
-                .allowsHitTesting(selectedTab == .tax)
-
-            SettingsView(viewModel: c.settings)
-                .opacity(selectedTab == .settings ? 1 : 0)
-                .allowsHitTesting(selectedTab == .settings)
-
-            FloatingTabBar(selection: tabBinding)
-                .padding(.bottom, 20)
-        }
-        .ignoresSafeArea(edges: .bottom)
     }
 
     // MARK: Boot
