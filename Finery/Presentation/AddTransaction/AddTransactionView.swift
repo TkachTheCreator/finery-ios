@@ -52,7 +52,7 @@ struct AddTransactionView: View {
         .overlay {
             if showSuccess {
                 ZStack {
-                    Color.black.opacity(0.55).ignoresSafeArea()
+                    Color(h: "1A1A18").opacity(0.55).ignoresSafeArea()
                     VStack(spacing: 10) {
                         LottieSuccessView()
                             .frame(width: 160, height: 160)

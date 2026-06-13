@@ -1,6 +1,5 @@
 import SwiftUI
 import Charts
-import UIKit
 
 struct AnalyticsView: View {
     @State var viewModel: AnalyticsViewModel

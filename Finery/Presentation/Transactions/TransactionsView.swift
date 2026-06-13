@@ -64,7 +64,7 @@ struct TransactionsView: View {
                     periodChip(p)
                 }
                 Rectangle()
-                    .fill(Color.white.opacity(0.12))
+                    .fill(FC.border)
                     .frame(width: 1, height: 20)
                 directionChip(nil,      label: "Все")
                 directionChip(.income,  label: "Доходы")
@@ -86,12 +86,12 @@ struct TransactionsView: View {
         .padding(.vertical, 7)
         .background(
             Capsule()
-                .fill(selected ? FC.cobalt : Color.white.opacity(0.08))
+                .fill(selected ? FC.cobalt : FC.surface)
                 .shadow(color: selected ? FC.cobaltGlow : .clear, radius: 8)
         )
         .overlay(
             Capsule().stroke(
-                selected ? Color.clear : Color.white.opacity(0.15),
+                selected ? Color.clear : FC.border,
                 lineWidth: 1
             )
         )
@@ -109,12 +109,12 @@ struct TransactionsView: View {
         .padding(.vertical, 7)
         .background(
             Capsule()
-                .fill(selected ? activeColor : Color.white.opacity(0.08))
+                .fill(selected ? activeColor : FC.surface)
                 .shadow(color: selected ? activeColor.opacity(0.4) : .clear, radius: 8)
         )
         .overlay(
             Capsule().stroke(
-                selected ? Color.clear : Color.white.opacity(0.15),
+                selected ? Color.clear : FC.border,
                 lineWidth: 1
             )
         )
@@ -126,7 +126,7 @@ struct TransactionsView: View {
         HStack {
             summaryItem(label: "ДОХОДЫ",  amount: viewModel.totalIncome,   color: FC.success)
             Spacer()
-            Rectangle().fill(Color.white.opacity(0.12)).frame(width: 1, height: 32)
+            Rectangle().fill(FC.border).frame(width: 1, height: 32)
             Spacer()
             summaryItem(label: "РАСХОДЫ", amount: viewModel.totalExpenses, color: FC.danger)
         }
@@ -188,27 +188,27 @@ struct TransactionsView: View {
                 ForEach(0..<6, id: \.self) { _ in
                     HStack(spacing: 12) {
                         Circle()
-                            .fill(Color.white.opacity(0.12))
+                            .fill(FC.border)
                             .frame(width: 38, height: 38)
                             .shimmering(active: true, duration: 1.4)
                         VStack(alignment: .leading, spacing: 6) {
                             RoundedRectangle(cornerRadius: 4)
-                                .fill(Color.white.opacity(0.12))
+                                .fill(FC.border)
                                 .frame(width: 130, height: 12)
                                 .shimmering(active: true, duration: 1.4)
                             RoundedRectangle(cornerRadius: 4)
-                                .fill(Color.white.opacity(0.08))
+                                .fill(FC.surface)
                                 .frame(width: 80, height: 10)
                                 .shimmering(active: true, duration: 1.4)
                         }
                         Spacer()
                         VStack(alignment: .trailing, spacing: 6) {
                             RoundedRectangle(cornerRadius: 4)
-                                .fill(Color.white.opacity(0.12))
+                                .fill(FC.border)
                                 .frame(width: 65, height: 12)
                                 .shimmering(active: true, duration: 1.4)
                             RoundedRectangle(cornerRadius: 4)
-                                .fill(Color.white.opacity(0.08))
+                                .fill(FC.surface)
                                 .frame(width: 36, height: 10)
                                 .shimmering(active: true, duration: 1.4)
                         }
@@ -259,7 +259,7 @@ struct TransactionsView: View {
                 )
         }
         .padding(.trailing, 20)
-        .padding(.bottom, 36)
+        .padding(.bottom, 108)
     }
 
     // MARK: Helpers

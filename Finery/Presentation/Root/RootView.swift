@@ -7,82 +7,84 @@ struct RootView: View {
 
     @State private var container: AppContainer?
     @State private var showLogin = false
-    @State private var showAddTransaction = false
+    @State private var showSplash = true
     @State private var selectedTab: FineryTab = .dashboard
 
     var body: some View {
-        Group {
-            if let c = container {
+        ZStack {
+            if showSplash {
+                SplashView(onFinish: { showSplash = false })
+                    .transition(
+                        .asymmetric(
+                            insertion: .opacity,
+                            removal:   .move(edge: .top).combined(with: .opacity)
+                        )
+                    )
+                    .zIndex(2)
+            } else if let c = container {
                 mainView(c)
+                    .transition(
+                        .asymmetric(
+                            insertion: .move(edge: .bottom).combined(with: .opacity),
+                            removal:   .opacity
+                        )
+                    )
+                    .zIndex(1)
                     .fullScreenCover(isPresented: $showLogin) {
                         LoginView(viewModel: c.auth) {
                             showLogin = false
                             Task { await c.dashboard.load() }
                         }
                     }
-                    .sheet(isPresented: $showAddTransaction) {
-                        AddTransactionView(
-                            viewModel: AddTransactionViewModel(
-                                transactionRepository: c.transactionRepository
-                            ),
-                            onSave: {
-                                Task {
-                                    await c.dashboard.load()
-                                    await c.transactions.load()
-                                }
-                            }
-                        )
-                    }
                     .onChange(of: c.dashboard.needsAuth) { _, needed in
                         if needed { showLogin = true }
                     }
             } else {
-                FC.background.ignoresSafeArea()
+                Color(h: "F5EFE0").ignoresSafeArea()
                     .onAppear { boot() }
+                    .zIndex(0)
             }
         }
-        .preferredColorScheme(.dark)
+        .animation(.fineryPage, value: showSplash)
+        .fontDesign(.rounded)
     }
 
     // MARK: Main Layout
 
     private func mainView(_ c: AppContainer) -> some View {
         ZStack(alignment: .bottom) {
-            // Page content — switch without TabView to control transitions
             Group {
                 switch selectedTab {
                 case .dashboard:
                     DashboardView(viewModel: c.dashboard)
-                        .transition(pageTransition)
+                        .transition(tabTransition(forward: true))
                 case .transactions:
                     TransactionsView(viewModel: c.transactions)
-                        .transition(pageTransition)
+                        .transition(tabTransition(forward: selectedTab.rawValue > 1))
                 case .analytics:
                     AnalyticsView(viewModel: c.analytics)
-                        .transition(pageTransition)
+                        .transition(tabTransition(forward: selectedTab.rawValue > 2))
                 case .tax:
                     TaxView(viewModel: c.tax)
-                        .transition(pageTransition)
+                        .transition(tabTransition(forward: selectedTab.rawValue > 3))
                 case .settings:
                     SettingsView(viewModel: c.settings)
-                        .transition(pageTransition)
+                        .transition(tabTransition(forward: true))
                 }
             }
-            .id(selectedTab)   // force view replacement for transition
-            .animation(.spring(response: 0.42, dampingFraction: 0.82), value: selectedTab)
+            .id(selectedTab)
+            .animation(.spring(response: 0.40, dampingFraction: 0.84), value: selectedTab)
 
-            // Floating tab bar
             FloatingTabBar(selection: $selectedTab)
                 .padding(.bottom, 20)
-                .ignoresSafeArea(edges: .bottom)
         }
         .ignoresSafeArea(edges: .bottom)
     }
 
-    private var pageTransition: AnyTransition {
+    private func tabTransition(forward: Bool) -> AnyTransition {
         .asymmetric(
-            insertion: .opacity.combined(with: .move(edge: .bottom).animation(.spring(response: 0.4, dampingFraction: 0.85))),
-            removal:   .opacity.animation(.easeIn(duration: 0.12))
+            insertion: .move(edge: forward ? .trailing : .leading).combined(with: .opacity),
+            removal:   .move(edge: forward ? .leading  : .trailing).combined(with: .opacity)
         )
     }
 
@@ -99,8 +101,6 @@ struct RootView: View {
         Task { await c.dashboard.load() }
     }
 }
-
-// MARK: - Preview
 
 #Preview {
     RootView()
