@@ -1,27 +1,28 @@
 import SwiftUI
 
-// MARK: - Colors
+// MARK: - Colors (Warm Sand palette)
 
 enum FC {
-    static let background = Color(h: "0A0E1A")
-    static let surface    = Color.white.opacity(0.08)
-    static let cobalt     = Color(h: "4A9EFF")
-    static let ink        = Color.white
-    static let muted      = Color(h: "8B9CC8")
-    static let border     = Color(h: "2A3252")
-    static let danger     = Color(h: "FF5B5B")
-    static let success    = Color(h: "34D399")
-    static let amber      = Color(h: "FBBF24")
+    static let background  = Color(h: "F5EFE0")
+    static let surface     = Color(h: "EDE4CE")
+    static let border      = Color(h: "D4C9A8")
+    static let cobalt      = Color(h: "0047AB")
+    static let cobaltDark  = Color(h: "002F7A")
+    static let ink         = Color(h: "1A1A18")
+    static let muted       = Color(h: "8B7D5A")
+    static let success     = Color(h: "1A6B3C")
+    static let danger      = Color(h: "B03A2E")
+    static let amber       = Color(h: "C17F24")
 
     static let backgroundGradient = LinearGradient(
-        colors: [Color(h: "0A0E1A"), Color(h: "1A1035")],
+        colors: [Color(h: "F5EFE0"), Color(h: "EDE4CE")],
         startPoint: .top,
         endPoint: .bottom
     )
 
-    static let cobaltGlow    = Color(h: "4A9EFF").opacity(0.45)
-    static let successGlow   = Color(h: "34D399").opacity(0.35)
-    static let dangerGlow    = Color(h: "FF5B5B").opacity(0.35)
+    static let cobaltGlow  = Color(h: "0047AB").opacity(0.22)
+    static let successGlow = Color(h: "1A6B3C").opacity(0.18)
+    static let dangerGlow  = Color(h: "B03A2E").opacity(0.18)
 }
 
 extension Color {
@@ -35,17 +36,13 @@ extension Color {
     }
 }
 
-// MARK: - Animation presets (per ui-ux-pro-max: 150-300ms micro, spring ease-out entry)
+// MARK: - Animation presets
 
 extension Animation {
-    /// 200ms snappy spring — for tab switches, button presses
-    static let fineryMicro   = Animation.spring(response: 0.28, dampingFraction: 0.7)
-    /// 350ms smooth spring — for card entrance, sheet appear
-    static let fineryCard    = Animation.spring(response: 0.48, dampingFraction: 0.82)
-    /// 550ms settled spring — for page-level transitions
-    static let fineryPage    = Animation.spring(response: 0.55, dampingFraction: 0.88)
-    /// Number roll — numeric text content transition
-    static let fineryNumber  = Animation.spring(response: 0.42, dampingFraction: 0.8)
+    static let fineryMicro  = Animation.spring(response: 0.28, dampingFraction: 0.70)
+    static let fineryCard   = Animation.spring(response: 0.50, dampingFraction: 0.82)
+    static let fineryPage   = Animation.spring(response: 0.55, dampingFraction: 0.88)
+    static let fineryNumber = Animation.spring(response: 0.42, dampingFraction: 0.80)
 }
 
 // MARK: - Number formatting
@@ -70,13 +67,13 @@ extension Decimal {
 extension View {
     func fLabel() -> some View {
         self
-            .font(.system(.caption2, design: .default, weight: .semibold))
+            .font(.system(.caption2, design: .rounded, weight: .semibold))
             .tracking(1.4)
             .textCase(.uppercase)
             .foregroundStyle(FC.muted)
     }
 
-    func glassCard(cornerRadius: CGFloat = 20) -> some View {
+    func glassCard(cornerRadius: CGFloat = 18) -> some View {
         modifier(GlassCardModifier(cornerRadius: cornerRadius))
     }
 
@@ -84,13 +81,12 @@ extension View {
         modifier(GlassCardModifier(cornerRadius: 14))
     }
 
-    /// Card with ambient glow — use for key data cards on Dashboard
-    func glassCardGlow(_ glowColor: Color = FC.cobaltGlow, cornerRadius: CGFloat = 20) -> some View {
+    func glassCardGlow(_ glowColor: Color = FC.cobaltGlow, cornerRadius: CGFloat = 18) -> some View {
         modifier(GlassCardGlowModifier(glowColor: glowColor, cornerRadius: cornerRadius))
     }
 }
 
-// MARK: - Pressable (scale 0.97 + haptic, per ui-ux-pro-max active states)
+// MARK: - Pressable
 
 struct PressableModifier: ViewModifier {
     @State private var isPressed = false
@@ -98,15 +94,15 @@ struct PressableModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .scaleEffect(isPressed ? 0.965 : 1.0)
-            .brightness(isPressed ? -0.04 : 0)
+            .scaleEffect(isPressed ? 0.97 : 1.0)
+            .brightness(isPressed ? -0.025 : 0)
             .animation(.fineryMicro, value: isPressed)
             .gesture(
                 DragGesture(minimumDistance: 0)
                     .onChanged { _ in
                         guard !isPressed else { return }
                         isPressed = true
-                        UIImpactFeedbackGenerator(style: .soft).impactOccurred()
+                        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                     }
                     .onEnded { _ in
                         isPressed = false
@@ -122,51 +118,22 @@ extension View {
     }
 }
 
-// MARK: - Glass Card (enhanced backdrop blur layering)
-
-struct GlassCard: ViewModifier {
-    func body(content: Content) -> some View {
-        content
-            .background(.ultraThinMaterial)
-            .overlay(
-                RoundedRectangle(cornerRadius: 20)
-                    .stroke(
-                        LinearGradient(
-                            colors: [.white.opacity(0.28), .white.opacity(0.06)],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ),
-                        lineWidth: 1
-                    )
-            )
-            .clipShape(RoundedRectangle(cornerRadius: 20))
-            .shadow(color: .black.opacity(0.38), radius: 18, y: 6)
-    }
-}
+// MARK: - Card modifiers (warm surface style)
 
 struct GlassCardModifier: ViewModifier {
-    var cornerRadius: CGFloat = 20
+    var cornerRadius: CGFloat = 18
 
     func body(content: Content) -> some View {
         content
-            .background(.ultraThinMaterial)
+            .background(FC.surface)
             .overlay(
                 RoundedRectangle(cornerRadius: cornerRadius)
-                    .stroke(
-                        LinearGradient(
-                            colors: [.white.opacity(0.28), .white.opacity(0.06)],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ),
-                        lineWidth: 1
-                    )
+                    .stroke(FC.border, lineWidth: 1)
             )
             .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
-            .shadow(color: .black.opacity(0.38), radius: 18, y: 6)
+            .shadow(color: Color(h: "8B7D5A").opacity(0.10), radius: 10, y: 3)
     }
 }
-
-// MARK: - Glass Card with ambient glow
 
 struct GlassCardGlowModifier: ViewModifier {
     var glowColor: Color
@@ -174,20 +141,47 @@ struct GlassCardGlowModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .background(.ultraThinMaterial)
+            .background(FC.surface)
             .overlay(
                 RoundedRectangle(cornerRadius: cornerRadius)
-                    .stroke(
-                        LinearGradient(
-                            colors: [.white.opacity(0.30), .white.opacity(0.07)],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ),
-                        lineWidth: 1
-                    )
+                    .stroke(FC.border, lineWidth: 1)
             )
             .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
-            .shadow(color: .black.opacity(0.38), radius: 18, y: 6)
-            .shadow(color: glowColor, radius: 22, y: 4)
+            .shadow(color: Color(h: "8B7D5A").opacity(0.10), radius: 10, y: 3)
+            .shadow(color: glowColor, radius: 18, y: 2)
+    }
+}
+
+// MARK: - Skeleton shimmer (warm sand gradient)
+
+struct SkeletonView: View {
+    @State private var phase: CGFloat = -1
+
+    var body: some View {
+        GeometryReader { geo in
+            LinearGradient(
+                stops: [
+                    .init(color: FC.surface,                  location: 0.0),
+                    .init(color: FC.border,                   location: 0.4),
+                    .init(color: Color(h: "C4B88A"),          location: 0.5),
+                    .init(color: FC.border,                   location: 0.6),
+                    .init(color: FC.surface,                  location: 1.0),
+                ],
+                startPoint: .init(x: phase, y: 0),
+                endPoint:   .init(x: phase + 1, y: 0)
+            )
+            .onAppear {
+                withAnimation(.linear(duration: 1.4).repeatForever(autoreverses: false)) {
+                    phase = 1
+                }
+            }
+        }
+    }
+}
+
+extension View {
+    func skeleton(active: Bool) -> some View {
+        self.overlay(active ? AnyView(SkeletonView()) : AnyView(EmptyView()))
+            .clipShape(RoundedRectangle(cornerRadius: 6))
     }
 }

@@ -10,7 +10,7 @@ struct TaxView: View {
 
     var body: some View {
         ZStack {
-            FC.backgroundGradient.ignoresSafeArea()
+            FC.background.ignoresSafeArea()
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 14) {
                     pageHeader
@@ -117,7 +117,7 @@ struct TaxView: View {
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
                     RoundedRectangle(cornerRadius: 5)
-                        .fill(Color.white.opacity(0.08))
+                        .fill(FC.border.opacity(0.6))
                         .frame(height: 8)
                     RoundedRectangle(cornerRadius: 5)
                         .fill(LinearGradient(
@@ -194,13 +194,13 @@ struct TaxView: View {
                 value: status.taxDue.rub(),
                 color: status.taxDue > 0 ? FC.danger : FC.muted
             )
-            Rectangle().fill(Color.white.opacity(0.1)).frame(width: 1)
+            Rectangle().fill(FC.border).frame(width: 1)
             deadlineCell(
                 label: "ДНЕЙ ОСТАЛОСЬ",
                 value: "\(max(0, status.daysUntilDeadline))",
                 color: status.daysUntilDeadline <= 5 ? FC.danger : FC.ink
             )
-            Rectangle().fill(Color.white.opacity(0.1)).frame(width: 1)
+            Rectangle().fill(FC.border).frame(width: 1)
             deadlineCell(
                 label: "ДЕДЛАЙН",
                 value: formattedDeadline(status.nextDeadline),
@@ -248,20 +248,20 @@ struct TaxView: View {
                     value: forecast.currentBalance.rub(),
                     color: forecast.currentBalance >= 0 ? FC.success : FC.danger
                 )
-                Rectangle().fill(Color.white.opacity(0.1)).frame(width: 1)
+                Rectangle().fill(FC.border).frame(width: 1)
                 forecastCell(
                     label: "ХВАТИТ НА",
                     value: forecast.daysUntilNegative.map { "\($0) дн." } ?? "∞",
                     color: forecastDaysColor(forecast)
                 )
-                Rectangle().fill(Color.white.opacity(0.1)).frame(width: 1)
+                Rectangle().fill(FC.border).frame(width: 1)
                 forecastCell(
                     label: "РАСХОДЫ/МЕС",
                     value: forecast.avgMonthlyExpenses.rub(),
                     color: FC.muted
                 )
             }
-            .background(Color.white.opacity(0.04))
+            .background(FC.surface)
             .clipShape(RoundedRectangle(cornerRadius: 10))
 
             // Average income trend
@@ -322,7 +322,7 @@ struct TaxView: View {
     private var yearSummaryCard: some View {
         HStack(spacing: 0) {
             yearCell(label: "ДОХОД ЗА ГОД", amount: viewModel.totalIncomeYear, color: FC.success)
-            Rectangle().fill(Color.white.opacity(0.1)).frame(width: 1)
+            Rectangle().fill(FC.border).frame(width: 1)
             yearCell(label: "НАЛОГ ЗА ГОД",  amount: viewModel.totalTaxYear,   color: FC.danger)
         }
         .glassCard()
@@ -369,7 +369,7 @@ struct TaxView: View {
                 .padding(.vertical, 6)
                 if item.id != viewModel.monthlyHistory.reversed().last?.id {
                     Rectangle()
-                        .fill(Color.white.opacity(0.07))
+                        .fill(FC.border.opacity(0.5))
                         .frame(height: 0.5)
                 }
             }

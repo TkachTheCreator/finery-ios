@@ -10,7 +10,7 @@ struct LoginView: View {
 
     var body: some View {
         ZStack {
-            FC.backgroundGradient.ignoresSafeArea()
+            FC.background.ignoresSafeArea()
 
             Circle()
                 .fill(FC.cobalt.opacity(0.10))
@@ -90,7 +90,7 @@ struct LoginView: View {
                         .padding(.vertical, 10)
                         .background(
                             viewModel.mode == m
-                            ? FC.cobalt.opacity(0.12)
+                            ? FC.cobalt.opacity(0.10)
                             : Color.clear
                         )
                         .clipShape(RoundedRectangle(cornerRadius: 10))
@@ -100,7 +100,7 @@ struct LoginView: View {
             }
         }
         .padding(4)
-        .background(Color.white.opacity(0.06))
+        .background(FC.surface)
         .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 
@@ -130,7 +130,7 @@ struct LoginView: View {
         .focused($focus, equals: field)
         .padding(.horizontal, 16)
         .padding(.vertical, 14)
-        .background(Color.white.opacity(0.06))
+        .background(FC.surface)
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .overlay(
             RoundedRectangle(cornerRadius: 12)
@@ -157,7 +157,7 @@ struct LoginView: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
-        .background(Color.white.opacity(0.06))
+        .background(FC.surface)
         .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 
@@ -179,7 +179,7 @@ struct LoginView: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
-        .background(Color.white.opacity(0.06))
+        .background(FC.surface)
         .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 

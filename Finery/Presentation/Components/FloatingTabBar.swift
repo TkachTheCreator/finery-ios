@@ -46,22 +46,12 @@ struct FloatingTabBar: View {
         .padding(.vertical, 10)
         .background {
             RoundedRectangle(cornerRadius: 26)
-                .fill(.ultraThinMaterial)
+                .fill(FC.surface)
                 .overlay(
                     RoundedRectangle(cornerRadius: 26)
-                        .stroke(
-                            LinearGradient(
-                                colors: [
-                                    .white.opacity(0.25),
-                                    .white.opacity(0.06)
-                                ],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
-                            lineWidth: 1
-                        )
+                        .stroke(FC.border, lineWidth: 1)
                 )
-                .shadow(color: .black.opacity(0.45), radius: 24, y: 8)
+                .shadow(color: Color(h: "8B7D5A").opacity(0.18), radius: 20, y: 6)
         }
         .padding(.horizontal, 20)
     }
@@ -73,31 +63,32 @@ struct FloatingTabBar: View {
         Button {
             guard selection != tab else { return }
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
-            withAnimation(.spring(response: 0.38, dampingFraction: 0.72)) {
+            withAnimation(.fineryMicro) {
                 selection = tab
             }
         } label: {
             VStack(spacing: 4) {
                 ZStack {
                     if selected {
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(FC.cobalt.opacity(0.18))
+                        RoundedRectangle(cornerRadius: 11)
+                            .fill(FC.cobalt.opacity(0.12))
                             .frame(width: 44, height: 30)
                             .overlay(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .stroke(FC.cobalt.opacity(0.35), lineWidth: 1)
+                                RoundedRectangle(cornerRadius: 11)
+                                    .stroke(FC.cobalt.opacity(0.25), lineWidth: 1)
                             )
                             .matchedGeometryEffect(id: "indicator", in: indicator)
                     }
                     Image(systemName: selected ? tab.icon + ".fill" : tab.icon)
-                        .font(.system(size: 16, weight: selected ? .semibold : .regular))
+                        .font(.system(size: 15, weight: selected ? .semibold : .regular))
                         .foregroundStyle(selected ? FC.cobalt : FC.muted)
-                        .scaleEffect(selected ? 1.1 : 1.0)
+                        .scaleEffect(selected ? 1.08 : 1.0)
+                        .animation(.fineryMicro, value: selected)
                         .frame(width: 44, height: 30)
                 }
 
                 Text(tab.label)
-                    .font(.system(size: 9.5, weight: selected ? .semibold : .regular))
+                    .font(.system(size: 9.5, weight: selected ? .semibold : .regular, design: .rounded))
                     .foregroundStyle(selected ? FC.cobalt : FC.muted)
                     .lineLimit(1)
             }
@@ -108,13 +99,13 @@ struct FloatingTabBar: View {
     }
 }
 
-// MARK: - Press style (no default highlight)
+// MARK: - Button press style
 
 private struct TabButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .scaleEffect(configuration.isPressed ? 0.88 : 1.0)
-            .animation(.spring(response: 0.25, dampingFraction: 0.65), value: configuration.isPressed)
+            .animation(.fineryMicro, value: configuration.isPressed)
     }
 }
 

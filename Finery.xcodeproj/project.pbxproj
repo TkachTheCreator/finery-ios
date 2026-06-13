@@ -54,6 +54,7 @@
 		D01F67461C845B0820DAB27D /* Pow in Frameworks */ = {isa = PBXBuildFile; productRef = CA9FE20FDDBC787F3252883A /* Pow */; };
 		D1E17F9EB7662E4DDC587927 /* TransactionEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBFB152A8697C84E2E8ECF71 /* TransactionEntity.swift */; };
 		D5B323A2400D0070F2213C0D /* Transaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF7D02C675F33D63441B89E /* Transaction.swift */; };
+		D7182FC815B11F3DD24A2F60 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA49D022D88246DAE9865205 /* SplashView.swift */; };
 		D94CCCD1E9570EDA6DF9A8C7 /* TransactionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E139A4F9AFC176D183F3632 /* TransactionsView.swift */; };
 		E9DEF104FE00898537267D34 /* TaxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3B3F7DAC41282629E2C6B2 /* TaxView.swift */; };
 		EF17431F6C6E5E98DAFC0E60 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDCE5CF5E48714BC763B1ED2 /* User.swift */; };
@@ -101,6 +102,7 @@
 		A808E46673806C37D5BF707B /* UserRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRepository.swift; sourceTree = "<group>"; };
 		B73BE6B840255FE525903F14 /* AnalyticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsView.swift; sourceTree = "<group>"; };
 		B84589DEF693D5737501347D /* ClassifyTransactionUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassifyTransactionUseCase.swift; sourceTree = "<group>"; };
+		BA49D022D88246DAE9865205 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		BEA0EF0BBE34BD802AD3109C /* ClientType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientType.swift; sourceTree = "<group>"; };
 		C21FF8736E7CAAF54FB5048F /* TransactionDirection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionDirection.swift; sourceTree = "<group>"; };
 		C9712285D88F65D5F9E23430 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -217,6 +219,14 @@
 				400E887DDE95D38E6E31F0E5 /* LottieSuccessView.swift */,
 			);
 			path = Components;
+			sourceTree = "<group>";
+		};
+		2DA45C7BDF7A606D770AC4EA /* Splash */ = {
+			isa = PBXGroup;
+			children = (
+				BA49D022D88246DAE9865205 /* SplashView.swift */,
+			);
+			path = Splash;
 			sourceTree = "<group>";
 		};
 		3632FBF2174281E277BFAAA6 /* AddTransaction */ = {
@@ -396,6 +406,7 @@
 				423693FC4B12046F813FCF0B /* Onboarding */,
 				94B62CA32A9D5BD6E537FE64 /* Root */,
 				CCAD105335DAB0871FD914D5 /* Settings */,
+				2DA45C7BDF7A606D770AC4EA /* Splash */,
 				64C33EB15D5B8909E5AF5A98 /* Tax */,
 				B2141B802F1F152E5239883B /* Theme */,
 				6FC703283BBCC44E7764C8A1 /* Transactions */,
@@ -525,6 +536,7 @@
 				8F9F6A6C899C207AED931882 /* RootView.swift in Sources */,
 				615CA91F82633A7A2C1F40E1 /* SettingsView.swift in Sources */,
 				6DF61355766320364D5B7694 /* SettingsViewModel.swift in Sources */,
+				D7182FC815B11F3DD24A2F60 /* SplashView.swift in Sources */,
 				42F92C1337CD08F72B200AF2 /* TaxCalculatorService.swift in Sources */,
 				99749BD373E8E06A3CC8378B /* TaxMode.swift in Sources */,
 				5DDB9EEE1ED1D2F26BE47D49 /* TaxStatus.swift in Sources */,
