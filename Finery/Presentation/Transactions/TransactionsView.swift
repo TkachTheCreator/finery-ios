@@ -245,7 +245,7 @@ struct TransactionsView: View {
 
     private var addButton: some View {
         Button {
-            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+            HapticManager.impact()
             showAdd = true
         } label: {
             Image(systemName: "plus")

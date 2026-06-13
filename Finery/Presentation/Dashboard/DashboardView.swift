@@ -307,7 +307,7 @@ struct DashboardView: View {
 
     private var addButton: some View {
         Button {
-            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+            HapticManager.impact()
             showAdd = true
         } label: {
             HStack(spacing: 8) {
@@ -394,11 +394,11 @@ struct DashboardView: View {
 private extension View {
     func staggered(appeared: Bool, index: Int) -> some View {
         self
-            .offset(y: appeared ? 0 : 40)
+            .offset(y: appeared ? 0 : 24)
             .opacity(appeared ? 1 : 0)
             .animation(
-                .spring(response: 0.5, dampingFraction: 0.8)
-                .delay(Double(index) * 0.10),
+                .spring(response: 0.5, dampingFraction: 0.82)
+                .delay(Double(index) * 0.10 + 0.05),
                 value: appeared
             )
     }
