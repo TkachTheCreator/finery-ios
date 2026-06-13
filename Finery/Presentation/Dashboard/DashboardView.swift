@@ -9,7 +9,7 @@ private struct ScrollOffsetKey: PreferenceKey {
 
 struct DashboardView: View {
     @State var viewModel: DashboardViewModel
-    @State private var cardAppeared   = false
+    @State private var appeared        = false
     @State private var progressShown  = false
     @State private var scrollOffset:  CGFloat = 0
     @State private var initialOffset: CGFloat?
@@ -51,8 +51,10 @@ struct DashboardView: View {
             .transition(.move(edge: .bottom).combined(with: .opacity))
         }
         .onAppear {
-            guard !cardAppeared else { return }
-            withAnimation(.fineryCard.delay(0.05)) { cardAppeared = true }
+            guard !appeared else { return }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) { appeared = true }
+            }
             withAnimation(.easeOut(duration: 1.2).delay(0.5)) { progressShown = true }
         }
         .onPreferenceChange(ScrollOffsetKey.self) { value in
@@ -82,9 +84,9 @@ struct DashboardView: View {
         .padding(.horizontal, 4)
         .padding(.top, 20)
         .padding(.bottom, 4)
-        .offset(y: cardAppeared ? 0 : -16)
-        .opacity(cardAppeared ? 1 : 0)
-        .animation(.fineryCard, value: cardAppeared)
+        .offset(y: appeared ? 0 : -16)
+        .opacity(appeared ? 1 : 0)
+        .animation(.fineryCard, value: appeared)
     }
 
     // MARK: - Staggered Card Stack
@@ -92,20 +94,28 @@ struct DashboardView: View {
     @ViewBuilder
     private var cardStack: some View {
         incomeHeroCard
-            .staggered(appeared: cardAppeared, index: 0)
+            .offset(y: appeared ? 0 : 32)
+            .opacity(appeared ? 1 : 0)
+            .animation(.spring(response: 0.55, dampingFraction: 0.8).delay(0.05), value: appeared)
             .pressable()
 
         taxCard
-            .staggered(appeared: cardAppeared, index: 1)
+            .offset(y: appeared ? 0 : 32)
+            .opacity(appeared ? 1 : 0)
+            .animation(.spring(response: 0.55, dampingFraction: 0.8).delay(0.15), value: appeared)
             .pressable()
 
         topSourcesCard
-            .staggered(appeared: cardAppeared, index: 2)
+            .offset(y: appeared ? 0 : 32)
+            .opacity(appeared ? 1 : 0)
+            .animation(.spring(response: 0.55, dampingFraction: 0.8).delay(0.25), value: appeared)
             .pressable()
 
         if !viewModel.insights.isEmpty {
             insightsCard
-                .staggered(appeared: cardAppeared, index: 3)
+                .offset(y: appeared ? 0 : 32)
+                .opacity(appeared ? 1 : 0)
+                .animation(.spring(response: 0.55, dampingFraction: 0.8).delay(0.35), value: appeared)
                 .pressable()
         }
     }
@@ -386,21 +396,6 @@ struct DashboardView: View {
         fmt.dateFormat = format
         fmt.locale = Locale(identifier: "ru_RU")
         return fmt.string(from: date).capitalized
-    }
-}
-
-// MARK: - Staggered appearance modifier
-
-private extension View {
-    func staggered(appeared: Bool, index: Int) -> some View {
-        self
-            .offset(y: appeared ? 0 : 24)
-            .opacity(appeared ? 1 : 0)
-            .animation(
-                .spring(response: 0.5, dampingFraction: 0.82)
-                .delay(Double(index) * 0.10 + 0.05),
-                value: appeared
-            )
     }
 }
 
