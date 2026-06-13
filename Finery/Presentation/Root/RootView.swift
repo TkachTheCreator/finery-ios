@@ -61,16 +61,27 @@ struct RootView: View {
             }
         )
         return ZStack(alignment: .bottom) {
-            Group {
-                switch selectedTab {
-                case .dashboard:    DashboardView(viewModel: c.dashboard)
-                case .transactions: TransactionsView(viewModel: c.transactions)
-                case .analytics:    AnalyticsView(viewModel: c.analytics)
-                case .tax:          TaxView(viewModel: c.tax)
-                case .settings:     SettingsView(viewModel: c.settings)
-                }
-            }
-            .id(selectedTab)
+            FC.background.ignoresSafeArea()
+
+            DashboardView(viewModel: c.dashboard)
+                .opacity(selectedTab == .dashboard ? 1 : 0)
+                .allowsHitTesting(selectedTab == .dashboard)
+
+            TransactionsView(viewModel: c.transactions)
+                .opacity(selectedTab == .transactions ? 1 : 0)
+                .allowsHitTesting(selectedTab == .transactions)
+
+            AnalyticsView(viewModel: c.analytics)
+                .opacity(selectedTab == .analytics ? 1 : 0)
+                .allowsHitTesting(selectedTab == .analytics)
+
+            TaxView(viewModel: c.tax)
+                .opacity(selectedTab == .tax ? 1 : 0)
+                .allowsHitTesting(selectedTab == .tax)
+
+            SettingsView(viewModel: c.settings)
+                .opacity(selectedTab == .settings ? 1 : 0)
+                .allowsHitTesting(selectedTab == .settings)
 
             FloatingTabBar(selection: tabBinding)
                 .padding(.bottom, 20)
