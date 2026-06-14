@@ -103,21 +103,15 @@ final class DashboardViewModel {
 
     private func topIncomeSources(from transactions: [Transaction]) -> [IncomeSource] {
         let income = transactions.filter { $0.direction == .income }
-        var bySource: [String: Decimal] = [:]
+        var byCategory: [IncomeCategory: Decimal] = [:]
         for t in income {
-            bySource[t.source.displayName, default: 0] += t.amount
+            let cat = t.incomeCategory ?? .other
+            byCategory[cat, default: 0] += t.amount
         }
-        let iconMap: [String: String] = [
-            "Boosty":          "star",
-            "DonationAlerts":  "heart",
-            "Банк":            "building.columns",
-            "Вручную":         "pencil",
-            "Голос":           "mic"
-        ]
-        return bySource
-            .map { name, amount in
-                IncomeSource(name: name,
-                             icon: iconMap[name] ?? "ellipsis.circle",
+        return byCategory
+            .map { category, amount in
+                IncomeSource(name: category.displayName,
+                             icon: category.iconName,
                              amount: amount)
             }
             .sorted { $0.amount > $1.amount }
