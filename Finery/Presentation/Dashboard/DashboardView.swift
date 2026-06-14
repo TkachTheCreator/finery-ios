@@ -97,27 +97,27 @@ struct DashboardView: View {
 
     @ViewBuilder
     private var cardStack: some View {
-        Button { } label: { incomeHeroCard }
-            .buttonStyle(ScaleButtonStyle())
+        incomeHeroCard
+            .fineryTap()
             .offset(y: appeared ? 0 : 40)
             .opacity(appeared ? 1 : 0)
             .animation(.spring(response: 0.55, dampingFraction: 0.8).delay(0.05), value: appeared)
 
-        Button { } label: { taxCard }
-            .buttonStyle(ScaleButtonStyle())
+        taxCard
+            .fineryTap()
             .offset(y: appeared ? 0 : 40)
             .opacity(appeared ? 1 : 0)
             .animation(.spring(response: 0.55, dampingFraction: 0.8).delay(0.15), value: appeared)
 
-        Button { } label: { topSourcesCard }
-            .buttonStyle(ScaleButtonStyle())
+        topSourcesCard
+            .fineryTap()
             .offset(y: appeared ? 0 : 40)
             .opacity(appeared ? 1 : 0)
             .animation(.spring(response: 0.55, dampingFraction: 0.8).delay(0.25), value: appeared)
 
         if !viewModel.insights.isEmpty {
-            Button { } label: { insightsCard }
-                .buttonStyle(ScaleButtonStyle())
+            insightsCard
+                .fineryTap()
                 .offset(y: appeared ? 0 : 40)
                 .opacity(appeared ? 1 : 0)
                 .animation(.spring(response: 0.55, dampingFraction: 0.8).delay(0.35), value: appeared)

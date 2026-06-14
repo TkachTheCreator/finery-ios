@@ -227,3 +227,40 @@ struct ScaleButtonStyle: ButtonStyle {
             .animation(.spring(duration: 0.2), value: configuration.isPressed)
     }
 }
+
+// MARK: - Finery Tap (cobalt ripple + action)
+
+private struct FineryTapModifier: ViewModifier {
+    let action: () -> Void
+    @State private var rippleScale:   CGFloat = 0.01
+    @State private var rippleOpacity: Double  = 0
+
+    func body(content: Content) -> some View {
+        content
+            .overlay(
+                Circle()
+                    .fill(FC.cobalt.opacity(0.18))
+                    .scaleEffect(rippleScale)
+                    .opacity(rippleOpacity)
+                    .allowsHitTesting(false)
+            )
+            .contentShape(Rectangle())
+            .onTapGesture {
+                rippleScale   = 0.01
+                rippleOpacity = 0.32
+                withAnimation(.easeOut(duration: 0.38)) {
+                    rippleScale   = 3.5
+                    rippleOpacity = 0
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) {
+                    action()
+                }
+            }
+    }
+}
+
+extension View {
+    func fineryTap(action: @escaping () -> Void = {}) -> some View {
+        modifier(FineryTapModifier(action: action))
+    }
+}
