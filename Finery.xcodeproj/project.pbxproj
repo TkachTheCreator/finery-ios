@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		047DC8F0070E27C21E7E3C3D /* success.json in Resources */ = {isa = PBXBuildFile; fileRef = DCE055888C0EC773FBED99DC /* success.json */; };
+		AA1B2C3D4E5F678901BCDEF2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA1B2C3D4E5F678901ABCDEF /* Assets.xcassets */; };
 		0599F653DBC5B9EF669DE4E7 /* UserLocalRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F747A35F6E89CF3EFE0629 /* UserLocalRepository.swift */; };
 		082F44E6A0528399DC16BE5F /* ExpenseCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9286A23592206481E6E093FA /* ExpenseCategory.swift */; };
 		0A6150E3A8C6C066DC006C52 /* GetPnLUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 974BD75AB3FE1C6176DB1293 /* GetPnLUseCase.swift */; };
@@ -129,6 +130,7 @@
 		D63DC38B29DA04BE54BB2733 /* FineryTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FineryTheme.swift; sourceTree = "<group>"; };
 		D6594DF992676C1A5BDA9E7F /* IncomeCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IncomeCategory.swift; sourceTree = "<group>"; };
 		D6F747A35F6E89CF3EFE0629 /* UserLocalRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLocalRepository.swift; sourceTree = "<group>"; };
+		AA1B2C3D4E5F678901ABCDEF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		DCE055888C0EC773FBED99DC /* success.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = success.json; sourceTree = "<group>"; };
 		DFD3FEDDD06A99D9BC586E2C /* DashboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewModel.swift; sourceTree = "<group>"; };
 		E262ACD8872F105202BFDD43 /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
@@ -404,6 +406,7 @@
 		C1118DE2B272EBCC96E524CD /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				AA1B2C3D4E5F678901ABCDEF /* Assets.xcassets */,
 				DCE055888C0EC773FBED99DC /* success.json */,
 			);
 			path = Resources;
@@ -542,6 +545,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AA1B2C3D4E5F678901BCDEF2 /* Assets.xcassets in Resources */,
 				047DC8F0070E27C21E7E3C3D /* success.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
