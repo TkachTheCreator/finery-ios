@@ -34,6 +34,13 @@ final class TaxViewModel {
             taxStatus     = s
             monthlyHistory = h
             cashFlowForecast = await computeForecast(history: h, referenceDate: referenceDate)
+
+            NotificationService.shared.scheduleTaxReminder(
+                deadline: s.nextDeadline, amount: s.taxDue, daysBefore: 5)
+            if s.isNearLimit {
+                NotificationService.shared.scheduleNpdLimitWarning(
+                    usedPercent: s.limitUsedPercent)
+            }
         } catch {}
     }
 

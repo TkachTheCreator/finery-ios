@@ -1,155 +1,133 @@
 import SwiftUI
 
 struct SplashView: View {
-    @State private var iconScale:    CGFloat = 0.3
-    @State private var iconOpacity:  Double  = 0
-    @State private var waveScale:    CGFloat = 0.01
-    @State private var waveOpacity:  Double  = 0
-    @State private var dotScale:     CGFloat = 0
-    @State private var titleOffset:  CGFloat = 16
-    @State private var titleOpacity: Double  = 0
-    @State private var tagOffset:    CGFloat = 16
-    @State private var tagOpacity:   Double  = 0
-    @State private var screenOpacity: Double = 1
-
+    @State private var scale:         CGFloat = 0.3
+    @State private var opacity:       Double  = 0
+    @State private var waveScale:     CGFloat = 0
+    @State private var dotScale:      CGFloat = 0
+    @State private var chartProgress: CGFloat = 0
+    @State private var textOpacity:   Double  = 0
+    @State private var exit:          Bool    = false
     var onFinish: () -> Void
 
     var body: some View {
         ZStack {
             FC.background.ignoresSafeArea()
 
-            // Zoom wave behind icon
-            Circle()
-                .fill(Color(h: "002F7A"))
-                .frame(width: 110, height: 110)
-                .scaleEffect(waveScale)
-                .opacity(waveOpacity)
-                .allowsHitTesting(false)
-
             VStack(spacing: 20) {
-                // Logo icon
                 ZStack(alignment: .bottomTrailing) {
                     RoundedRectangle(cornerRadius: 26)
                         .fill(FC.cobalt)
                         .frame(width: 100, height: 100)
-                        .shadow(color: FC.cobalt.opacity(0.28), radius: 24, x: 0, y: 8)
+                        .shadow(color: FC.cobalt.opacity(0.3), radius: 24, x: 0, y: 8)
+                        .overlay(
+                            Circle()
+                                .fill(FC.cobaltDark)
+                                .scaleEffect(waveScale)
+                                .opacity(waveScale > 0 ? max(0, 1 - waveScale / 2) : 0)
+                                .frame(width: 100, height: 100)
+                                .clipShape(RoundedRectangle(cornerRadius: 26))
+                        )
 
-                    // F + chart drawn via Canvas (R4)
                     Canvas { ctx, size in
                         let w = size.width
                         let h = size.height
 
                         // Vertical bar of F
-                        let vertical = Path(roundedRect: CGRect(
-                            x: w*0.19, y: h*0.17, width: w*0.11, height: h*0.66
-                        ), cornerRadius: w*0.055)
-                        ctx.fill(vertical, with: .color(.white))
+                        ctx.fill(
+                            Path(roundedRect: CGRect(x: w*0.19, y: h*0.17, width: w*0.11, height: h*0.66),
+                                 cornerRadius: w*0.055),
+                            with: .color(.white))
 
                         // Top horizontal bar
-                        let topBar = Path(roundedRect: CGRect(
-                            x: w*0.19, y: h*0.17, width: w*0.50, height: h*0.11
-                        ), cornerRadius: w*0.055)
-                        ctx.fill(topBar, with: .color(.white))
+                        ctx.fill(
+                            Path(roundedRect: CGRect(x: w*0.19, y: h*0.17, width: w*0.50, height: h*0.11),
+                                 cornerRadius: w*0.055),
+                            with: .color(.white))
 
                         // Mid horizontal bar
-                        let midBar = Path(roundedRect: CGRect(
-                            x: w*0.19, y: h*0.42, width: w*0.34, height: h*0.10
-                        ), cornerRadius: w*0.048)
-                        ctx.fill(midBar, with: .color(.white))
+                        ctx.fill(
+                            Path(roundedRect: CGRect(x: w*0.19, y: h*0.42, width: w*0.34, height: h*0.10),
+                                 cornerRadius: w*0.048),
+                            with: .color(.white))
 
-                        // Growth chart line (lime)
-                        var chart = Path()
-                        chart.move(to:    CGPoint(x: w*0.36, y: h*0.74))
-                        chart.addLine(to: CGPoint(x: w*0.47, y: h*0.58))
-                        chart.addLine(to: CGPoint(x: w*0.59, y: h*0.65))
-                        chart.addLine(to: CGPoint(x: w*0.70, y: h*0.44))
-                        chart.addLine(to: CGPoint(x: w*0.80, y: h*0.48))
-                        ctx.stroke(chart, with: .color(Color(h: "C8FF00")),
-                                   style: StrokeStyle(lineWidth: w*0.028, lineCap: .round, lineJoin: .round))
-
-                        // Endpoint dot
-                        let endDot = Path(ellipseIn: CGRect(
-                            x: w*0.76, y: h*0.40, width: w*0.08, height: w*0.08
-                        ))
-                        ctx.fill(endDot, with: .color(Color(h: "C8FF00")))
+                        // Growth chart (draws progressively via chartProgress)
+                        let points: [CGPoint] = [
+                            CGPoint(x: w*0.33, y: h*0.74),
+                            CGPoint(x: w*0.44, y: h*0.58),
+                            CGPoint(x: w*0.56, y: h*0.65),
+                            CGPoint(x: w*0.68, y: h*0.44),
+                            CGPoint(x: w*0.78, y: h*0.48)
+                        ]
+                        let count = points.count
+                        let progressCount = Int(CGFloat(count - 1) * chartProgress)
+                        if progressCount > 0 {
+                            var chart = Path()
+                            chart.move(to: points[0])
+                            for i in 1...min(progressCount, count - 1) {
+                                chart.addLine(to: points[i])
+                            }
+                            ctx.stroke(chart,
+                                       with: .color(Color(h: "C8FF00")),
+                                       style: StrokeStyle(lineWidth: w*0.028, lineCap: .round, lineJoin: .round))
+                        }
                     }
                     .frame(width: 100, height: 100)
 
-                    // Corner lime badge
+                    // Lime badge dot
                     Circle()
                         .fill(Color(h: "C8FF00"))
                         .frame(width: 14, height: 14)
-                        .shadow(color: Color(h: "C8FF00").opacity(0.6), radius: 6)
+                        .shadow(color: Color(h: "C8FF00").opacity(0.6), radius: 8)
                         .scaleEffect(dotScale)
                         .offset(x: 5, y: 5)
                 }
-                .scaleEffect(iconScale)
-                .opacity(iconOpacity)
+                .scaleEffect(scale)
+                .opacity(opacity)
 
-                // Text block
-                VStack(spacing: 5) {
+                VStack(spacing: 6) {
                     Text("Finery")
                         .font(.system(size: 34, weight: .bold, design: .rounded))
                         .foregroundStyle(FC.ink)
-                        .tracking(2)
-                        .offset(y: titleOffset)
-                        .opacity(titleOpacity)
-
+                        .tracking(3)
                     Text("Все твои деньги. Один экран.")
-                        .font(.system(size: 13, weight: .medium, design: .rounded))
+                        .font(.system(size: 12, weight: .medium, design: .rounded))
                         .foregroundStyle(FC.muted)
                         .tracking(1)
-                        .offset(y: tagOffset)
-                        .opacity(tagOpacity)
                 }
+                .opacity(textOpacity)
             }
         }
-        .opacity(screenOpacity)
-        .onAppear { runSequence() }
+        .scaleEffect(exit ? 1.08 : 1.0)
+        .opacity(exit ? 0 : 1.0)
+        .onAppear { animate() }
     }
 
-    private func runSequence() {
-        // 1. Icon springs in (0.0s)
+    private func animate() {
+        // 1. Logo springs in
         withAnimation(.spring(response: 0.55, dampingFraction: 0.65)) {
-            iconScale   = 1.0
-            iconOpacity = 1.0
+            scale = 1.0; opacity = 1.0
         }
-
-        // 2. Zoom wave expands from center (0.45s)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.45) {
-            waveScale   = 0.01
-            waveOpacity = 0.28
-            withAnimation(.easeOut(duration: 0.65)) {
-                waveScale   = 14
-                waveOpacity = 0
-            }
+        // 2. Zoom wave inside icon
+        withAnimation(.easeOut(duration: 0.5).delay(0.4)) {
+            waveScale = 2.0
         }
-
-        // 5. "Finery" title fadeUp (0.5s)
-        withAnimation(.easeOut(duration: 0.38).delay(0.5)) {
-            titleOffset  = 0
-            titleOpacity = 1.0
+        // 3. Chart line draws
+        withAnimation(.easeInOut(duration: 0.5).delay(0.45)) {
+            chartProgress = 1.0
         }
-
-        // 4. Slogan fadeUp (0.65s)
-        withAnimation(.easeOut(duration: 0.38).delay(0.65)) {
-            tagOffset  = 0
-            tagOpacity = 1.0
-        }
-
-        // 3. Lime badge bounces (0.82s)
-        withAnimation(.spring(response: 0.38, dampingFraction: 0.45).delay(0.82)) {
+        // 4. Lime dot bounces in
+        withAnimation(.spring(response: 0.4, dampingFraction: 0.45).delay(0.85)) {
             dotScale = 1.0
         }
-
-        // 6. Whole screen fades out (2.4s)
+        // 5. Tagline fades up
+        withAnimation(.easeOut(duration: 0.35).delay(0.6)) {
+            textOpacity = 1.0
+        }
+        // 6. Exit
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.4) {
-            withAnimation(.easeIn(duration: 0.35)) {
-                screenOpacity = 0
-            }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
-                onFinish()
-            }
+            withAnimation(.easeIn(duration: 0.35)) { exit = true }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) { onFinish() }
         }
     }
 }
