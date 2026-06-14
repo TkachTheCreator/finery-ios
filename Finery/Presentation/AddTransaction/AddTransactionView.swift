@@ -8,7 +8,9 @@ struct AddTransactionView: View {
 
     @Environment(\.dismiss) private var dismiss
     @FocusState private var amountFocused: Bool
-    @State private var showSuccess = false
+    @State private var showOverlay: OverlayState = .none
+
+    private enum OverlayState { case none, loading, success }
 
     init(viewModel: AddTransactionViewModel, onSave: (() -> Void)? = nil) {
         _viewModel = State(wrappedValue: viewModel)
@@ -36,18 +38,31 @@ struct AddTransactionView: View {
             }
         }
         .onAppear { amountFocused = true }
+        .onChange(of: viewModel.isSaving) { _, saving in
+            if saving { withAnimation { showOverlay = .loading } }
+        }
         .onChange(of: viewModel.didSave) { _, saved in
             if saved {
                 onSave?()
-                showSuccess = true
+                withAnimation { showOverlay = .success }
             }
         }
-        .fullScreenCover(isPresented: $showSuccess) {
-            FinerySuccessView {
-                showSuccess = false
-                dismiss()
+        .overlay {
+            switch showOverlay {
+            case .loading:
+                FineryLoadingOverlay(message: "Сохраняем транзакцию...")
+                    .transition(.opacity.combined(with: .scale(scale: 0.96)))
+            case .success:
+                FinerySuccessOverlay(message: "Готово!") {
+                    showOverlay = .none
+                    dismiss()
+                }
+                .transition(.opacity.combined(with: .scale(scale: 0.96)))
+            case .none:
+                EmptyView()
             }
         }
+        .animation(.spring(response: 0.38, dampingFraction: 0.8), value: showOverlay == .none)
     }
 
     // MARK: Header
@@ -283,66 +298,6 @@ struct AddTransactionView: View {
 
     private var hairline: some View {
         Rectangle().fill(FC.border).frame(height: 0.5)
-    }
-}
-
-// MARK: - Branded Success Screen
-
-struct FinerySuccessView: View {
-    @State private var scale: CGFloat = 0.3
-    @State private var opacity: Double = 0
-    @State private var logoRotation: Double = -30
-    var onDismiss: () -> Void
-
-    var body: some View {
-        ZStack {
-            FC.background.ignoresSafeArea()
-            VStack(spacing: 24) {
-                ZStack(alignment: .bottomTrailing) {
-                    RoundedRectangle(cornerRadius: 26)
-                        .fill(FC.cobalt)
-                        .frame(width: 80, height: 80)
-                    Text("F")
-                        .font(.system(size: 46, weight: .bold, design: .rounded))
-                        .foregroundStyle(.white)
-                        .frame(width: 80, height: 80)
-                    Circle()
-                        .fill(Color(h: "C8FF00"))
-                        .frame(width: 14, height: 14)
-                        .offset(x: 4, y: 4)
-                }
-                .rotationEffect(.degrees(logoRotation))
-                .scaleEffect(scale)
-                .opacity(opacity)
-
-                VStack(spacing: 8) {
-                    Text("Сохранено")
-                        .font(.system(size: 24, weight: .bold, design: .rounded))
-                        .foregroundStyle(FC.ink)
-                    Text("Транзакция добавлена")
-                        .font(.system(size: 14, weight: .medium, design: .rounded))
-                        .foregroundStyle(FC.muted)
-                }
-                .opacity(opacity)
-            }
-        }
-        .onAppear {
-            withAnimation(.spring(response: 0.5, dampingFraction: 0.65)) {
-                scale = 1.0
-                opacity = 1.0
-                logoRotation = 0
-            }
-            HapticManager.success()
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                withAnimation(.easeIn(duration: 0.25)) {
-                    opacity = 0
-                    scale = 1.1
-                }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
-                    onDismiss()
-                }
-            }
-        }
     }
 }
 

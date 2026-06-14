@@ -42,7 +42,7 @@ struct InsightRow: View {
         switch insight.severity {
         case .info:     FC.cobalt
         case .warning:  FC.amber
-        case .critical: FC.danger
+        case .critical: FC.amber
         }
     }
 

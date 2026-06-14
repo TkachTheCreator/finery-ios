@@ -28,6 +28,16 @@ struct DashboardView: View {
 
             addButton
         }
+        .overlay {
+            if viewModel.isLoading && !appeared {
+                ZStack {
+                    FC.background.opacity(0.6).ignoresSafeArea()
+                    FineryCoinLoader()
+                }
+                .transition(.opacity)
+            }
+        }
+        .animation(.easeOut(duration: 0.3), value: viewModel.isLoading)
         .task {
             appeared = false
             barProgress = 0

@@ -31,7 +31,7 @@ struct AnalyticsView: View {
                         breakdownSection(
                             title: "СТРУКТУРА РАСХОДОВ",
                             rows: viewModel.expenseBreakdown.map { ($0.category.displayName, $0.category.iconName, $0.amount, $0.percent) },
-                            accentColor: FC.danger
+                            accentColor: FC.muted
                         )
                     }
                     Color.clear.frame(height: 40)
@@ -97,7 +97,7 @@ struct AnalyticsView: View {
             comparisonCard(
                 label: "ЭТОТ МЕСЯЦ",
                 amount: viewModel.currentMonthIncome,
-                color: FC.success
+                color: FC.cobalt
             )
             Rectangle().fill(FC.border).frame(width: 0.5)
             comparisonCard(
@@ -135,7 +135,7 @@ struct AnalyticsView: View {
                     .font(.system(.subheadline, design: .default, weight: .semibold))
                     .monospacedDigit()
             }
-            .foregroundStyle(viewModel.incomeChange >= 0 ? FC.success : FC.danger)
+            .foregroundStyle(viewModel.incomeChange >= 0 ? FC.cobalt : FC.muted)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 16)
@@ -170,7 +170,7 @@ struct AnalyticsView: View {
                         x: .value("Месяц", item.monthLabel),
                         y: .value("Расходы", -NSDecimalNumber(decimal: item.expenses).doubleValue)
                     )
-                    .foregroundStyle(FC.danger.opacity(0.6))
+                    .foregroundStyle(FC.muted.opacity(0.55))
                     .cornerRadius(0)
                 }
                 .chartYAxis {
@@ -198,7 +198,7 @@ struct AnalyticsView: View {
                 // Legend
                 HStack(spacing: 16) {
                     legendItem(color: FC.cobalt, label: "Доходы")
-                    legendItem(color: FC.danger.opacity(0.6), label: "Расходы")
+                    legendItem(color: FC.muted.opacity(0.55), label: "Расходы")
                 }
             }
         }
