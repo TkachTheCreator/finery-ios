@@ -187,7 +187,17 @@ struct DashboardView: View {
 
     // MARK: - Tax Card
 
+    @ViewBuilder
     private var taxCard: some View {
+        if viewModel.taxStatus?.showNpdLimit == true || viewModel.taxStatus == nil {
+            npdLimitCard
+        } else if let status = viewModel.taxStatus {
+            usnQuarterlyCard(status)
+        }
+    }
+
+    // НПД: limit progress bar
+    private var npdLimitCard: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Text("ЛИМИТ НПД").fLabel()
@@ -202,15 +212,10 @@ struct DashboardView: View {
 
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
+                    RoundedRectangle(cornerRadius: 4).fill(FC.border).frame(height: 5)
                     RoundedRectangle(cornerRadius: 4)
-                        .fill(FC.border)
-                        .frame(height: 5)
-                    RoundedRectangle(cornerRadius: 4)
-                        .fill(LinearGradient(
-                            colors: [FC.cobalt, trafficColor],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        ))
+                        .fill(LinearGradient(colors: [FC.cobalt, trafficColor],
+                                             startPoint: .leading, endPoint: .trailing))
                         .frame(width: geo.size.width * barProgress, height: 5)
                         .animation(.spring(response: 1.2, dampingFraction: 0.8), value: barProgress)
                 }
@@ -223,7 +228,7 @@ struct DashboardView: View {
                     .foregroundStyle(FC.muted)
             }
 
-            deadlineRow
+            npdDeadlineRow
         }
         .padding(20)
         .background(FC.surface)
@@ -231,12 +236,51 @@ struct DashboardView: View {
         .overlay(RoundedRectangle(cornerRadius: 16).stroke(FC.border, lineWidth: 0.5))
     }
 
-    private var deadlineRow: some View {
+    // УСН: quarterly tax card
+    private func usnQuarterlyCard(_ status: TaxStatus) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Text("НАЛОГ ЗА КВАРТАЛ").fLabel()
+                Spacer()
+                Text(status.effectiveRate)
+                    .font(.system(.caption, design: .rounded, weight: .semibold))
+                    .foregroundStyle(FC.cobalt)
+            }
+
+            HStack {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("К УПЛАТЕ").fLabel()
+                    Text(status.taxDue.rub())
+                        .font(.system(.title3, design: .rounded, weight: .bold))
+                        .monospacedDigit()
+                        .foregroundStyle(FC.cobalt)
+                }
+                Spacer()
+                VStack(alignment: .trailing, spacing: 2) {
+                    Text("ДЕДЛАЙН").fLabel()
+                    Text(formattedDeadline(status.nextDeadline))
+                        .font(.system(.subheadline, design: .rounded, weight: .semibold))
+                        .foregroundStyle(status.daysUntilDeadline <= 7 ? FC.danger : FC.ink)
+                }
+            }
+
+            HStack(spacing: 6) {
+                Image(systemName: "calendar").fontWeight(.light).imageScale(.medium).foregroundStyle(FC.muted)
+                Text("Авансовый платёж раз в квартал")
+                    .font(.system(.caption, design: .rounded, weight: .regular))
+                    .foregroundStyle(FC.muted)
+            }
+            .padding(.top, 2)
+        }
+        .padding(20)
+        .background(FC.surface)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .overlay(RoundedRectangle(cornerRadius: 16).stroke(FC.border, lineWidth: 0.5))
+    }
+
+    private var npdDeadlineRow: some View {
         HStack(spacing: 6) {
-            Image(systemName: "calendar")
-                .fontWeight(.light)
-                .imageScale(.medium)
-                .foregroundStyle(FC.muted)
+            Image(systemName: "calendar").fontWeight(.light).imageScale(.medium).foregroundStyle(FC.muted)
             Text("Следующий налог: ")
                 .font(.system(.caption, design: .rounded, weight: .regular))
                 .foregroundStyle(FC.muted)
@@ -251,6 +295,13 @@ struct DashboardView: View {
                 .foregroundStyle(FC.muted)
         }
         .padding(.top, 2)
+    }
+
+    private func formattedDeadline(_ date: Date) -> String {
+        let fmt = DateFormatter()
+        fmt.dateFormat = "d MMMM"
+        fmt.locale = Locale(identifier: "ru_RU")
+        return fmt.string(from: date)
     }
 
     // MARK: - Top Sources Card
