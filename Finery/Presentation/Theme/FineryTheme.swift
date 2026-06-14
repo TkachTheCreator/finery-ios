@@ -217,3 +217,13 @@ extension View {
     func fineryPrimaryButton() -> some View { modifier(FineryPrimaryButton()) }
     func finerySecondaryButton() -> some View { modifier(FinerySecondaryButton()) }
 }
+
+// MARK: - Scale press ButtonStyle
+
+struct ScaleButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.97 : 1.0)
+            .animation(.spring(duration: 0.2), value: configuration.isPressed)
+    }
+}

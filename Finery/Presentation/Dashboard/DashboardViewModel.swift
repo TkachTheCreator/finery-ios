@@ -15,6 +15,7 @@ final class DashboardViewModel {
     var isLoading = false
     var errorMessage: String?
     var needsAuth = false
+    var isOffline = false
 
     // MARK: Dependencies
 
@@ -44,6 +45,7 @@ final class DashboardViewModel {
         isLoading = true
         defer { isLoading = false }
         needsAuth = false
+        isOffline = false
 
         guard APIClient.shared.isAuthenticated else {
             needsAuth = true
@@ -71,6 +73,21 @@ final class DashboardViewModel {
             insights   = i
             userName   = u?.name ?? ""
             topSources = topIncomeSources(from: txns)
+        } catch NetworkError.noConnection {
+            isOffline = true
+            // Fallback: compute PnL from local SwiftData
+            if let txns = try? await transactionRepository.fetch(from: startOfMonth, to: endOfMonth) {
+                topSources = topIncomeSources(from: txns)
+                let income   = txns.filter { $0.direction == .income  }.reduce(Decimal(0)) { $0 + $1.amount }
+                let expenses = txns.filter { $0.direction == .expense }.reduce(Decimal(0)) { $0 + $1.amount }
+                pnl = PnL(
+                    period: DateInterval(start: startOfMonth, end: endOfMonth),
+                    totalIncome: income,
+                    totalExpenses: expenses,
+                    taxAmount: 0
+                )
+            }
+            userName = (try? await userRepository.fetchUser())?.name ?? userName
         } catch {
             errorMessage = error.localizedDescription
         }
