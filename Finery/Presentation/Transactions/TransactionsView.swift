@@ -99,7 +99,7 @@ struct TransactionsView: View {
 
     private func directionChip(_ dir: TransactionDirection?, label: String) -> some View {
         let selected = viewModel.directionFilter == dir
-        let activeColor: Color = dir == .income ? FC.success : dir == .expense ? FC.danger : FC.cobalt
+        let activeColor: Color = dir == .income ? FC.cobalt : dir == .expense ? FC.muted : FC.cobalt
         return Button(label) {
             withAnimation(.spring(response: 0.35, dampingFraction: 0.75)) { viewModel.directionFilter = dir }
         }
@@ -124,11 +124,11 @@ struct TransactionsView: View {
 
     private var summaryCard: some View {
         HStack {
-            summaryItem(label: "ДОХОДЫ",  amount: viewModel.totalIncome,   color: FC.success)
+            summaryItem(label: "ДОХОДЫ",  amount: viewModel.totalIncome,   color: FC.cobalt)
             Spacer()
             Rectangle().fill(FC.border).frame(width: 1, height: 32)
             Spacer()
-            summaryItem(label: "РАСХОДЫ", amount: viewModel.totalExpenses, color: FC.danger)
+            summaryItem(label: "РАСХОДЫ", amount: viewModel.totalExpenses, color: FC.muted)
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 14)
@@ -288,13 +288,13 @@ struct TransactionRow: View {
             ZStack {
                 Circle()
                     .fill(transaction.direction == .income
-                          ? FC.success.opacity(0.18)
-                          : FC.danger.opacity(0.18))
+                          ? FC.cobalt.opacity(0.12)
+                          : FC.muted.opacity(0.12))
                     .frame(width: 38, height: 38)
                 Image(systemName: iconName)
                     .fontWeight(.light)
                     .imageScale(.small)
-                    .foregroundStyle(transaction.direction == .income ? FC.success : FC.danger)
+                    .foregroundStyle(transaction.direction == .income ? FC.cobalt : FC.ink)
             }
 
             VStack(alignment: .leading, spacing: 2) {
@@ -321,7 +321,7 @@ struct TransactionRow: View {
                 Text((transaction.direction == .income ? "+" : "−") + transaction.amount.rub())
                     .font(.system(.subheadline, design: .default, weight: .medium))
                     .monospacedDigit()
-                    .foregroundStyle(transaction.direction == .income ? FC.success : FC.danger)
+                    .foregroundStyle(transaction.direction == .income ? FC.cobalt : FC.ink)
                 Text(shortTime(transaction.date))
                     .font(.system(.caption2, design: .default, weight: .regular))
                     .foregroundStyle(FC.muted)

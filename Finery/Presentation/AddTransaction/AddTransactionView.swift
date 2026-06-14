@@ -39,29 +39,13 @@ struct AddTransactionView: View {
         .onChange(of: viewModel.didSave) { _, saved in
             if saved {
                 onSave?()
-                HapticManager.success()
-                withAnimation(.spring(response: 0.4, dampingFraction: 0.75)) {
-                    showSuccess = true
-                }
-                Task {
-                    try? await Task.sleep(for: .seconds(1.6))
-                    dismiss()
-                }
+                showSuccess = true
             }
         }
-        .overlay {
-            if showSuccess {
-                ZStack {
-                    Color(h: "1A1A18").opacity(0.55).ignoresSafeArea()
-                    VStack(spacing: 10) {
-                        LottieSuccessView()
-                            .frame(width: 160, height: 160)
-                        Text("Сохранено!")
-                            .font(.system(.headline, design: .default, weight: .semibold))
-                            .foregroundStyle(.white)
-                    }
-                }
-                .transition(.opacity.combined(with: .scale(scale: 0.9)))
+        .fullScreenCover(isPresented: $showSuccess) {
+            FinerySuccessView {
+                showSuccess = false
+                dismiss()
             }
         }
     }
@@ -114,12 +98,11 @@ struct AddTransactionView: View {
 
     private var directionToggle: some View {
         HStack(spacing: 0) {
-            directionButton(.income, label: "Доход", color: FC.success)
+            directionButton(.income,  label: "Доход",  color: FC.cobalt)
             Rectangle().fill(FC.border).frame(width: 0.5)
-            directionButton(.expense, label: "Расход", color: FC.danger)
+            directionButton(.expense, label: "Расход", color: FC.muted)
         }
         .frame(height: 48)
-        .overlay(Rectangle().stroke(FC.border.opacity(0), lineWidth: 0))
     }
 
     private func directionButton(_ dir: TransactionDirection, label: String, color: Color) -> some View {
@@ -150,15 +133,15 @@ struct AddTransactionView: View {
         } label: {
             ZStack {
                 Circle()
-                    .fill(isRecording ? FC.danger.opacity(0.18) : FC.cobalt.opacity(0.12))
+                    .fill(isRecording ? FC.muted.opacity(0.18) : FC.cobalt.opacity(0.12))
                     .frame(width: 36, height: 36)
                     .overlay(
                         Circle()
-                            .stroke(isRecording ? FC.danger.opacity(0.5) : FC.cobalt.opacity(0.3), lineWidth: 1)
+                            .stroke(isRecording ? FC.muted.opacity(0.5) : FC.cobalt.opacity(0.3), lineWidth: 1)
                     )
                 Image(systemName: isRecording ? "stop.circle" : "mic")
                     .font(.system(size: 15, weight: .medium))
-                    .foregroundStyle(isRecording ? FC.danger : FC.cobalt)
+                    .foregroundStyle(isRecording ? FC.muted : FC.cobalt)
             }
             .scaleEffect(isRecording ? 1.1 : 1.0)
             .animation(.spring(response: 0.3), value: isRecording)
@@ -296,17 +279,70 @@ struct AddTransactionView: View {
             .clipShape(RoundedRectangle(cornerRadius: 14))
         }
         .disabled(!viewModel.canSave || viewModel.isSaving)
-        .changeEffect(
-            .spray(origin: .center) {
-                Image(systemName: "checkmark.circle.fill")
-                    .foregroundStyle(FC.success)
-            },
-            value: viewModel.didSave
-        )
     }
 
     private var hairline: some View {
         Rectangle().fill(FC.border).frame(height: 0.5)
+    }
+}
+
+// MARK: - Branded Success Screen
+
+struct FinerySuccessView: View {
+    @State private var scale: CGFloat = 0.3
+    @State private var opacity: Double = 0
+    @State private var logoRotation: Double = -30
+    var onDismiss: () -> Void
+
+    var body: some View {
+        ZStack {
+            FC.background.ignoresSafeArea()
+            VStack(spacing: 24) {
+                ZStack(alignment: .bottomTrailing) {
+                    RoundedRectangle(cornerRadius: 26)
+                        .fill(FC.cobalt)
+                        .frame(width: 80, height: 80)
+                    Text("F")
+                        .font(.system(size: 46, weight: .bold, design: .rounded))
+                        .foregroundStyle(.white)
+                        .frame(width: 80, height: 80)
+                    Circle()
+                        .fill(Color(h: "C8FF00"))
+                        .frame(width: 14, height: 14)
+                        .offset(x: 4, y: 4)
+                }
+                .rotationEffect(.degrees(logoRotation))
+                .scaleEffect(scale)
+                .opacity(opacity)
+
+                VStack(spacing: 8) {
+                    Text("Сохранено")
+                        .font(.system(size: 24, weight: .bold, design: .rounded))
+                        .foregroundStyle(FC.ink)
+                    Text("Транзакция добавлена")
+                        .font(.system(size: 14, weight: .medium, design: .rounded))
+                        .foregroundStyle(FC.muted)
+                }
+                .opacity(opacity)
+            }
+        }
+        .onAppear {
+            withAnimation(.spring(response: 0.5, dampingFraction: 0.65)) {
+                scale = 1.0
+                opacity = 1.0
+                logoRotation = 0
+            }
+            HapticManager.success()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                withAnimation(.easeIn(duration: 0.25)) {
+                    opacity = 0
+                    scale = 1.1
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                    onDismiss()
+                }
+            }
+        }
     }
 }
 
