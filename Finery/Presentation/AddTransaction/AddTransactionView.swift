@@ -123,7 +123,7 @@ struct AddTransactionView: View {
     private func directionButton(_ dir: TransactionDirection, label: String, color: Color) -> some View {
         let selected = viewModel.direction == dir
         return Button {
-            withAnimation(.easeInOut(duration: 0.15)) { viewModel.direction = dir }
+            withAnimation(.easeInOut(duration: 0.15)) { viewModel.setDirection(dir) }
         } label: {
             Text(label)
                 .font(.system(.subheadline, design: .default, weight: selected ? .semibold : .regular))
@@ -193,16 +193,21 @@ struct AddTransactionView: View {
                 Menu {
                     if viewModel.direction == .income {
                         ForEach(IncomeCategory.allCases, id: \.self) { cat in
-                            Button(cat.displayName) { viewModel.incomeCategory = cat }
+                            Button(cat.displayName) {
+                                viewModel.selectIncomeCategory(cat)
+                            }
                         }
                     } else {
                         ForEach(ExpenseCategory.allCases, id: \.self) { cat in
-                            Button(cat.displayName) { viewModel.expenseCategory = cat }
+                            Button(cat.displayName) {
+                                viewModel.selectExpenseCategory(cat)
+                            }
                         }
                     }
                 } label: {
                     HStack(spacing: 4) {
                         Text(viewModel.activeCategory)
+                            .id(viewModel.activeCategory)
                             .font(.system(.body))
                             .foregroundStyle(FC.ink)
                         Image(systemName: "chevron.up.chevron.down")
