@@ -79,7 +79,7 @@ struct AddTransactionView: View {
             Spacer()
             Button("Сохранить") { Task { await viewModel.save() } }
                 .font(.system(.body, design: .default, weight: .semibold))
-                .foregroundStyle(viewModel.canSave ? FC.cobalt : FC.border)
+                .foregroundStyle(FC.cobalt.opacity(viewModel.canSave ? 1.0 : 0.5))
                 .disabled(!viewModel.canSave)
         }
         .padding(.horizontal, 20)
@@ -186,6 +186,7 @@ struct AddTransactionView: View {
                     .datePickerStyle(.compact)
                     .labelsHidden()
                     .tint(FC.cobalt)
+                    .environment(\.locale, Locale(identifier: "ru_RU"))
             }
             hairline
 
@@ -295,7 +296,7 @@ struct AddTransactionView: View {
             .foregroundStyle(.white)
             .frame(maxWidth: .infinity)
             .padding(.vertical, 16)
-            .background(viewModel.canSave ? FC.cobalt : FC.border)
+            .background(FC.cobalt.opacity(viewModel.canSave ? 1.0 : 0.5))
             .clipShape(RoundedRectangle(cornerRadius: 14))
         }
         .disabled(!viewModel.canSave || viewModel.isSaving)
