@@ -62,7 +62,12 @@ struct LoginView: View {
                         submitButton
                     }
                     .padding(20)
-                    .glassCard()
+                    .background(FC.surface)
+                    .clipShape(RoundedRectangle(cornerRadius: 20))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 20)
+                            .stroke(FC.border, lineWidth: 0.5)
+                    )
                     .padding(.horizontal, 20)
 
                     Color.clear.frame(height: 60)
@@ -134,7 +139,7 @@ struct LoginView: View {
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .stroke(focus == field ? FC.cobalt.opacity(0.5) : Color.clear, lineWidth: 1)
+                .stroke(focus == field ? FC.cobalt.opacity(0.6) : FC.border, lineWidth: 1)
         )
         .animation(.easeOut(duration: 0.15), value: focus)
     }
