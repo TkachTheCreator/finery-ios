@@ -17,6 +17,7 @@ final class AddTransactionViewModel {
     var notes        = ""
 
     // UI state
+    var userSelectedCategory = false
     var isSaving      = false
     var didSave       = false
     var errorMessage: String?
@@ -48,10 +49,32 @@ final class AddTransactionViewModel {
         direction == .income ? incomeCategory.displayName : expenseCategory.displayName
     }
 
-    // MARK: Actions
+    // MARK: Direction change (reset category selection)
+
+    func setDirection(_ dir: TransactionDirection) {
+        guard dir != direction else { return }
+        direction = dir
+        userSelectedCategory = false
+        incomeCategory  = .other
+        expenseCategory = .other
+    }
+
+    // MARK: Category selection (marks as user-chosen, blocks auto-classifier)
+
+    func selectIncomeCategory(_ cat: IncomeCategory) {
+        incomeCategory = cat
+        userSelectedCategory = true
+    }
+
+    func selectExpenseCategory(_ cat: ExpenseCategory) {
+        expenseCategory = cat
+        userSelectedCategory = true
+    }
+
+    // MARK: Auto-classify from description (skips if user already chose)
 
     func onDescriptionChanged() {
-        guard !description.isEmpty else { return }
+        guard !description.isEmpty, !userSelectedCategory else { return }
         let result = classifier.execute(description: description, direction: direction)
         if let cat = result.income  { incomeCategory  = cat }
         if let cat = result.expense { expenseCategory = cat }
@@ -66,6 +89,8 @@ final class AddTransactionViewModel {
         }
         onDescriptionChanged()
     }
+
+    // MARK: Save
 
     func save() async {
         guard let amount, canSave else { return }
@@ -85,12 +110,12 @@ final class AddTransactionViewModel {
             notes: notes.trimmingCharacters(in: .whitespaces).isEmpty ? nil : notes
         )
 
-        print("[AddTx] Saving: direction=\(direction), category=\(incomeCategory), source=\(source), desc=\(trimmedDesc)")
+        print("💾 Saving: direction=\(direction), incomeCategory=\(incomeCategory), expenseCategory=\(expenseCategory), userSelected=\(userSelectedCategory)")
 
         do {
             if APIClient.shared.isAuthenticated {
                 let synced = try await APIClient.shared.createTransaction(transaction)
-                print("[AddTx] API synced: incomeCategory=\(String(describing: synced.incomeCategory))")
+                print("✅ Synced: incomeCategory=\(String(describing: synced.incomeCategory)), expenseCategory=\(String(describing: synced.expenseCategory))")
                 try? await transactionRepository.save(synced)
             } else {
                 try await transactionRepository.save(transaction)
