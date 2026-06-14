@@ -4,9 +4,10 @@ import Pow
 
 struct DashboardView: View {
     @State var viewModel: DashboardViewModel
-    @State private var appeared       = false
-    @State private var progressShown  = false
-    @State private var showAdd        = false
+    @State private var appeared    = false
+    @State private var barProgress: Double = 0
+    @State private var fabPressed  = false
+    @State private var showAdd     = false
 
     init(viewModel: DashboardViewModel) {
         _viewModel = State(wrappedValue: viewModel)
@@ -27,18 +28,49 @@ struct DashboardView: View {
 
             addButton
         }
-        .task { await viewModel.load() }
+        .task {
+            appeared = false
+            barProgress = 0
+            await viewModel.load()
+            withAnimation(.spring(response: 0.6, dampingFraction: 0.78)) {
+                appeared = true
+            }
+            if let status = viewModel.taxStatus {
+                let raw = Double(status.limitUsedPercent.description) ?? 0
+                let target = raw > 100 ? 1.0 : raw / 100.0
+                withAnimation(.spring(response: 1.2, dampingFraction: 0.8).delay(0.4)) {
+                    barProgress = target
+                }
+            }
+        }
         .sheet(isPresented: $showAdd) {
             AddTransactionView(
                 viewModel: viewModel.makeAddTransactionViewModel(),
                 onSave: { Task { await viewModel.load() } }
             )
         }
-        .onAppear {
-            guard !appeared else { return }
-            withAnimation(.spring(response: 0.5, dampingFraction: 0.82)) { appeared = true }
-            withAnimation(.easeOut(duration: 1.2).delay(0.5)) { progressShown = true }
+        .overlay(alignment: .top) {
+            if viewModel.isOffline {
+                offlineBanner.transition(.move(edge: .top).combined(with: .opacity))
+            }
         }
+        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: viewModel.isOffline)
+    }
+
+    // MARK: - Offline Banner
+
+    private var offlineBanner: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "wifi.slash").fontWeight(.light)
+            Text("Нет подключения · локальные данные")
+                .font(.system(.caption, design: .rounded, weight: .medium))
+        }
+        .foregroundStyle(.white)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
+        .background(FC.muted.opacity(0.92))
+        .clipShape(Capsule())
+        .padding(.top, 8)
     }
 
     // MARK: - Header
@@ -63,37 +95,41 @@ struct DashboardView: View {
         .padding(.bottom, 4)
         .offset(y: appeared ? 0 : -12)
         .opacity(appeared ? 1 : 0)
-        .animation(.spring(response: 0.5, dampingFraction: 0.82), value: appeared)
+        .animation(.spring(response: 0.55, dampingFraction: 0.8), value: appeared)
     }
 
     // MARK: - Card Stack
 
     @ViewBuilder
     private var cardStack: some View {
-        incomeHeroCard
-            .offset(y: appeared ? 0 : 24)
+        Button { } label: { incomeHeroCard }
+            .buttonStyle(ScaleButtonStyle())
+            .offset(y: appeared ? 0 : 40)
             .opacity(appeared ? 1 : 0)
-            .animation(.spring(response: 0.5, dampingFraction: 0.82).delay(0.05), value: appeared)
+            .animation(.spring(response: 0.55, dampingFraction: 0.8).delay(0.05), value: appeared)
 
-        taxCard
-            .offset(y: appeared ? 0 : 24)
+        Button { } label: { taxCard }
+            .buttonStyle(ScaleButtonStyle())
+            .offset(y: appeared ? 0 : 40)
             .opacity(appeared ? 1 : 0)
-            .animation(.spring(response: 0.5, dampingFraction: 0.82).delay(0.15), value: appeared)
+            .animation(.spring(response: 0.55, dampingFraction: 0.8).delay(0.15), value: appeared)
 
-        topSourcesCard
-            .offset(y: appeared ? 0 : 24)
+        Button { } label: { topSourcesCard }
+            .buttonStyle(ScaleButtonStyle())
+            .offset(y: appeared ? 0 : 40)
             .opacity(appeared ? 1 : 0)
-            .animation(.spring(response: 0.5, dampingFraction: 0.82).delay(0.25), value: appeared)
+            .animation(.spring(response: 0.55, dampingFraction: 0.8).delay(0.25), value: appeared)
 
         if !viewModel.insights.isEmpty {
-            insightsCard
-                .offset(y: appeared ? 0 : 24)
+            Button { } label: { insightsCard }
+                .buttonStyle(ScaleButtonStyle())
+                .offset(y: appeared ? 0 : 40)
                 .opacity(appeared ? 1 : 0)
-                .animation(.spring(response: 0.5, dampingFraction: 0.82).delay(0.35), value: appeared)
+                .animation(.spring(response: 0.55, dampingFraction: 0.8).delay(0.35), value: appeared)
         }
     }
 
-    // MARK: - Income Hero Card (Cobalt)
+    // MARK: - Income Hero Card
 
     private var incomeHeroCard: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -180,8 +216,8 @@ struct DashboardView: View {
                             startPoint: .leading,
                             endPoint: .trailing
                         ))
-                        .frame(width: geo.size.width * (progressShown ? limitFraction : 0), height: 5)
-                        .animation(.easeOut(duration: 1.2), value: progressShown)
+                        .frame(width: geo.size.width * barProgress, height: 5)
+                        .animation(.spring(response: 1.2, dampingFraction: 0.8), value: barProgress)
                 }
             }
             .frame(height: 5)
@@ -301,25 +337,27 @@ struct DashboardView: View {
     // MARK: - FAB
 
     private var addButton: some View {
-        Button {
+        HStack(spacing: 8) {
+            Image(systemName: "plus").fontWeight(.semibold).imageScale(.medium)
+            Text("Добавить").font(.system(.subheadline, design: .rounded, weight: .semibold))
+        }
+        .foregroundStyle(.white)
+        .padding(.horizontal, 22)
+        .padding(.vertical, 14)
+        .background(
+            Capsule()
+                .fill(FC.cobalt)
+                .shadow(color: FC.cobaltGlow, radius: 12, x: 0, y: 4)
+        )
+        .scaleEffect(fabPressed ? 0.92 : 1.0)
+        .animation(.spring(duration: 0.2), value: fabPressed)
+        .onTapGesture {
+            withAnimation { fabPressed = true }
             HapticManager.impact(.medium)
-            showAdd = true
-        } label: {
-            HStack(spacing: 8) {
-                Image(systemName: "plus")
-                    .fontWeight(.semibold)
-                    .imageScale(.medium)
-                Text("Добавить")
-                    .font(.system(.subheadline, design: .rounded, weight: .semibold))
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                fabPressed = false
+                showAdd = true
             }
-            .foregroundStyle(.white)
-            .padding(.horizontal, 22)
-            .padding(.vertical, 14)
-            .background(
-                Capsule()
-                    .fill(FC.cobalt)
-                    .shadow(color: FC.cobaltGlow, radius: 12, x: 0, y: 4)
-            )
         }
         .padding(.trailing, 20)
         .padding(.bottom, 24)
@@ -329,15 +367,9 @@ struct DashboardView: View {
 
     private var skeletonRow: some View {
         HStack {
-            RoundedRectangle(cornerRadius: 4)
-                .fill(FC.border)
-                .frame(width: 130, height: 12)
-                .skeleton(active: true)
+            RoundedRectangle(cornerRadius: 4).fill(FC.border).frame(width: 130, height: 12).skeleton(active: true)
             Spacer()
-            RoundedRectangle(cornerRadius: 4)
-                .fill(FC.border)
-                .frame(width: 60, height: 12)
-                .skeleton(active: true)
+            RoundedRectangle(cornerRadius: 4).fill(FC.border).frame(width: 60, height: 12).skeleton(active: true)
         }
         .padding(.vertical, 6)
     }
@@ -353,11 +385,6 @@ struct DashboardView: View {
         }
     }
 
-    private var limitFraction: CGFloat {
-        guard let status = viewModel.taxStatus else { return 0 }
-        return CGFloat(min(status.limitUsedPercent / 100, 1.0))
-    }
-
     private var limitPercentText: String {
         guard let status = viewModel.taxStatus else { return "—" }
         return "\(Int(status.limitUsedPercent))%"
@@ -370,8 +397,7 @@ struct DashboardView: View {
     private var currentMonthFull: String { formatted(Date(), "LLLL yyyy") }
     private var currentMonthShortUpper: String { formatted(Date(), "LLLL").uppercased() }
     private var nextMonthGenitive: String {
-        let next = Calendar.current.date(byAdding: .month, value: 1, to: Date())!
-        return formatted(next, "LLLL")
+        formatted(Calendar.current.date(byAdding: .month, value: 1, to: Date())!, "LLLL")
     }
 
     private func formatted(_ date: Date, _ format: String) -> String {

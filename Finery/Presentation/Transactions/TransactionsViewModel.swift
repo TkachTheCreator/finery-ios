@@ -33,6 +33,7 @@ final class TransactionsViewModel {
     var period: TimePeriod = .month
     var directionFilter: TransactionDirection? = nil
     var isLoading = false
+    var isOffline = false
     var errorMessage: String?
 
     private let transactionRepository: any TransactionRepository
@@ -68,21 +69,27 @@ final class TransactionsViewModel {
 
     func load() async {
         isLoading = true
+        isOffline = false
         defer { isLoading = false }
+        let interval = period.interval
         do {
-            let interval = period.interval
-            allTransactions = try await transactionRepository.fetch(from: interval.start, to: interval.end)
+            allTransactions = try await APIClient.shared.getTransactions(from: interval.start, to: interval.end)
+        } catch NetworkError.noConnection, NetworkError.unauthorized {
+            isOffline = true
+            allTransactions = (try? await transactionRepository.fetch(from: interval.start, to: interval.end)) ?? []
         } catch {
+            allTransactions = (try? await transactionRepository.fetch(from: interval.start, to: interval.end)) ?? []
             errorMessage = error.localizedDescription
         }
     }
 
     func delete(id: UUID) async {
+        allTransactions.removeAll { $0.id == id }
         do {
-            try await transactionRepository.delete(id: id)
-            allTransactions.removeAll { $0.id == id }
+            try await APIClient.shared.deleteTransaction(id: id)
+            try? await transactionRepository.delete(id: id)
         } catch {
-            errorMessage = error.localizedDescription
+            try? await transactionRepository.delete(id: id)
         }
     }
 

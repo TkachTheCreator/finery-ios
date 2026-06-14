@@ -366,6 +366,34 @@ actor APIClient {
         return dto.toDomain()
     }
 
+    func getTransactions(from: Date? = nil, to: Date? = nil, limit: Int = 200) async throws -> [Transaction] {
+        let fmt = ISO8601DateFormatter()
+        fmt.formatOptions = [.withInternetDateTime]
+        var query: [String: String] = ["limit": "\(limit)"]
+        if let from { query["from_date"] = fmt.string(from: from) }
+        if let to   { query["to_date"]   = fmt.string(from: to) }
+        let dtos: [TransactionDTO] = try await get("api/v1/transactions", query: query, authorized: true)
+        return dtos.map { $0.toDomain() }
+    }
+
+    func deleteTransaction(id: UUID) async throws {
+        var req = URLRequest(url: baseURL.appendingPathComponent("api/v1/transactions/\(id.uuidString)"))
+        req.httpMethod = "DELETE"
+        if let token = KeychainStore.load() {
+            req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        let (_, response): (Data, URLResponse)
+        do {
+            (_, response) = try await session.data(for: req)
+        } catch {
+            throw NetworkError.noConnection
+        }
+        guard let http = response as? HTTPURLResponse, (200...299).contains(http.statusCode) else {
+            let code = (response as? HTTPURLResponse)?.statusCode ?? 0
+            throw NetworkError.serverError(code, nil)
+        }
+    }
+
     // MARK: Analytics
 
     func getPnL(from: Date, to: Date) async throws -> PnL {

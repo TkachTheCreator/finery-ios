@@ -151,6 +151,7 @@ struct TransactionsView: View {
     private var transactionList: some View {
         List {
             ForEach(viewModel.grouped, id: \.date) { group in
+
                 Section {
                     ForEach(group.items) { tx in
                         TransactionRow(transaction: tx)
@@ -178,6 +179,7 @@ struct TransactionsView: View {
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
         .background(Color.clear)
+        .refreshable { await viewModel.load() }
     }
 
     // MARK: Shimmer Skeleton
@@ -259,7 +261,7 @@ struct TransactionsView: View {
                 )
         }
         .padding(.trailing, 20)
-        .padding(.bottom, 108)
+        .padding(.bottom, 24)
     }
 
     // MARK: Helpers
