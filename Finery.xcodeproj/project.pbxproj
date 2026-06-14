@@ -8,10 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		047DC8F0070E27C21E7E3C3D /* success.json in Resources */ = {isa = PBXBuildFile; fileRef = DCE055888C0EC773FBED99DC /* success.json */; };
-		AA1B2C3D4E5F678901BCDEF2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA1B2C3D4E5F678901ABCDEF /* Assets.xcassets */; };
 		0599F653DBC5B9EF669DE4E7 /* UserLocalRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F747A35F6E89CF3EFE0629 /* UserLocalRepository.swift */; };
 		082F44E6A0528399DC16BE5F /* ExpenseCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9286A23592206481E6E093FA /* ExpenseCategory.swift */; };
 		0A6150E3A8C6C066DC006C52 /* GetPnLUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 974BD75AB3FE1C6176DB1293 /* GetPnLUseCase.swift */; };
+		0C4011AF07F45FD56FBBA2F9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 536977A95B8339D67FF45B42 /* Assets.xcassets */; };
 		139D9B698D395707AF9AF876 /* TransactionRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = E93820A671554C608923316D /* TransactionRepository.swift */; };
 		154314B4625FFD8511918D86 /* PreviewData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12B56BD4CA668CF84630EEE1 /* PreviewData.swift */; };
 		15B3D13568DF23D8F47D1892 /* AddTransactionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C00BB60C8DA88F1771E5540 /* AddTransactionView.swift */; };
@@ -23,7 +23,7 @@
 		3C0CDAA5557803A99A8C721D /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2182632BEFCE4CB0A8A9362F /* OnboardingView.swift */; };
 		3EA59CEC864D0D95A65A44BB /* GetInsightsUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B7428812D629E1EEDF5B7D /* GetInsightsUseCase.swift */; };
 		42F92C1337CD08F72B200AF2 /* TaxCalculatorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9925A0E4CA8F1006122C1BD8 /* TaxCalculatorService.swift */; };
-		447D6B5CA8337259EC304907 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 43249DC6BB94489E878746F4 /* Lottie */; };
+		447D6B5CA8337259EC304907 /* Pow in Frameworks */ = {isa = PBXBuildFile; productRef = CA9FE20FDDBC787F3252883A /* Pow */; };
 		46A5C4A951725A7ACCCEC222 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A7AB35CED17D75500E5AF1 /* APIClient.swift */; };
 		4B117A31774BF9F428CFB325 /* TransactionSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51872C806C150DBEB4911CE0 /* TransactionSource.swift */; };
 		4DA6EEBAB8E662AE8B083851 /* PnL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B38440EFFA21F1F82715A28 /* PnL.swift */; };
@@ -55,7 +55,7 @@
 		BBE61F28FF7F44CA4B840E0A /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E262ACD8872F105202BFDD43 /* AuthViewModel.swift */; };
 		CE61AB72C74CD48311DFED14 /* FineryApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94113177E3F1122E055454B2 /* FineryApp.swift */; };
 		CFC26F9E8EE72DC53CA13631 /* MockRepositories.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A4C68A92997653ED71CE4E /* MockRepositories.swift */; };
-		D01F67461C845B0820DAB27D /* Pow in Frameworks */ = {isa = PBXBuildFile; productRef = CA9FE20FDDBC787F3252883A /* Pow */; };
+		D01F67461C845B0820DAB27D /* Shimmer in Frameworks */ = {isa = PBXBuildFile; productRef = B3B07C11F2BB4F4E4D734903 /* Shimmer */; };
 		D1E17F9EB7662E4DDC587927 /* TransactionEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBFB152A8697C84E2E8ECF71 /* TransactionEntity.swift */; };
 		D5B323A2400D0070F2213C0D /* Transaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF7D02C675F33D63441B89E /* Transaction.swift */; };
 		D7182FC815B11F3DD24A2F60 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA49D022D88246DAE9865205 /* SplashView.swift */; };
@@ -65,7 +65,7 @@
 		F1AE7C2A94B173851217D863 /* AnalyticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B73BE6B840255FE525903F14 /* AnalyticsView.swift */; };
 		F32D6FF0C5E47010341EA8E2 /* TaxCalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FCDD1C9C2F31381AC106478 /* TaxCalculatorTests.swift */; };
 		F430E274A1D416043C4DCDB8 /* TransactionsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F2C94236A147B2275A4C7B4 /* TransactionsViewModel.swift */; };
-		F5A4780A6555EA06DF2D87DA /* Shimmer in Frameworks */ = {isa = PBXBuildFile; productRef = B3B07C11F2BB4F4E4D734903 /* Shimmer */; };
+		F5A4780A6555EA06DF2D87DA /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 43249DC6BB94489E878746F4 /* Lottie */; };
 		F7554B4154E8B9D123B58552 /* FineryPDFGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A22F96E80B26D493834CA4 /* FineryPDFGenerator.swift */; };
 		F950C54839946E228199F9E2 /* IncomeCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6594DF992676C1A5BDA9E7F /* IncomeCategory.swift */; };
 		FAA10A31048A1AD78FC78D3F /* UserRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = A808E46673806C37D5BF707B /* UserRepository.swift */; };
@@ -98,6 +98,7 @@
 		4F2B3F9FFFE9B4D34E99D83B /* HapticManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticManager.swift; sourceTree = "<group>"; };
 		51872C806C150DBEB4911CE0 /* TransactionSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionSource.swift; sourceTree = "<group>"; };
 		52B7428812D629E1EEDF5B7D /* GetInsightsUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetInsightsUseCase.swift; sourceTree = "<group>"; };
+		536977A95B8339D67FF45B42 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5B9757BE2B397BAF4F9FA65C /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
 		5E139A4F9AFC176D183F3632 /* TransactionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionsView.swift; sourceTree = "<group>"; };
 		5F2C94236A147B2275A4C7B4 /* TransactionsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionsViewModel.swift; sourceTree = "<group>"; };
@@ -130,7 +131,6 @@
 		D63DC38B29DA04BE54BB2733 /* FineryTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FineryTheme.swift; sourceTree = "<group>"; };
 		D6594DF992676C1A5BDA9E7F /* IncomeCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IncomeCategory.swift; sourceTree = "<group>"; };
 		D6F747A35F6E89CF3EFE0629 /* UserLocalRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLocalRepository.swift; sourceTree = "<group>"; };
-		AA1B2C3D4E5F678901ABCDEF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		DCE055888C0EC773FBED99DC /* success.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = success.json; sourceTree = "<group>"; };
 		DFD3FEDDD06A99D9BC586E2C /* DashboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewModel.swift; sourceTree = "<group>"; };
 		E262ACD8872F105202BFDD43 /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
@@ -150,9 +150,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				447D6B5CA8337259EC304907 /* Lottie in Frameworks */,
-				F5A4780A6555EA06DF2D87DA /* Shimmer in Frameworks */,
-				D01F67461C845B0820DAB27D /* Pow in Frameworks */,
+				447D6B5CA8337259EC304907 /* Pow in Frameworks */,
+				F5A4780A6555EA06DF2D87DA /* Lottie in Frameworks */,
+				D01F67461C845B0820DAB27D /* Shimmer in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -406,7 +406,7 @@
 		C1118DE2B272EBCC96E524CD /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				AA1B2C3D4E5F678901ABCDEF /* Assets.xcassets */,
+				536977A95B8339D67FF45B42 /* Assets.xcassets */,
 				DCE055888C0EC773FBED99DC /* success.json */,
 			);
 			path = Resources;
@@ -475,9 +475,9 @@
 			);
 			name = Finery;
 			packageProductDependencies = (
+				CA9FE20FDDBC787F3252883A /* Pow */,
 				43249DC6BB94489E878746F4 /* Lottie */,
 				B3B07C11F2BB4F4E4D734903 /* Shimmer */,
-				CA9FE20FDDBC787F3252883A /* Pow */,
 			);
 			productName = Finery;
 			productReference = 9F40AEF0915FDE1ADF55A664 /* Finery.app */;
@@ -512,6 +512,7 @@
 				TargetAttributes = {
 					2515D379705AE448BB7D130D = {
 						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -545,7 +546,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AA1B2C3D4E5F678901BCDEF2 /* Assets.xcassets in Resources */,
+				0C4011AF07F45FD56FBBA2F9 /* Assets.xcassets in Resources */,
 				047DC8F0070E27C21E7E3C3D /* success.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -696,27 +697,23 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = Finery;
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Finery использует микрофон для голосового ввода транзакций";
-				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Finery распознаёт речь чтобы автоматически заполнять поля транзакции";
-				INFOPLIST_KEY_NSUserNotificationsUsageDescription = "Finery отправляет напоминания о налоговых дедлайнах";
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				INFOPLIST_FILE = Finery/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tkachev.finery;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_STRICT_CONCURRENCY = minimal;
-				SWIFT_VERSION = 5.9;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -734,7 +731,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.tkachev.finery.tests;
 				SDKROOT = iphoneos;
-				SWIFT_VERSION = 5.9;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Finery.app/Finery";
 			};
@@ -808,27 +805,24 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = "";
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = Finery;
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Finery использует микрофон для голосового ввода транзакций";
-				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Finery распознаёт речь чтобы автоматически заполнять поля транзакции";
-				INFOPLIST_KEY_NSUserNotificationsUsageDescription = "Finery отправляет напоминания о налоговых дедлайнах";
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				INFOPLIST_FILE = Finery/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tkachev.finery;
 				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_STRICT_CONCURRENCY = minimal;
-				SWIFT_VERSION = 5.9;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -846,7 +840,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.tkachev.finery.tests;
 				SDKROOT = iphoneos;
-				SWIFT_VERSION = 5.9;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Finery.app/Finery";
 			};
