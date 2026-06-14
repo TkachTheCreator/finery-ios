@@ -31,6 +31,7 @@
 		53832F634D193A1E432C69C9 /* UserEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BF5014B27266B9CEA6DC11C /* UserEntity.swift */; };
 		5455763DEB51751F2BD30444 /* MonthlyData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F93123DFD18F0824E532091 /* MonthlyData.swift */; };
 		58B22BC0114CF4DC17035316 /* LottieSuccessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 400E887DDE95D38E6E31F0E5 /* LottieSuccessView.swift */; };
+		E7DC64BADEB24F089957530A /* FineryLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91231B6F2E0C427691A4F049 /* FineryLoadingView.swift */; };
 		5DDB9EEE1ED1D2F26BE47D49 /* TaxStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = D369C24192D675392A205C4B /* TaxStatus.swift */; };
 		615CA91F82633A7A2C1F40E1 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9712285D88F65D5F9E23430 /* SettingsView.swift */; };
 		6DCA2D6AF64B014023F819EC /* FloatingTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E8A3D0228E2EE3ADAE37A86 /* FloatingTabBar.swift */; };
@@ -79,6 +80,7 @@
 		38A22F96E80B26D493834CA4 /* FineryPDFGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FineryPDFGenerator.swift; sourceTree = "<group>"; };
 		3E1A9031C01D7ABAC3322EC7 /* Insight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Insight.swift; sourceTree = "<group>"; };
 		400E887DDE95D38E6E31F0E5 /* LottieSuccessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LottieSuccessView.swift; sourceTree = "<group>"; };
+		91231B6F2E0C427691A4F049 /* FineryLoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FineryLoadingView.swift; sourceTree = "<group>"; };
 		4E3B3F7DAC41282629E2C6B2 /* TaxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaxView.swift; sourceTree = "<group>"; };
 		51872C806C150DBEB4911CE0 /* TransactionSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionSource.swift; sourceTree = "<group>"; };
 		52B7428812D629E1EEDF5B7D /* GetInsightsUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetInsightsUseCase.swift; sourceTree = "<group>"; };
@@ -219,6 +221,7 @@
 				9E8A3D0228E2EE3ADAE37A86 /* FloatingTabBar.swift */,
 				F290DAB89D8CFCE0528870E3 /* InsightRow.swift */,
 				400E887DDE95D38E6E31F0E5 /* LottieSuccessView.swift */,
+				91231B6F2E0C427691A4F049 /* FineryLoadingView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -532,6 +535,7 @@
 				210E596473F221B02402B18B /* InsightRow.swift in Sources */,
 				8D0140B10201060ACBAD81ED /* LoginView.swift in Sources */,
 				58B22BC0114CF4DC17035316 /* LottieSuccessView.swift in Sources */,
+				E7DC64BADEB24F089957530A /* FineryLoadingView.swift in Sources */,
 				CFC26F9E8EE72DC53CA13631 /* MockRepositories.swift in Sources */,
 				5455763DEB51751F2BD30444 /* MonthlyData.swift in Sources */,
 				3C0CDAA5557803A99A8C721D /* OnboardingView.swift in Sources */,
