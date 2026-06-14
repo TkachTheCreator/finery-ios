@@ -424,13 +424,18 @@ actor APIClient {
         df.dateFormat = "yyyy-MM-dd"
         df.timeZone = .current
         let deadline = df.date(from: dto.nextDeadline) ?? Date()
+        let calc = TaxCalculatorService()
+        let limit: Decimal = taxMode == .npd ? Decimal(dto.yearlyLimit) : 0
+        let nextDL = dto.nextDeadline.isEmpty ? calc.nextDeadline(mode: taxMode) : deadline
         return TaxStatus(
-            taxMode: taxMode,
-            yearlyIncome: Decimal(dto.totalIncome),
-            taxDue: Decimal(dto.totalTax),
-            taxPaid: 0,
-            nextDeadline: deadline,
-            yearLimit: Decimal(dto.yearlyLimit)
+            taxMode:           taxMode,
+            yearlyIncome:      Decimal(dto.totalIncome),
+            quarterlyIncome:   Decimal(dto.totalIncome),
+            quarterlyExpenses: 0,
+            taxDue:            Decimal(dto.totalTax),
+            taxPaid:           0,
+            nextDeadline:      nextDL,
+            yearLimit:         limit
         )
     }
 

@@ -89,12 +89,14 @@ enum PreviewData {
     ]
 
     static let taxStatus = TaxStatus(
-        taxMode: .npd,
-        yearlyIncome: 687_500,
-        taxDue: 8_700,
-        taxPaid: 25_700,
-        nextDeadline: ymd(2026, 7, 28),
-        yearLimit: TaxStatus.npdYearLimit
+        taxMode:           .npd,
+        yearlyIncome:      687_500,
+        quarterlyIncome:   327_500,
+        quarterlyExpenses: 65_900,
+        taxDue:            8_700,
+        taxPaid:           25_700,
+        nextDeadline:      ymd(2026, 7, 28),
+        yearLimit:         TaxStatus.npdYearLimit
     )
 
     static let insights: [Insight] = [
