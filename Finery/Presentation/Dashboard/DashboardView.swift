@@ -85,11 +85,6 @@ struct DashboardView: View {
                     .font(.system(.subheadline, design: .rounded, weight: .regular))
                     .foregroundStyle(FC.muted)
             }
-            Spacer()
-            Image(systemName: "gearshape")
-                .fontWeight(.light)
-                .imageScale(.medium)
-                .foregroundStyle(FC.muted)
         }
         .padding(.top, 16)
         .padding(.bottom, 4)
@@ -155,11 +150,11 @@ struct DashboardView: View {
             }
 
             HStack(alignment: .top, spacing: 0) {
-                miniMetric(label: "РАСХОДЫ", value: viewModel.pnl?.totalExpenses, align: .leading)
+                miniMetric(label: "РАСХОДЫ", value: viewModel.pnl?.totalExpenses, align: .leading,  valueColor: .white.opacity(0.7))
                 Spacer()
-                miniMetric(label: "НАЛОГ",   value: viewModel.pnl?.taxAmount,     align: .center)
+                miniMetric(label: "НАЛОГ",   value: viewModel.pnl?.taxAmount,     align: .center,   valueColor: .white.opacity(0.7))
                 Spacer()
-                miniMetric(label: "ЧИСТАЯ",  value: viewModel.pnl?.netProfit,     align: .trailing)
+                miniMetric(label: "ЧИСТАЯ",  value: viewModel.pnl?.netProfit,     align: .trailing, valueColor: .white)
             }
         }
         .padding(20)
@@ -168,13 +163,13 @@ struct DashboardView: View {
     }
 
     @ViewBuilder
-    private func miniMetric(label: String, value: Decimal?, align: HorizontalAlignment) -> some View {
+    private func miniMetric(label: String, value: Decimal?, align: HorizontalAlignment, valueColor: Color = .white) -> some View {
         VStack(alignment: align, spacing: 4) {
             Text(label)
                 .font(.system(.caption2, design: .rounded, weight: .semibold))
                 .tracking(1.4)
                 .textCase(.uppercase)
-                .foregroundStyle(.white.opacity(0.6))
+                .foregroundStyle(.white.opacity(0.55))
             if viewModel.isLoading {
                 RoundedRectangle(cornerRadius: 4)
                     .fill(.white.opacity(0.2))
@@ -183,7 +178,7 @@ struct DashboardView: View {
                 Text(value?.rub() ?? "—")
                     .font(.system(.footnote, design: .rounded, weight: .semibold))
                     .monospacedDigit()
-                    .foregroundStyle(.white.opacity(0.9))
+                    .foregroundStyle(valueColor)
                     .contentTransition(.numericText())
                     .animation(.fineryNumber, value: value)
             }
@@ -312,7 +307,7 @@ struct DashboardView: View {
             Text(amount.rub())
                 .font(.system(.subheadline, design: .rounded, weight: .semibold))
                 .monospacedDigit()
-                .foregroundStyle(FC.success)
+                .foregroundStyle(FC.cobalt)
         }
         .padding(.vertical, 6)
     }
@@ -378,7 +373,7 @@ struct DashboardView: View {
 
     private var trafficColor: Color {
         switch viewModel.taxStatus?.trafficLight {
-        case .green:  FC.success
+        case .green:  FC.cobalt
         case .yellow: FC.amber
         case .red:    FC.danger
         case nil:     FC.muted
