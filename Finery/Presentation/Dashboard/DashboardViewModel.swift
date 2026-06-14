@@ -9,7 +9,7 @@ final class DashboardViewModel {
 
     var pnl: PnL?
     var taxStatus: TaxStatus?
-    var topSources: [(category: IncomeCategory, amount: Decimal)] = []
+    var topSources: [IncomeSource] = []
     var insights: [Insight] = []
     var userName: String = ""
     var isLoading = false
@@ -101,13 +101,36 @@ final class DashboardViewModel {
 
     // MARK: Helpers
 
-    private func topIncomeSources(from transactions: [Transaction]) -> [(category: IncomeCategory, amount: Decimal)] {
+    private func topIncomeSources(from transactions: [Transaction]) -> [IncomeSource] {
         let income = transactions.filter { $0.direction == .income }
-        let grouped = Dictionary(grouping: income, by: { $0.incomeCategory ?? .other })
-        return grouped
-            .map { (category: $0.key, amount: $0.value.reduce(Decimal(0)) { $0 + $1.amount }) }
+        var bySource: [String: Decimal] = [:]
+        for t in income {
+            bySource[t.source.displayName, default: 0] += t.amount
+        }
+        let iconMap: [String: String] = [
+            "Boosty":          "star",
+            "DonationAlerts":  "heart",
+            "Банк":            "building.columns",
+            "Вручную":         "pencil",
+            "Голос":           "mic"
+        ]
+        return bySource
+            .map { name, amount in
+                IncomeSource(name: name,
+                             icon: iconMap[name] ?? "ellipsis.circle",
+                             amount: amount)
+            }
             .sorted { $0.amount > $1.amount }
             .prefix(3)
             .map { $0 }
     }
+}
+
+// MARK: - IncomeSource
+
+struct IncomeSource: Identifiable, Sendable {
+    let id     = UUID()
+    let name:   String
+    let icon:   String
+    let amount: Decimal
 }

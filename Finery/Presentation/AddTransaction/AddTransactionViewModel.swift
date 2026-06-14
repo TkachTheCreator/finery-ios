@@ -72,10 +72,11 @@ final class AddTransactionViewModel {
         isSaving = true
         defer { isSaving = false }
 
+        let trimmedDesc = description.trimmingCharacters(in: .whitespaces)
         let transaction = Transaction(
             amount: amount,
             direction: direction,
-            description: description.trimmingCharacters(in: .whitespaces),
+            description: trimmedDesc,
             date: date,
             source: source,
             incomeCategory:  direction == .income  ? incomeCategory  : nil,
@@ -84,10 +85,12 @@ final class AddTransactionViewModel {
             notes: notes.trimmingCharacters(in: .whitespaces).isEmpty ? nil : notes
         )
 
+        print("[AddTx] Saving: direction=\(direction), category=\(incomeCategory), source=\(source), desc=\(trimmedDesc)")
+
         do {
             if APIClient.shared.isAuthenticated {
                 let synced = try await APIClient.shared.createTransaction(transaction)
-                // Persist locally so TransactionsView and Analytics see it immediately
+                print("[AddTx] API synced: incomeCategory=\(String(describing: synced.incomeCategory))")
                 try? await transactionRepository.save(synced)
             } else {
                 try await transactionRepository.save(transaction)

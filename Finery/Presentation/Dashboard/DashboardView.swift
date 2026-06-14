@@ -6,15 +6,13 @@ struct DashboardView: View {
     @State var viewModel: DashboardViewModel
     @State private var appeared    = false
     @State private var barProgress: Double = 0
-    @State private var fabPressed  = false
-    @State private var showAdd     = false
 
     init(viewModel: DashboardViewModel) {
         _viewModel = State(wrappedValue: viewModel)
     }
 
     var body: some View {
-        ZStack(alignment: .bottomTrailing) {
+        ZStack {
             FC.background.ignoresSafeArea()
 
             ScrollView(showsIndicators: false) {
@@ -25,8 +23,6 @@ struct DashboardView: View {
                 }
                 .padding(.horizontal, 20)
             }
-
-            addButton
         }
         .overlay {
             if viewModel.isLoading && !appeared {
@@ -52,12 +48,6 @@ struct DashboardView: View {
                     barProgress = target
                 }
             }
-        }
-        .sheet(isPresented: $showAdd) {
-            AddTransactionView(
-                viewModel: viewModel.makeAddTransactionViewModel(),
-                onSave: { Task { await viewModel.load() } }
-            )
         }
         .overlay(alignment: .top) {
             if viewModel.isOffline {
@@ -334,8 +324,8 @@ struct DashboardView: View {
                 }
                 .padding(.vertical, 4)
             } else {
-                ForEach(Array(viewModel.topSources.enumerated()), id: \.element.category) { index, item in
-                    sourceRow(rank: index + 1, category: item.category, amount: item.amount)
+                ForEach(Array(viewModel.topSources.enumerated()), id: \.element.id) { index, item in
+                    sourceRow(rank: index + 1, source: item)
                     if index < viewModel.topSources.count - 1 {
                         Rectangle().fill(FC.border.opacity(0.5)).frame(height: 0.5)
                     }
@@ -349,23 +339,23 @@ struct DashboardView: View {
     }
 
     @ViewBuilder
-    private func sourceRow(rank: Int, category: IncomeCategory, amount: Decimal) -> some View {
+    private func sourceRow(rank: Int, source: IncomeSource) -> some View {
         HStack(spacing: 12) {
             Text("\(rank)")
                 .font(.system(.caption2, design: .rounded, weight: .semibold))
                 .monospacedDigit()
                 .foregroundStyle(FC.muted)
                 .frame(width: 14, alignment: .center)
-            Image(systemName: category.iconName)
+            Image(systemName: source.icon)
                 .fontWeight(.light)
                 .imageScale(.medium)
                 .foregroundStyle(FC.cobalt)
                 .frame(width: 20)
-            Text(category.displayName)
+            Text(source.name)
                 .font(.system(.subheadline, design: .rounded, weight: .regular))
                 .foregroundStyle(FC.ink)
             Spacer()
-            Text(amount.rub())
+            Text(source.amount.rub())
                 .font(.system(.subheadline, design: .rounded, weight: .semibold))
                 .monospacedDigit()
                 .foregroundStyle(FC.cobalt)
@@ -388,35 +378,6 @@ struct DashboardView: View {
         .background(FC.surface)
         .clipShape(RoundedRectangle(cornerRadius: 16))
         .overlay(RoundedRectangle(cornerRadius: 16).stroke(FC.border, lineWidth: 0.5))
-    }
-
-    // MARK: - FAB
-
-    private var addButton: some View {
-        HStack(spacing: 8) {
-            Image(systemName: "plus").fontWeight(.semibold).imageScale(.medium)
-            Text("Добавить").font(.system(.subheadline, design: .rounded, weight: .semibold))
-        }
-        .foregroundStyle(.white)
-        .padding(.horizontal, 22)
-        .padding(.vertical, 14)
-        .background(
-            Capsule()
-                .fill(FC.cobalt)
-                .shadow(color: FC.cobaltGlow, radius: 12, x: 0, y: 4)
-        )
-        .scaleEffect(fabPressed ? 0.92 : 1.0)
-        .animation(.spring(duration: 0.2), value: fabPressed)
-        .onTapGesture {
-            withAnimation { fabPressed = true }
-            HapticManager.impact(.medium)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                fabPressed = false
-                showAdd = true
-            }
-        }
-        .padding(.trailing, 20)
-        .padding(.bottom, 24)
     }
 
     // MARK: - Skeleton
