@@ -129,19 +129,17 @@ struct LoginView: View {
                     .autocorrectionDisabled(keyboard == .emailAddress)
             }
         }
-        .font(.system(.body))
+        .font(.system(.body, design: .rounded))
         .foregroundStyle(FC.ink)
         .tint(FC.cobalt)
         .focused($focus, equals: field)
-        .padding(.horizontal, 16)
-        .padding(.vertical, 14)
-        .background(FC.surface)
+        .padding(16)
+        .background(Color.white.opacity(0.8))
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .stroke(focus == field ? FC.cobalt.opacity(0.6) : FC.border, lineWidth: 1)
+                .stroke(FC.cobalt.opacity(0.3), lineWidth: 1)
         )
-        .animation(.easeOut(duration: 0.15), value: focus)
     }
 
     // MARK: TaxMode Row
@@ -210,15 +208,10 @@ struct LoginView: View {
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 15)
-            .background(
-                Capsule()
-                    .fill(viewModel.canSubmit ? FC.cobalt : Color.white.opacity(0.15))
-                    .shadow(color: viewModel.canSubmit ? FC.cobaltGlow : .clear, radius: 14, x: 0, y: 6)
-            )
+            .background(FC.cobalt)
+            .clipShape(RoundedRectangle(cornerRadius: 14))
         }
         .buttonStyle(.plain)
-        .disabled(!viewModel.canSubmit || viewModel.isLoading)
-        .animation(.easeOut(duration: 0.2), value: viewModel.canSubmit)
         .padding(.top, 4)
     }
 }
