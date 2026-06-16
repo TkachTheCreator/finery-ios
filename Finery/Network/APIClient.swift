@@ -340,16 +340,28 @@ actor APIClient {
             email: email, password: password, name: name,
             taxMode: taxMode.apiValue, userType: userType.apiValue
         )
-        let dto: TokenDTO = try await post("api/v1/auth/register", body: body)
-        KeychainStore.save(dto.accessToken)
-        return (dto.accessToken, dto.user.toDomain())
+        do {
+            let dto: TokenDTO = try await post("api/v1/auth/register", body: body)
+            KeychainStore.save(dto.accessToken)
+            return (dto.accessToken, dto.user.toDomain())
+        } catch NetworkError.emailTaken {
+            throw NetworkError.emailTaken
+        } catch NetworkError.unauthorized {
+            throw NetworkError.wrongPassword
+        }
     }
 
     func login(email: String, password: String) async throws -> (token: String, user: User) {
         let body = LoginRequest(email: email, password: password)
-        let dto: TokenDTO = try await post("api/v1/auth/login", body: body)
-        KeychainStore.save(dto.accessToken)
-        return (dto.accessToken, dto.user.toDomain())
+        do {
+            let dto: TokenDTO = try await post("api/v1/auth/login", body: body)
+            KeychainStore.save(dto.accessToken)
+            return (dto.accessToken, dto.user.toDomain())
+        } catch NetworkError.userNotFound {
+            throw NetworkError.userNotFound
+        } catch NetworkError.unauthorized {
+            throw NetworkError.wrongPassword
+        }
     }
 
     nonisolated func logout() {
@@ -501,9 +513,7 @@ actor APIClient {
             } catch {
                 throw NetworkError.decodingFailed(error)
             }
-        case 401:
-            throw NetworkError.wrongPassword
-        case 403:
+        case 401, 403:
             throw NetworkError.unauthorized
         case 404:
             throw NetworkError.userNotFound
