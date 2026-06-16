@@ -44,19 +44,25 @@ struct LoginView: View {
                             inputField("Имя", text: $viewModel.name, field: .name)
                         }
                         inputField("Email", text: $viewModel.email, field: .email, keyboard: .emailAddress)
+                            .onChange(of: viewModel.email) { _, _ in
+                                withAnimation { viewModel.errorMessage = nil }
+                            }
                         inputField("Пароль", text: $viewModel.password, field: .password, secure: true)
+                            .onChange(of: viewModel.password) { _, _ in
+                                withAnimation { viewModel.errorMessage = nil }
+                            }
 
                         if viewModel.mode == .register {
                             taxModeRow
                             userTypeRow
                         }
 
-                        if let msg = viewModel.errorMessage {
-                            Text(msg)
-                                .font(.system(.caption))
+                        if let error = viewModel.errorMessage {
+                            Text(error)
+                                .font(.system(.caption, design: .rounded))
                                 .foregroundStyle(FC.danger)
-                                .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding(.horizontal, 4)
+                                .transition(.opacity.combined(with: .move(edge: .top)))
                         }
 
                         submitButton
@@ -68,6 +74,7 @@ struct LoginView: View {
                         RoundedRectangle(cornerRadius: 20)
                             .stroke(FC.border, lineWidth: 0.5)
                     )
+                    .animation(.easeOut(duration: 0.2), value: viewModel.errorMessage)
                     .padding(.horizontal, 20)
 
                     Color.clear.frame(height: 60)

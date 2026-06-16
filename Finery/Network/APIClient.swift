@@ -4,6 +4,9 @@ import Security
 // MARK: - NetworkError
 
 enum NetworkError: LocalizedError {
+    case wrongPassword
+    case userNotFound
+    case emailTaken
     case unauthorized
     case serverError(Int, String?)
     case decodingFailed(Error)
@@ -11,14 +14,15 @@ enum NetworkError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .unauthorized:
-            return "Необходима авторизация"
+        case .wrongPassword:   return "Неверный пароль"
+        case .userNotFound:    return "Аккаунт с таким email не найден"
+        case .emailTaken:      return "Этот email уже зарегистрирован"
+        case .unauthorized:    return "Необходима авторизация"
         case .serverError(let code, let msg):
             return "Ошибка сервера \(code): \(msg ?? "неизвестная ошибка")"
         case .decodingFailed(let e):
             return "Ошибка разбора ответа: \(e.localizedDescription)"
-        case .noConnection:
-            return "Нет подключения к интернету"
+        case .noConnection:    return "Проверь подключение к интернету"
         }
     }
 }
@@ -497,8 +501,14 @@ actor APIClient {
             } catch {
                 throw NetworkError.decodingFailed(error)
             }
-        case 401, 403:
+        case 401:
+            throw NetworkError.wrongPassword
+        case 403:
             throw NetworkError.unauthorized
+        case 404:
+            throw NetworkError.userNotFound
+        case 409:
+            throw NetworkError.emailTaken
         default:
             let msg = (try? JSONDecoder().decode([String: String].self, from: data))?["detail"]
             throw NetworkError.serverError(http.statusCode, msg)

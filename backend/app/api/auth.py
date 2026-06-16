@@ -81,8 +81,10 @@ async def register(body: UserRegister, db: AsyncSession = Depends(get_db)):
 async def login(body: UserLogin, db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(User).where(User.email == body.email))
     user = result.scalar_one_or_none()
-    if not user or not _verify(body.password, user.hashed_password):
-        raise HTTPException(status_code=401, detail="Invalid credentials")
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    if not _verify(body.password, user.hashed_password):
+        raise HTTPException(status_code=401, detail="Invalid password")
 
     return TokenOut(
         access_token=_create_token(str(user.id)),

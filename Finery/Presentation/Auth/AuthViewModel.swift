@@ -66,8 +66,17 @@ final class AuthViewModel {
                 try? await userRepository.saveUser(user)
             }
             return true
+        } catch NetworkError.wrongPassword {
+            errorMessage = "Неверный пароль"
+            return false
+        } catch NetworkError.userNotFound {
+            errorMessage = "Аккаунт с таким email не найден"
+            return false
+        } catch NetworkError.emailTaken {
+            errorMessage = "Этот email уже зарегистрирован"
+            return false
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = "Проверь подключение к интернету"
             return false
         }
     }
