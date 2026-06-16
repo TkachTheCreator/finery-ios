@@ -69,6 +69,7 @@
 		F7554B4154E8B9D123B58552 /* FineryPDFGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A22F96E80B26D493834CA4 /* FineryPDFGenerator.swift */; };
 		F950C54839946E228199F9E2 /* IncomeCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6594DF992676C1A5BDA9E7F /* IncomeCategory.swift */; };
 		FAA10A31048A1AD78FC78D3F /* UserRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = A808E46673806C37D5BF707B /* UserRepository.swift */; };
+		FAB77131057F49CD90964829 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E73C5652F8D4587F8E71CE1 /* WelcomeView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -104,6 +105,7 @@
 		5F2C94236A147B2275A4C7B4 /* TransactionsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionsViewModel.swift; sourceTree = "<group>"; };
 		62B4BED05BA08985B221A10E /* VoiceInputManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceInputManager.swift; sourceTree = "<group>"; };
 		64B6E0D5E7B5285B6516722D /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
+		7E73C5652F8D4587F8E71CE1 /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
 		82440E40D8C6C2AE2D27D8A5 /* TaxMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaxMode.swift; sourceTree = "<group>"; };
 		863573B06FC5E41B69167E2D /* FineryLoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FineryLoadingView.swift; sourceTree = "<group>"; };
 		866B1A5E002A254F53748A3D /* AppContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppContainer.swift; sourceTree = "<group>"; };
@@ -298,6 +300,7 @@
 			isa = PBXGroup;
 			children = (
 				2182632BEFCE4CB0A8A9362F /* OnboardingView.swift */,
+				7E73C5652F8D4587F8E71CE1 /* WelcomeView.swift */,
 			);
 			path = Onboarding;
 			sourceTree = "<group>";
@@ -622,6 +625,7 @@
 				0599F653DBC5B9EF669DE4E7 /* UserLocalRepository.swift in Sources */,
 				FAA10A31048A1AD78FC78D3F /* UserRepository.swift in Sources */,
 				53249838281A74655483AFB7 /* VoiceInputManager.swift in Sources */,
+				FAB77131057F49CD90964829 /* WelcomeView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

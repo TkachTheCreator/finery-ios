@@ -8,6 +8,7 @@ struct RootView: View {
     @State private var container: AppContainer?
     @State private var showLogin = false
     @State private var showSplash = true
+    @State private var showWelcome = !UserDefaults.standard.bool(forKey: "finery_welcome_seen")
     @State private var selectedTab: Int = 0
 
     var body: some View {
@@ -21,6 +22,13 @@ struct RootView: View {
                         )
                     )
                     .zIndex(2)
+            } else if showWelcome {
+                WelcomeView {
+                    UserDefaults.standard.set(true, forKey: "finery_welcome_seen")
+                    withAnimation(.fineryPage) { showWelcome = false }
+                }
+                .transition(.asymmetric(insertion: .opacity, removal: .move(edge: .leading).combined(with: .opacity)))
+                .zIndex(1)
             } else if let c = container {
                 TabView(selection: $selectedTab) {
                     DashboardView(viewModel: c.dashboard)
