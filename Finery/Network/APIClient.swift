@@ -306,7 +306,11 @@ private extension TransactionSource {
 actor APIClient {
     static let shared = APIClient()
 
+    #if targetEnvironment(simulator)
+    private let baseURL = URL(string: "http://localhost:8000")!
+    #else
     private let baseURL = URL(string: "http://10.192.204.89:8000")!
+    #endif
     private let session: URLSession
 
     nonisolated var isAuthenticated: Bool {
