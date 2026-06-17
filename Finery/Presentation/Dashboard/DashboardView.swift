@@ -103,11 +103,13 @@ struct DashboardView: View {
             .opacity(appeared ? 1 : 0)
             .animation(.spring(response: 0.55, dampingFraction: 0.8).delay(0.05), value: appeared)
 
-        taxCard
-            .fineryTap()
-            .offset(y: appeared ? 0 : 40)
-            .opacity(appeared ? 1 : 0)
-            .animation(.spring(response: 0.55, dampingFraction: 0.8).delay(0.15), value: appeared)
+        if viewModel.userType != .other {
+            taxCard
+                .fineryTap()
+                .offset(y: appeared ? 0 : 40)
+                .opacity(appeared ? 1 : 0)
+                .animation(.spring(response: 0.55, dampingFraction: 0.8).delay(0.15), value: appeared)
+        }
 
         topSourcesCard
             .fineryTap()
@@ -152,8 +154,10 @@ struct DashboardView: View {
             HStack(alignment: .top, spacing: 0) {
                 miniMetric(label: "РАСХОДЫ", value: viewModel.pnl?.totalExpenses, align: .leading,  valueColor: .white.opacity(0.7))
                 Spacer()
-                miniMetric(label: "НАЛОГ",   value: viewModel.pnl?.taxAmount,     align: .center,   valueColor: .white.opacity(0.7))
-                Spacer()
+                if viewModel.userType != .other {
+                    miniMetric(label: "НАЛОГ", value: viewModel.pnl?.taxAmount, align: .center, valueColor: .white.opacity(0.7))
+                    Spacer()
+                }
                 miniMetric(label: "ЧИСТАЯ",  value: viewModel.pnl?.netProfit,     align: .trailing, valueColor: .white)
             }
         }
@@ -189,7 +193,7 @@ struct DashboardView: View {
 
     @ViewBuilder
     private var taxCard: some View {
-        if viewModel.taxStatus?.showNpdLimit == true || viewModel.taxStatus == nil {
+        if viewModel.taxStatus?.showNpdLimit == true {
             npdLimitCard
         } else if let status = viewModel.taxStatus {
             usnQuarterlyCard(status)

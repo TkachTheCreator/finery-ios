@@ -86,33 +86,49 @@ struct SettingsView: View {
     private var taxSection: some View {
         VStack(alignment: .leading, spacing: 0) {
             sectionHeader("НАЛОГООБЛОЖЕНИЕ")
-            fieldRow(label: "Режим") {
-                Menu {
-                    ForEach(TaxMode.allCases, id: \.self) { mode in
-                        Button {
-                            viewModel.user.taxMode = mode
-                            Task { await viewModel.save() }
-                        } label: {
-                            VStack(alignment: .leading) {
-                                Text(mode.displayName)
-                                Text(mode.shortDescription)
-                                    .font(.caption)
-                                    .fixedSize(horizontal: false, vertical: true)
+            if viewModel.user.userType == .other {
+                fieldRow(label: "Режим") {
+                    Text("Без налогов")
+                        .font(.system(.body))
+                        .foregroundStyle(FC.muted)
+                }
+                hairline
+                Text("Личный трекер — налоги и лимиты не отслеживаются")
+                    .font(.system(.caption))
+                    .foregroundStyle(FC.muted)
+                    .lineLimit(nil)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 10)
+            } else {
+                fieldRow(label: "Режим") {
+                    Menu {
+                        ForEach(TaxMode.allCases, id: \.self) { mode in
+                            Button {
+                                viewModel.user.taxMode = mode
+                                Task { await viewModel.save() }
+                            } label: {
+                                VStack(alignment: .leading) {
+                                    Text(mode.displayName)
+                                    Text(mode.shortDescription)
+                                        .font(.caption)
+                                        .fixedSize(horizontal: false, vertical: true)
+                                }
                             }
                         }
+                    } label: {
+                        menuLabel(viewModel.user.taxMode.displayName)
                     }
-                } label: {
-                    menuLabel(viewModel.user.taxMode.displayName)
                 }
+                hairline
+                Text(viewModel.user.taxMode.shortDescription)
+                    .font(.system(.caption))
+                    .foregroundStyle(FC.muted)
+                    .lineLimit(nil)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 10)
             }
-            hairline
-            Text(viewModel.user.taxMode.shortDescription)
-                .font(.system(.caption))
-                .foregroundStyle(FC.muted)
-                .lineLimit(nil)
-                .fixedSize(horizontal: false, vertical: true)
-                .padding(.horizontal, 20)
-                .padding(.vertical, 10)
         }
     }
 
