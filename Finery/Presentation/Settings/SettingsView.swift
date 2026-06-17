@@ -45,18 +45,8 @@ struct SettingsView: View {
                 .font(.system(.title2, design: .default, weight: .semibold))
                 .foregroundStyle(FC.ink)
             Spacer()
-            Button {
-                Task { await viewModel.save() }
-            } label: {
-                Group {
-                    if viewModel.isSaving {
-                        ProgressView().tint(FC.cobalt).scaleEffect(0.8)
-                    } else {
-                        Text("Сохранить")
-                            .font(.system(.subheadline, design: .default, weight: .semibold))
-                            .foregroundStyle(FC.cobalt)
-                    }
-                }
+            if viewModel.isSaving {
+                ProgressView().tint(FC.cobalt).scaleEffect(0.8)
             }
         }
         .padding(.horizontal, 20)
@@ -73,12 +63,16 @@ struct SettingsView: View {
                     .font(.system(.body))
                     .foregroundStyle(FC.ink)
                     .multilineTextAlignment(.trailing)
+                    .onSubmit { Task { await viewModel.save() } }
             }
             hairline
             fieldRow(label: "Кто ты") {
                 Menu {
                     ForEach(UserType.allCases, id: \.self) { type in
-                        Button(type.displayName) { viewModel.user.userType = type }
+                        Button(type.displayName) {
+                            viewModel.user.userType = type
+                            Task { await viewModel.save() }
+                        }
                     }
                 } label: {
                     menuLabel(viewModel.user.userType.displayName)
@@ -97,10 +91,13 @@ struct SettingsView: View {
                     ForEach(TaxMode.allCases, id: \.self) { mode in
                         Button {
                             viewModel.user.taxMode = mode
+                            Task { await viewModel.save() }
                         } label: {
                             VStack(alignment: .leading) {
                                 Text(mode.displayName)
-                                Text(mode.shortDescription).font(.caption)
+                                Text(mode.shortDescription)
+                                    .font(.caption)
+                                    .fixedSize(horizontal: false, vertical: true)
                             }
                         }
                     }
@@ -109,13 +106,13 @@ struct SettingsView: View {
                 }
             }
             hairline
-            VStack(alignment: .leading, spacing: 6) {
-                Text(viewModel.user.taxMode.shortDescription)
-                    .font(.system(.caption))
-                    .foregroundStyle(FC.muted)
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 14)
-            }
+            Text(viewModel.user.taxMode.shortDescription)
+                .font(.system(.caption))
+                .foregroundStyle(FC.muted)
+                .lineLimit(nil)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.horizontal, 20)
+                .padding(.vertical, 10)
         }
     }
 
@@ -132,6 +129,9 @@ struct SettingsView: View {
                 Toggle("", isOn: $viewModel.user.notificationsEnabled)
                     .tint(FC.cobalt)
                     .labelsHidden()
+                    .onChange(of: viewModel.user.notificationsEnabled) { _, _ in
+                        Task { await viewModel.save() }
+                    }
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 14)
@@ -142,7 +142,10 @@ struct SettingsView: View {
                 fieldRow(label: "За сколько дней") {
                     Menu {
                         ForEach([3, 5, 7, 10], id: \.self) { days in
-                            Button("За \(days) дней") { viewModel.user.taxReminderDaysBefore = days }
+                            Button("За \(days) дней") {
+                                viewModel.user.taxReminderDaysBefore = days
+                                Task { await viewModel.save() }
+                            }
                         }
                     } label: {
                         menuLabel("За \(viewModel.user.taxReminderDaysBefore) дней")
@@ -216,7 +219,11 @@ struct SettingsView: View {
 
     private func menuLabel(_ text: String) -> some View {
         HStack(spacing: 4) {
-            Text(text).font(.system(.body)).foregroundStyle(FC.ink)
+            Text(text)
+                .font(.system(.body))
+                .foregroundStyle(FC.ink)
+                .lineLimit(nil)
+                .fixedSize(horizontal: false, vertical: true)
             Image(systemName: "chevron.up.chevron.down")
                 .font(.system(.caption2))
                 .foregroundStyle(FC.muted)
