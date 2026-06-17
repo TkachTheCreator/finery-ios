@@ -12,6 +12,7 @@ final class DashboardViewModel {
     var topSources: [IncomeSource] = []
     var insights: [Insight] = []
     var userName: String = ""
+    var userType: UserType = .freelancer
     var isLoading = false
     var errorMessage: String?
     var needsAuth = false
@@ -68,8 +69,10 @@ final class DashboardViewModel {
 
             let (p, t, i, u, txns) = try await (pnlTask, taxTask, insightsTask, userTask, txnsTask)
 
+            let fetchedUserType = u?.userType ?? .freelancer
             pnl        = p
-            taxStatus  = t
+            userType   = fetchedUserType
+            taxStatus  = fetchedUserType == .other ? nil : t
             insights   = i
             userName   = u?.name ?? ""
             topSources = topIncomeSources(from: txns)
@@ -87,7 +90,10 @@ final class DashboardViewModel {
                     taxAmount: 0
                 )
             }
-            userName = (try? await userRepository.fetchUser())?.name ?? userName
+            if let u = try? await userRepository.fetchUser() {
+                userName = u.name
+                userType = u.userType
+            }
         } catch {
             errorMessage = error.localizedDescription
         }
