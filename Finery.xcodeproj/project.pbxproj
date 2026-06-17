@@ -53,6 +53,7 @@
 		B3213706B3839773FB09DBB5 /* TransactionDirection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C21FF8736E7CAAF54FB5048F /* TransactionDirection.swift */; };
 		B3B0734E6DF2C86A4AA73AD2 /* FineryTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = D63DC38B29DA04BE54BB2733 /* FineryTheme.swift */; };
 		BBE61F28FF7F44CA4B840E0A /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E262ACD8872F105202BFDD43 /* AuthViewModel.swift */; };
+		C2E7BB8D40E2E138E609556A /* AuthFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8BB4775422C9B1A7C044A2F /* AuthFlowView.swift */; };
 		CE61AB72C74CD48311DFED14 /* FineryApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94113177E3F1122E055454B2 /* FineryApp.swift */; };
 		CFC26F9E8EE72DC53CA13631 /* MockRepositories.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A4C68A92997653ED71CE4E /* MockRepositories.swift */; };
 		D01F67461C845B0820DAB27D /* Shimmer in Frameworks */ = {isa = PBXBuildFile; productRef = B3B07C11F2BB4F4E4D734903 /* Shimmer */; };
@@ -123,6 +124,7 @@
 		9E8A3D0228E2EE3ADAE37A86 /* FloatingTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingTabBar.swift; sourceTree = "<group>"; };
 		9F40AEF0915FDE1ADF55A664 /* Finery.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Finery.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A808E46673806C37D5BF707B /* UserRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRepository.swift; sourceTree = "<group>"; };
+		A8BB4775422C9B1A7C044A2F /* AuthFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthFlowView.swift; sourceTree = "<group>"; };
 		B73BE6B840255FE525903F14 /* AnalyticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsView.swift; sourceTree = "<group>"; };
 		B84589DEF693D5737501347D /* ClassifyTransactionUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassifyTransactionUseCase.swift; sourceTree = "<group>"; };
 		BA49D022D88246DAE9865205 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
@@ -173,6 +175,7 @@
 		026D4551C3670886D07E6F10 /* Auth */ = {
 			isa = PBXGroup;
 			children = (
+				A8BB4775422C9B1A7C044A2F /* AuthFlowView.swift */,
 				E262ACD8872F105202BFDD43 /* AuthViewModel.swift */,
 				90EB6D6C94F4C5C5E5716B66 /* LoginView.swift */,
 			);
@@ -575,6 +578,7 @@
 				F1AE7C2A94B173851217D863 /* AnalyticsView.swift in Sources */,
 				3A02770F74D88D2B7E6969E7 /* AnalyticsViewModel.swift in Sources */,
 				B183A2A671407F2C3CFB56B2 /* AppContainer.swift in Sources */,
+				C2E7BB8D40E2E138E609556A /* AuthFlowView.swift in Sources */,
 				BBE61F28FF7F44CA4B840E0A /* AuthViewModel.swift in Sources */,
 				977403F6A9A4693D5687BDD9 /* CalculateTaxUseCase.swift in Sources */,
 				ADE05D6F2C7A8BB1596F7047 /* CashFlowForecast.swift in Sources */,
