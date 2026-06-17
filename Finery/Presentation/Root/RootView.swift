@@ -8,7 +8,8 @@ struct RootView: View {
     @State private var container: AppContainer?
     @State private var phase: Phase = .splash
     @State private var showReAuth = false
-    @State private var selectedTab: Int = 0
+    @State private var selectedTab: FineryTab = .dashboard
+    @State private var goingRight = true
 
     private enum Phase: Equatable {
         case splash, welcome, register, login, main
@@ -104,28 +105,43 @@ struct RootView: View {
         .fontDesign(.rounded)
     }
 
-    // MARK: Main TabView
+    // MARK: Main TabView (custom with directional transitions)
 
     private func mainTabView(c: AppContainer) -> some View {
-        TabView(selection: $selectedTab) {
-            DashboardView(viewModel: c.dashboard)
-                .tabItem { Label("Главная",   systemImage: "house") }
-                .tag(0)
-            TransactionsView(viewModel: c.transactions)
-                .tabItem { Label("Операции",  systemImage: "list.bullet") }
-                .tag(1)
-            AnalyticsView(viewModel: c.analytics)
-                .tabItem { Label("Аналитика", systemImage: "chart.bar") }
-                .tag(2)
-            TaxView(viewModel: c.tax)
-                .tabItem { Label("Налоги",    systemImage: "percent") }
-                .tag(3)
-            SettingsView(viewModel: c.settings)
-                .tabItem { Label("Настройки", systemImage: "gearshape") }
-                .tag(4)
+        ZStack(alignment: .bottom) {
+            // Content
+            ZStack {
+                tabSlide { DashboardView(viewModel: c.dashboard) }
+                    .opacity(selectedTab == .dashboard ? 1 : 0)
+
+                if selectedTab == .transactions {
+                    TransactionsView(viewModel: c.transactions)
+                        .transition(slideTransition)
+                }
+                if selectedTab == .analytics {
+                    AnalyticsView(viewModel: c.analytics)
+                        .transition(slideTransition)
+                }
+                if selectedTab == .tax {
+                    TaxView(viewModel: c.tax)
+                        .transition(slideTransition)
+                }
+                if selectedTab == .settings {
+                    SettingsView(viewModel: c.settings)
+                        .transition(slideTransition)
+                }
+            }
+            .animation(.spring(response: 0.35, dampingFraction: 0.85), value: selectedTab)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .ignoresSafeArea(edges: .bottom)
+
+            // Floating tab bar
+            FloatingTabBar(selection: Binding(
+                get: { selectedTab },
+                set: { selectTab($0) }
+            ))
+            .padding(.bottom, 20)
         }
-        .tint(FC.cobalt)
-        .onChange(of: selectedTab) { _, _ in HapticManager.light() }
         .fullScreenCover(isPresented: $showReAuth) {
             if let c = container {
                 AuthFlowView(
@@ -141,6 +157,27 @@ struct RootView: View {
         .onChange(of: c.dashboard.needsAuth) { _, needed in
             if needed { showReAuth = true }
         }
+    }
+
+    private var slideTransition: AnyTransition {
+        .asymmetric(
+            insertion: .move(edge: goingRight ? .trailing : .leading),
+            removal:   .move(edge: goingRight ? .leading  : .trailing)
+        )
+    }
+
+    private func selectTab(_ tab: FineryTab) {
+        guard tab != selectedTab else { return }
+        goingRight = tab.rawValue > selectedTab.rawValue
+        HapticManager.light()
+        withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
+            selectedTab = tab
+        }
+    }
+
+    @ViewBuilder
+    private func tabSlide<V: View>(@ViewBuilder _ content: () -> V) -> some View {
+        content()
     }
 
     // MARK: Boot
