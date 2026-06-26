@@ -42,6 +42,7 @@ targets:
           - UIInterfaceOrientationPortrait
         NSAppTransportSecurity:
           NSAllowsArbitraryLoads: true
+        ANTHROPIC_API_KEY: ""
     dependencies:
       - package: Pow
         product: Pow

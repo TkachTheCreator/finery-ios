@@ -35,7 +35,46 @@ final class SharedDataService {
         return Date().timeIntervalSince(t) > 30
     }
 
-    // MARK: - Load
+    // MARK: - Cache keys
+
+    private enum CacheKey {
+        static let transactions = "cached_transactions"
+        static let income       = "cached_income"
+        static let expense      = "cached_expense"
+        static let tax          = "cached_tax"
+    }
+
+    // MARK: - Load cached data (called at startup)
+
+    func loadCached() {
+        let defaults = UserDefaults.standard
+        if let data = defaults.data(forKey: CacheKey.transactions),
+           let txs = try? JSONDecoder().decode([Transaction].self, from: data) {
+            transactions = txs
+            TransactionStore.shared.syncFromService(txs)
+        }
+        let income  = Decimal(defaults.double(forKey: CacheKey.income))
+        let expense = Decimal(defaults.double(forKey: CacheKey.expense))
+        let tax     = Decimal(defaults.double(forKey: CacheKey.tax))
+        if income > 0 || expense > 0 {
+            let cal   = Calendar.current
+            let start = cal.date(from: cal.dateComponents([.year, .month], from: Date()))!
+            pnl = PnL(period: DateInterval(start: start, end: Date()),
+                      totalIncome: income, totalExpenses: expense, taxAmount: tax)
+        }
+    }
+
+    // MARK: - Persist to cache
+
+    private func saveToCache() {
+        let defaults = UserDefaults.standard
+        defaults.set(try? JSONEncoder().encode(transactions), forKey: CacheKey.transactions)
+        defaults.set(NSDecimalNumber(decimal: totalIncome ).doubleValue, forKey: CacheKey.income)
+        defaults.set(NSDecimalNumber(decimal: totalExpense).doubleValue, forKey: CacheKey.expense)
+        defaults.set(NSDecimalNumber(decimal: taxAmount   ).doubleValue, forKey: CacheKey.tax)
+    }
+
+    // MARK: - Load from network
 
     func loadAll(referenceDate: Date = Date()) async {
         guard APIClient.shared.isAuthenticated else { return }
@@ -61,17 +100,22 @@ final class SharedDataService {
         let taxResult  = try? await taxTask
         let userResult = try? await userTask
 
-        isOffline = (txResult == nil) && transactions.isEmpty
+        // Network is offline when all primary calls fail
+        let networkFailed = txResult == nil && pnlResult == nil
+        isOffline = networkFailed
 
         if let txs = txResult {
             transactions = txs
-            TransactionStore.shared.syncFromService(txs)   // keep use-cases in sync
+            TransactionStore.shared.syncFromService(txs)
         }
         if let p = pnlResult  { pnl = p }
         if let t = taxResult  { taxStatus = t }
         if let u = userResult { currentUser = u }
 
         lastUpdated = Date()
+
+        // Persist fresh data for offline use
+        if !networkFailed { saveToCache() }
     }
 
     // MARK: - Mutations
