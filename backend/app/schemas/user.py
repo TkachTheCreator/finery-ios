@@ -34,6 +34,12 @@ class TokenOut(BaseModel):
     user: UserOut
 
 
+class UserUpdate(BaseModel):
+    name: str | None = None
+    tax_mode: str | None = None   # npd | usn6 | usn15 | patent | none
+    user_type: str | None = None  # freelancer | ip | blogger | self_employed | other
+
+
 class ForgotPasswordIn(BaseModel):
     email: EmailStr
 

@@ -34,7 +34,7 @@ async def pnl(
     db: AsyncSession = Depends(get_db),
 ):
     rows = await _fetch(user.id, from_date, to_date, db)
-    return svc.pnl(_tx_dicts(rows))
+    return svc.pnl(_tx_dicts(rows), tax_mode=user.tax_mode)
 
 
 @router.get("/top-sources")
@@ -58,7 +58,7 @@ async def monthly(
     from_date = datetime(year, 1, 1)
     to_date = datetime(year, 12, 31, 23, 59, 59)
     rows = await _fetch(user.id, from_date, to_date, db)
-    return svc.monthly_dynamics(_tx_dicts(rows))
+    return svc.monthly_dynamics(_tx_dicts(rows), tax_mode=user.tax_mode)
 
 
 async def _fetch(user_id, from_date, to_date, db: AsyncSession):
