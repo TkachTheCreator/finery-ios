@@ -42,6 +42,9 @@ struct TaxView: View {
                             .cardAppear(appeared: appeared, delay: 0.46)
                     } else if viewModel.isLoading {
                         loadingState
+                    } else if viewModel.userType == .other {
+                        personalTrackerStub
+                            .cardAppear(appeared: appeared, delay: 0.08)
                     }
 
                     Color.clear.frame(height: 40)
@@ -366,6 +369,28 @@ struct TaxView: View {
         }
         .padding(20)
         .glassCard()
+    }
+
+    // MARK: - Personal Tracker Stub
+
+    private var personalTrackerStub: some View {
+        VStack(spacing: 20) {
+            Image(systemName: "house.circle")
+                .font(.system(size: 60, weight: .light))
+                .foregroundStyle(FC.muted)
+            VStack(spacing: 8) {
+                Text("Личный трекер")
+                    .font(.system(.title3, design: .rounded, weight: .semibold))
+                    .foregroundStyle(FC.ink)
+                Text("Налоги не отслеживаются.\nЭтот режим — для личного бюджета без налоговой отчётности.")
+                    .font(.system(.subheadline, design: .rounded))
+                    .foregroundStyle(FC.muted)
+                    .multilineTextAlignment(.center)
+            }
+        }
+        .padding(.horizontal, 32)
+        .padding(.vertical, 64)
+        .frame(maxWidth: .infinity)
     }
 
     // MARK: - Loading

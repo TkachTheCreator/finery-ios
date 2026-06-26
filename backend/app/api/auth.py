@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.config import settings
 from app.core.database import get_db
 from app.models.user import User
-from app.schemas.user import TokenOut, UserLogin, UserOut, UserRegister
+from app.schemas.user import ForgotPasswordIn, ForgotPasswordOut, TokenOut, UserLogin, UserOut, UserRegister
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 pwd = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -95,3 +95,12 @@ async def login(body: UserLogin, db: AsyncSession = Depends(get_db)):
 @router.get("/me", response_model=UserOut)
 async def me(user: User = Depends(current_user)):
     return user
+
+
+@router.post("/forgot-password", response_model=ForgotPasswordOut)
+async def forgot_password(body: ForgotPasswordIn, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(User).where(User.email == body.email))
+    user = result.scalar_one_or_none()
+    if not user:
+        raise HTTPException(status_code=404, detail="Email not found")
+    return ForgotPasswordOut(message="Письмо отправлено")

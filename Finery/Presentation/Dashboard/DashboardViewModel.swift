@@ -53,6 +53,9 @@ final class DashboardViewModel {
             return
         }
 
+        // Populate shared store so Tax/Analytics ViewModels see the same data
+        await TransactionStore.shared.load()
+
         let calendar = Calendar.current
         let startOfMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: referenceDate))!
         let startOfNext  = calendar.date(byAdding: .month, value: 1, to: startOfMonth)!

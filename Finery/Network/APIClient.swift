@@ -11,18 +11,20 @@ enum NetworkError: LocalizedError {
     case serverError(Int, String?)
     case decodingFailed(Error)
     case noConnection
+    case serverUnavailable
 
     var errorDescription: String? {
         switch self {
-        case .wrongPassword:   return "Неверный пароль"
-        case .userNotFound:    return "Аккаунт с таким email не найден"
-        case .emailTaken:      return "Этот email уже зарегистрирован"
-        case .unauthorized:    return "Необходима авторизация"
+        case .wrongPassword:      return "Неверный пароль"
+        case .userNotFound:       return "Аккаунт с таким email не найден"
+        case .emailTaken:         return "Этот email уже зарегистрирован"
+        case .unauthorized:       return "Необходима авторизация"
         case .serverError(let code, let msg):
             return "Ошибка сервера \(code): \(msg ?? "неизвестная ошибка")"
         case .decodingFailed(let e):
             return "Ошибка разбора ответа: \(e.localizedDescription)"
-        case .noConnection:    return "Проверь подключение к интернету"
+        case .noConnection:       return "Проверь подключение к интернету"
+        case .serverUnavailable:  return "Сервер недоступен, попробуйте позже"
         }
     }
 }
@@ -82,6 +84,14 @@ private struct RegisterRequest: Encodable {
 private struct LoginRequest: Encodable {
     let email: String
     let password: String
+}
+
+private struct ForgotPasswordRequest: Encodable {
+    let email: String
+}
+
+private struct ForgotPasswordResponse: Decodable {
+    let message: String
 }
 
 private struct TokenDTO: Decodable {
@@ -368,6 +378,12 @@ actor APIClient {
         KeychainStore.delete()
     }
 
+    func forgotPassword(email: String) async throws -> String {
+        let body = ForgotPasswordRequest(email: email)
+        let response: ForgotPasswordResponse = try await post("api/v1/auth/forgot-password", body: body)
+        return response.message
+    }
+
     // MARK: Transactions
 
     func createTransaction(_ tx: Transaction) async throws -> Transaction {
@@ -500,8 +516,15 @@ actor APIClient {
         let (data, response): (Data, URLResponse)
         do {
             (data, response) = try await session.data(for: request)
+        } catch let urlError as URLError {
+            switch urlError.code {
+            case .notConnectedToInternet, .networkConnectionLost, .dataNotAllowed:
+                throw NetworkError.noConnection
+            default:
+                throw NetworkError.serverUnavailable
+            }
         } catch {
-            throw NetworkError.noConnection
+            throw NetworkError.serverUnavailable
         }
         guard let http = response as? HTTPURLResponse else {
             throw NetworkError.noConnection
