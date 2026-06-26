@@ -56,11 +56,8 @@ extension DashboardViewModel {
         let usrRepo = MockUserRepository()
         let calc    = TaxCalculatorService()
         return DashboardViewModel(
-            getPnL:        GetPnLUseCase(transactionRepository: txRepo, userRepository: usrRepo, taxCalculator: calc),
-            calculateTax:  CalculateTaxUseCase(transactionRepository: txRepo, userRepository: usrRepo, taxCalculator: calc),
-            getInsights:   GetInsightsUseCase(transactionRepository: txRepo, userRepository: usrRepo, taxCalculator: calc),
-            transactionRepository: txRepo,
-            userRepository: usrRepo
+            getInsights:          GetInsightsUseCase(transactionRepository: txRepo, userRepository: usrRepo, taxCalculator: calc),
+            transactionRepository: txRepo
         )
     }
 }

@@ -22,8 +22,8 @@ final class AppContainer {
         let usrRepo = UserLocalRepository(modelContext: modelContext)
         let calc    = TaxCalculatorService()
 
-        // Store-backed repository: reads from in-memory TransactionStore (loaded from API),
-        // writes through to SwiftData for offline cache.
+        // Store-backed repo: read from in-memory TransactionStore (synced by SharedDataService),
+        // write-through to SwiftData for offline cache.
         let storeRepo = StoreBackedTransactionRepository(local: txRepo)
 
         transactionRepository = storeRepo
@@ -32,26 +32,20 @@ final class AppContainer {
         auth = AuthViewModel(userRepository: usrRepo)
 
         dashboard = DashboardViewModel(
-            getPnL:       GetPnLUseCase(transactionRepository: storeRepo, userRepository: usrRepo, taxCalculator: calc),
-            calculateTax: CalculateTaxUseCase(transactionRepository: storeRepo, userRepository: usrRepo, taxCalculator: calc),
-            getInsights:  GetInsightsUseCase(transactionRepository: storeRepo, userRepository: usrRepo, taxCalculator: calc),
-            transactionRepository: storeRepo,
-            userRepository: usrRepo
+            getInsights:          GetInsightsUseCase(transactionRepository: storeRepo, userRepository: usrRepo, taxCalculator: calc),
+            transactionRepository: storeRepo
         )
 
         transactions = TransactionsViewModel(transactionRepository: storeRepo)
 
         analytics = AnalyticsViewModel(
-            getMonthlyDynamics: GetMonthlyDynamicsUseCase(transactionRepository: storeRepo, userRepository: usrRepo, taxCalculator: calc),
-            transactionRepository: storeRepo,
-            userRepository: usrRepo
+            getMonthlyDynamics: GetMonthlyDynamicsUseCase(transactionRepository: storeRepo, userRepository: usrRepo, taxCalculator: calc)
         )
 
         tax = TaxViewModel(
-            calculateTax:       CalculateTaxUseCase(transactionRepository: storeRepo, userRepository: usrRepo, taxCalculator: calc),
-            getMonthlyDynamics: GetMonthlyDynamicsUseCase(transactionRepository: storeRepo, userRepository: usrRepo, taxCalculator: calc),
+            getMonthlyDynamics:   GetMonthlyDynamicsUseCase(transactionRepository: storeRepo, userRepository: usrRepo, taxCalculator: calc),
             transactionRepository: storeRepo,
-            userRepository: usrRepo
+            userRepository:        usrRepo
         )
 
         settings = SettingsViewModel(userRepository: usrRepo)

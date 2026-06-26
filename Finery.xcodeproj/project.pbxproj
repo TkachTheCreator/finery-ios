@@ -22,6 +22,7 @@
 		254EC4E96239C9836A221B88 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64B6E0D5E7B5285B6516722D /* NotificationService.swift */; };
 		2CF9F77B9304F82B9C29D876 /* AIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB8D7D57EA3C0EC851F0F031 /* AIService.swift */; };
 		30B51A1F80AB530F64ADB1A0 /* StoreBackedTransactionRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 186B0AECC2A01E3E467153CD /* StoreBackedTransactionRepository.swift */; };
+		35F4639E9AECB81581CA7E76 /* SharedDataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D3C9EFD3FC5B539D890FE46 /* SharedDataService.swift */; };
 		366AC8A43E427CB937DCB1F1 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B594F31B53AA1F9EDB46E9 /* Constants.swift */; };
 		38E4A622E0DB6FF0B1DA2219 /* ClassifyTransactionUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = B84589DEF693D5737501347D /* ClassifyTransactionUseCase.swift */; };
 		3A02770F74D88D2B7E6969E7 /* AnalyticsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4A3D50A4B2CBBE238524D0D /* AnalyticsViewModel.swift */; };
@@ -98,6 +99,7 @@
 		2182632BEFCE4CB0A8A9362F /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		21AE10AC2F9610FBD58E82A5 /* CalculateTaxUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculateTaxUseCase.swift; sourceTree = "<group>"; };
 		2BF5014B27266B9CEA6DC11C /* UserEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserEntity.swift; sourceTree = "<group>"; };
+		2D3C9EFD3FC5B539D890FE46 /* SharedDataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedDataService.swift; sourceTree = "<group>"; };
 		33A4C68A92997653ED71CE4E /* MockRepositories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockRepositories.swift; sourceTree = "<group>"; };
 		37EC1D8CBB961AC2E1444958 /* ForgotPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordView.swift; sourceTree = "<group>"; };
 		38A22F96E80B26D493834CA4 /* FineryPDFGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FineryPDFGenerator.swift; sourceTree = "<group>"; };
@@ -245,6 +247,7 @@
 		1D859BB1E5263BF014ADFCDB /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				2D3C9EFD3FC5B539D890FE46 /* SharedDataService.swift */,
 				186B0AECC2A01E3E467153CD /* StoreBackedTransactionRepository.swift */,
 				DBA3BDDB6EC21859BC0FAF0A /* TransactionStore.swift */,
 				7DEF06C69FA691FEC83CF934 /* Local */,
@@ -640,6 +643,7 @@
 				8F9F6A6C899C207AED931882 /* RootView.swift in Sources */,
 				615CA91F82633A7A2C1F40E1 /* SettingsView.swift in Sources */,
 				6DF61355766320364D5B7694 /* SettingsViewModel.swift in Sources */,
+				35F4639E9AECB81581CA7E76 /* SharedDataService.swift in Sources */,
 				D7182FC815B11F3DD24A2F60 /* SplashView.swift in Sources */,
 				30B51A1F80AB530F64ADB1A0 /* StoreBackedTransactionRepository.swift in Sources */,
 				42F92C1337CD08F72B200AF2 /* TaxCalculatorService.swift in Sources */,

@@ -53,6 +53,7 @@ struct TaxView: View {
             }
         }
         .task { await viewModel.load() }
+        .onAppear { Task { await SharedDataService.shared.loadAll() } }
         .onAppear {
             guard !appeared else { return }
             withAnimation(.spring(response: 0.7, dampingFraction: 0.82)) { appeared = true }

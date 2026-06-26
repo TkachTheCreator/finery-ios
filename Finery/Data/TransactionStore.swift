@@ -44,6 +44,12 @@ final class TransactionStore {
         loadedAt = nil
     }
 
+    /// Called by SharedDataService to keep use-cases in sync without an extra API call.
+    func syncFromService(_ txs: [Transaction]) {
+        transactions = txs
+        loadedAt = Date()
+    }
+
     func items(from: Date, to: Date) -> [Transaction] {
         transactions.filter { $0.date >= from && $0.date <= to }
     }
