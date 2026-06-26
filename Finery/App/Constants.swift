@@ -1,12 +1,11 @@
 import Foundation
 
 enum Constants {
-    /// Anthropic API key for the AI financial advisor.
-    /// Set your key here or add "AnthropicAPIKey" to Info.plist.
+    /// Anthropic API key — set in Info.plist under "ANTHROPIC_API_KEY"
+    /// or paste your key directly below for local development.
     static let anthropicAPIKey: String = {
-        if let key = Bundle.main.infoDictionary?["AnthropicAPIKey"] as? String, !key.isEmpty {
-            return key
-        }
-        return ""   // ← paste your key here for local dev
+        let plistKey = Bundle.main.infoDictionary?["ANTHROPIC_API_KEY"] as? String ?? ""
+        if !plistKey.isEmpty { return plistKey }
+        return ""   // ← paste key here for local dev
     }()
 }

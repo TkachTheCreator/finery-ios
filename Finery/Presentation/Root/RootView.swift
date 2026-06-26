@@ -185,12 +185,7 @@ struct RootView: View {
             }
         }
         .sheet(isPresented: $showChat) {
-            ChatView(
-                income:  c.dashboard.pnl?.totalIncome   ?? 0,
-                expense: c.dashboard.pnl?.totalExpenses ?? 0,
-                tax:     c.dashboard.pnl?.taxAmount     ?? 0,
-                taxMode: c.dashboard.taxStatus?.taxMode.displayName ?? "НПД"
-            )
+            AIAdvisorView()
         }
     }
 
@@ -222,6 +217,9 @@ struct RootView: View {
             container = AppContainer(modelContext: modelContext)
         }
         guard let c = container else { return }
+
+        // Show cached data instantly while network loads
+        SharedDataService.shared.loadCached()
 
         let welcomeSeen = UserDefaults.standard.bool(forKey: "finery_welcome_seen")
 
