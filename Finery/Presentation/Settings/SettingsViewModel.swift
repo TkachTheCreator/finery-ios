@@ -38,8 +38,8 @@ final class SettingsViewModel {
                 )
                 // Refresh local store with backend-confirmed values
                 try? await userRepository.updateUser(updated)
-                // Invalidate transaction store so next Dashboard load re-fetches with correct tax
-                TransactionStore.shared.reset()
+                // Reset SharedDataService so all screens re-fetch with the new tax mode
+                SharedDataService.shared.reset()
             }
             savedFeedback = true
             try? await Task.sleep(for: .seconds(1.5))

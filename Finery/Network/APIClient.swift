@@ -397,6 +397,11 @@ actor APIClient {
         return response.message
     }
 
+    func getCurrentUser() async throws -> User {
+        let dto: UserDTO = try await get("api/v1/auth/me", authorized: true)
+        return dto.toDomain()
+    }
+
     func updateProfile(name: String, taxMode: TaxMode, userType: UserType) async throws -> User {
         let body = UpdateProfileRequest(name: name, taxMode: taxMode.apiValue, userType: userType.apiValue)
         let dto: UserDTO = try await put("api/v1/auth/me", body: body)

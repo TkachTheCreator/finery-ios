@@ -30,8 +30,12 @@ enum TimePeriod: String, CaseIterable, Sendable {
 final class TransactionsViewModel {
 
     var allTransactions: [Transaction] = []
-    var period: TimePeriod = .month
-    var directionFilter: TransactionDirection? = nil
+    var period: TimePeriod = .month {
+        didSet { filterFromService() }
+    }
+    var directionFilter: TransactionDirection? = nil {
+        didSet { filterFromService() }
+    }
     var isLoading = false
     var isOffline = false
     var errorMessage: String?
@@ -44,25 +48,21 @@ final class TransactionsViewModel {
 
     // MARK: Computed
 
-    var filtered: [Transaction] {
-        allTransactions
-            .filter { directionFilter == nil || $0.direction == directionFilter }
-    }
+    var filtered: [Transaction] { allTransactions }
 
     var grouped: [(date: Date, items: [Transaction])] {
         let cal = Calendar.current
-        let dict = Dictionary(grouping: filtered) { cal.startOfDay(for: $0.date) }
+        let dict = Dictionary(grouping: allTransactions) { cal.startOfDay(for: $0.date) }
         return dict
             .sorted { $0.key > $1.key }
             .map { (date: $0.key, items: $0.value.sorted { $0.date > $1.date }) }
     }
 
     var totalIncome: Decimal {
-        filtered.filter { $0.direction == .income  }.reduce(0) { $0 + $1.amount }
+        allTransactions.filter { $0.direction == .income  }.reduce(0) { $0 + $1.amount }
     }
-
     var totalExpenses: Decimal {
-        filtered.filter { $0.direction == .expense }.reduce(0) { $0 + $1.amount }
+        allTransactions.filter { $0.direction == .expense }.reduce(0) { $0 + $1.amount }
     }
 
     // MARK: Actions
@@ -71,30 +71,32 @@ final class TransactionsViewModel {
         isLoading = true
         isOffline = false
         defer { isLoading = false }
-        let interval = period.interval
-        do {
-            allTransactions = try await APIClient.shared.getTransactions(from: interval.start, to: interval.end)
-        } catch NetworkError.noConnection, NetworkError.unauthorized {
-            isOffline = true
-            allTransactions = (try? await transactionRepository.fetch(from: interval.start, to: interval.end)) ?? []
-        } catch {
-            allTransactions = (try? await transactionRepository.fetch(from: interval.start, to: interval.end)) ?? []
-            errorMessage = error.localizedDescription
-        }
+
+        await SharedDataService.shared.loadAll()
+
+        isOffline = SharedDataService.shared.isOffline
+        filterFromService()
     }
 
     func delete(id: UUID) async {
         allTransactions.removeAll { $0.id == id }
-        do {
-            try await APIClient.shared.deleteTransaction(id: id)
-            try? await transactionRepository.delete(id: id)
-        } catch {
-            try? await transactionRepository.delete(id: id)
-        }
+        await SharedDataService.shared.deleteTransaction(id: id)
     }
 
     func makeAddTransactionViewModel() -> AddTransactionViewModel {
         AddTransactionViewModel(transactionRepository: transactionRepository)
+    }
+
+    // MARK: Private
+
+    private func filterFromService() {
+        let interval = period.interval
+        var txns = SharedDataService.shared.transactions
+            .filter { $0.date >= interval.start && $0.date <= interval.end }
+        if let dir = directionFilter {
+            txns = txns.filter { $0.direction == dir }
+        }
+        allTransactions = txns
     }
 }
 

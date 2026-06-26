@@ -39,6 +39,7 @@ struct AnalyticsView: View {
             }
         }
         .task { await viewModel.load() }
+        .onAppear { Task { await SharedDataService.shared.loadAll() } }
         .alert("Ошибка загрузки", isPresented: Binding(
             get: { viewModel.errorMessage != nil },
             set: { if !$0 { viewModel.errorMessage = nil } }
