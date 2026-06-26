@@ -2,7 +2,7 @@ import Foundation
 import SwiftData
 import Observation
 
-/// Единая точка сборки зависимостей. Создаётся один раз при старте приложения.
+/// Single dependency graph. Created once at startup.
 @Observable
 @MainActor
 final class AppContainer {
@@ -20,33 +20,38 @@ final class AppContainer {
     init(modelContext: ModelContext) {
         let txRepo  = TransactionLocalRepository(modelContext: modelContext)
         let usrRepo = UserLocalRepository(modelContext: modelContext)
-
-        auth = AuthViewModel(userRepository: usrRepo)
         let calc    = TaxCalculatorService()
 
-        transactionRepository = txRepo
+        // Store-backed repository: reads from in-memory TransactionStore (loaded from API),
+        // writes through to SwiftData for offline cache.
+        let storeRepo = StoreBackedTransactionRepository(local: txRepo)
+
+        transactionRepository = storeRepo
         userRepository        = usrRepo
 
+        auth = AuthViewModel(userRepository: usrRepo)
+
         dashboard = DashboardViewModel(
-            getPnL:       GetPnLUseCase(transactionRepository: txRepo, userRepository: usrRepo, taxCalculator: calc),
-            calculateTax: CalculateTaxUseCase(transactionRepository: txRepo, userRepository: usrRepo, taxCalculator: calc),
-            getInsights:  GetInsightsUseCase(transactionRepository: txRepo, userRepository: usrRepo, taxCalculator: calc),
-            transactionRepository: txRepo,
+            getPnL:       GetPnLUseCase(transactionRepository: storeRepo, userRepository: usrRepo, taxCalculator: calc),
+            calculateTax: CalculateTaxUseCase(transactionRepository: storeRepo, userRepository: usrRepo, taxCalculator: calc),
+            getInsights:  GetInsightsUseCase(transactionRepository: storeRepo, userRepository: usrRepo, taxCalculator: calc),
+            transactionRepository: storeRepo,
             userRepository: usrRepo
         )
 
-        transactions = TransactionsViewModel(transactionRepository: txRepo)
+        transactions = TransactionsViewModel(transactionRepository: storeRepo)
 
         analytics = AnalyticsViewModel(
-            getMonthlyDynamics: GetMonthlyDynamicsUseCase(transactionRepository: txRepo, userRepository: usrRepo, taxCalculator: calc),
-            transactionRepository: txRepo,
+            getMonthlyDynamics: GetMonthlyDynamicsUseCase(transactionRepository: storeRepo, userRepository: usrRepo, taxCalculator: calc),
+            transactionRepository: storeRepo,
             userRepository: usrRepo
         )
 
         tax = TaxViewModel(
-            calculateTax:      CalculateTaxUseCase(transactionRepository: txRepo, userRepository: usrRepo, taxCalculator: calc),
-            getMonthlyDynamics: GetMonthlyDynamicsUseCase(transactionRepository: txRepo, userRepository: usrRepo, taxCalculator: calc),
-            transactionRepository: txRepo
+            calculateTax:       CalculateTaxUseCase(transactionRepository: storeRepo, userRepository: usrRepo, taxCalculator: calc),
+            getMonthlyDynamics: GetMonthlyDynamicsUseCase(transactionRepository: storeRepo, userRepository: usrRepo, taxCalculator: calc),
+            transactionRepository: storeRepo,
+            userRepository: usrRepo
         )
 
         settings = SettingsViewModel(userRepository: usrRepo)

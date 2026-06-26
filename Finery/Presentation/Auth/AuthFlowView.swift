@@ -11,10 +11,12 @@ struct AuthFlowView: View {
     @State private var forward = true
     @State private var localError: String?
     @State private var showPassword = false
+    @State private var showConfirmPassword = false
+    @State private var showForgotPassword = false
 
-    // register: 0=name  1=email  2=password  3=userType
+    // register: 0=name  1=email  2=password  3=confirmPassword  4=userType
     // login:    0=email 1=password
-    private var totalSteps: Int { isRegistering ? 4 : 2 }
+    private var totalSteps: Int { isRegistering ? 5 : 2 }
     private var progress: Double { Double(step + 1) / Double(totalSteps) }
 
     var body: some View {
@@ -41,6 +43,9 @@ struct AuthFlowView: View {
             viewModel.mode = isRegistering ? .register : .login
             viewModel.errorMessage = nil
             localError = nil
+        }
+        .sheet(isPresented: $showForgotPassword) {
+            ForgotPasswordView()
         }
     }
 
@@ -82,7 +87,8 @@ struct AuthFlowView: View {
             case 0: nameStep
             case 1: emailStep
             case 2: passwordStep
-            case 3: userTypeStep
+            case 3: confirmPasswordStep
+            case 4: userTypeStep
             default: EmptyView()
             }
         } else {
@@ -146,6 +152,34 @@ struct AuthFlowView: View {
                 showPassword: $showPassword,
                 onChange: { localError = nil }
             )
+            if !isRegistering {
+                Button("Забыли пароль?") {
+                    showForgotPassword = true
+                }
+                .font(.system(.caption, design: .rounded, weight: .medium))
+                .foregroundStyle(FC.cobalt)
+                .frame(maxWidth: .infinity, alignment: .trailing)
+                .padding(.top, 4)
+            }
+        }
+    }
+
+    private var confirmPasswordStep: some View {
+        let mismatch = !viewModel.confirmPassword.isEmpty
+            && viewModel.confirmPassword != viewModel.password
+        return StepLayout(
+            question: "Повторите пароль",
+            subtitle: "Введите пароль ещё раз",
+            isValid: isStepValid,
+            isLoading: false,
+            error: mismatch ? "Пароли не совпадают" : nil,
+            onContinue: handleContinue
+        ) {
+            AuthPasswordField(
+                text: $viewModel.confirmPassword,
+                showPassword: $showConfirmPassword,
+                onChange: { }
+            )
         }
     }
 
@@ -181,7 +215,9 @@ struct AuthFlowView: View {
             case 0: return viewModel.name.trimmingCharacters(in: .whitespaces).count >= 1
             case 1: return viewModel.email.contains("@") && viewModel.email.contains(".")
             case 2: return viewModel.password.count >= 8
-            case 3: return true
+            case 3: return !viewModel.confirmPassword.isEmpty
+                        && viewModel.confirmPassword == viewModel.password
+            case 4: return true
             default: return false
             }
         } else {
@@ -305,7 +341,7 @@ private struct StepLayout<Content: View>: View {
 
 // MARK: - AuthInputField
 
-private struct AuthInputField: View {
+struct AuthInputField: View {
     let placeholder: String
     @Binding var text: String
     var keyboard: UIKeyboardType = .default

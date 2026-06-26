@@ -8,6 +8,7 @@ struct RootView: View {
     @State private var container: AppContainer?
     @State private var phase: Phase = .splash
     @State private var showReAuth = false
+    @State private var showChat   = false
     @State private var selectedTab: FineryTab = .dashboard
     @State private var goingRight = true
 
@@ -141,6 +142,26 @@ struct RootView: View {
                 set: { selectTab($0) }
             ))
             .padding(.bottom, 20)
+
+            // AI FAB — above the tab bar, visible only on Dashboard
+            if selectedTab == .dashboard {
+                HStack {
+                    Spacer()
+                    Button { showChat = true } label: {
+                        Image(systemName: "sparkles")
+                            .font(.system(size: 22, weight: .medium))
+                            .foregroundStyle(.white)
+                            .frame(width: 56, height: 56)
+                            .background(FC.cobalt)
+                            .clipShape(Circle())
+                            .shadow(color: FC.cobalt.opacity(0.35), radius: 12, x: 0, y: 6)
+                    }
+                    .buttonStyle(ScaleButtonStyle())
+                }
+                .padding(.trailing, 20)
+                .padding(.bottom, 104)
+                .transition(.opacity.combined(with: .scale(scale: 0.8)))
+            }
         }
         .fullScreenCover(isPresented: $showReAuth) {
             if let c = container {
@@ -156,6 +177,20 @@ struct RootView: View {
         }
         .onChange(of: c.dashboard.needsAuth) { _, needed in
             if needed { showReAuth = true }
+        }
+        .onChange(of: selectedTab) { previous, current in
+            // Reload Dashboard whenever user returns to it, so Settings changes apply immediately
+            if current == .dashboard && previous != .dashboard {
+                Task { await c.dashboard.load() }
+            }
+        }
+        .sheet(isPresented: $showChat) {
+            ChatView(
+                income:  c.dashboard.pnl?.totalIncome   ?? 0,
+                expense: c.dashboard.pnl?.totalExpenses ?? 0,
+                tax:     c.dashboard.pnl?.taxAmount     ?? 0,
+                taxMode: c.dashboard.taxStatus?.taxMode.displayName ?? "НПД"
+            )
         }
     }
 

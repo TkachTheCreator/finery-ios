@@ -10,11 +10,12 @@ final class AuthViewModel {
     // MARK: State
 
     var mode: Mode = .login
-    var email    = ""
-    var password = ""
-    var name     = ""
-    var taxMode  = TaxMode.npd
-    var userType = UserType.freelancer
+    var email           = ""
+    var password        = ""
+    var confirmPassword = ""
+    var name            = ""
+    var taxMode         = TaxMode.npd
+    var userType        = UserType.freelancer
 
     var isLoading    = false
     var errorMessage: String?
@@ -76,7 +77,11 @@ final class AuthViewModel {
             errorMessage = "Этот email уже зарегистрирован"
             return false
         } catch {
-            errorMessage = "Проверь подключение к интернету"
+            if let netErr = error as? NetworkError {
+                errorMessage = netErr.errorDescription
+            } else {
+                errorMessage = "Проверь подключение к интернету"
+            }
             return false
         }
     }

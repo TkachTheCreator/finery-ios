@@ -41,6 +41,9 @@ final class AnalyticsViewModel {
         isLoading = true
         defer { isLoading = false }
 
+        // Populate shared store from backend
+        await TransactionStore.shared.load()
+
         let cal = Calendar.current
         let startOfMonth = cal.date(from: cal.dateComponents([.year, .month], from: referenceDate))!
         let startOfNext  = cal.date(byAdding: .month, value: 1, to: startOfMonth)!
@@ -49,9 +52,9 @@ final class AnalyticsViewModel {
         let prevEnd      = cal.date(byAdding: .second, value: -1, to: startOfMonth)!
 
         do {
-            async let monthly   = getMonthlyDynamics.execute(referenceDate: referenceDate)
-            async let curTxns   = transactionRepository.fetch(from: startOfMonth, to: endOfMonth)
-            async let prevTxns  = transactionRepository.fetch(from: prevStart, to: prevEnd)
+            async let monthly  = getMonthlyDynamics.execute(referenceDate: referenceDate)
+            async let curTxns  = transactionRepository.fetch(from: startOfMonth, to: endOfMonth)
+            async let prevTxns = transactionRepository.fetch(from: prevStart, to: prevEnd)
 
             let (months, current, prev) = try await (monthly, curTxns, prevTxns)
             monthlyData = months
@@ -79,7 +82,7 @@ final class AnalyticsViewModel {
         let totalExpenses = monthlyData.reduce(0) { $0 + $1.expenses }
         let netProfit     = totalIncome - totalExpenses - totalTax
 
-        let incomeRows = incomeBreakdown.map { (name: $0.category.displayName, amount: $0.amount, percent: $0.percent) }
+        let incomeRows  = incomeBreakdown.map { (name: $0.category.displayName, amount: $0.amount, percent: $0.percent) }
         let monthlyRows = monthlyData.map { (label: $0.monthLabel, income: $0.income, expenses: $0.expenses) }
 
         let reportData = FineryPDFGenerator.ReportData(
