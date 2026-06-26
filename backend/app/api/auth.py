@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.config import settings
 from app.core.database import get_db
 from app.models.user import User
-from app.schemas.user import ForgotPasswordIn, ForgotPasswordOut, TokenOut, UserLogin, UserOut, UserRegister
+from app.schemas.user import ForgotPasswordIn, ForgotPasswordOut, TokenOut, UserLogin, UserOut, UserRegister, UserUpdate
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 pwd = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -94,6 +94,23 @@ async def login(body: UserLogin, db: AsyncSession = Depends(get_db)):
 
 @router.get("/me", response_model=UserOut)
 async def me(user: User = Depends(current_user)):
+    return user
+
+
+@router.put("/me", response_model=UserOut)
+async def update_me(
+    body: UserUpdate,
+    user: User = Depends(current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    if body.name is not None:
+        user.name = body.name
+    if body.tax_mode is not None:
+        user.tax_mode = body.tax_mode
+    if body.user_type is not None:
+        user.user_type = body.user_type
+    await db.flush()
+    await db.refresh(user)
     return user
 
 

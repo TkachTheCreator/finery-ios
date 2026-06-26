@@ -94,6 +94,19 @@ private struct ForgotPasswordResponse: Decodable {
     let message: String
 }
 
+private struct UpdateProfileRequest: Encodable {
+    let name: String
+    let taxMode: String
+    let userType: String
+}
+
+private struct PaginatedTransactionsDTO: Decodable {
+    let items: [TransactionDTO]
+    let total: Int
+    let page: Int
+    let pages: Int
+}
+
 private struct TokenDTO: Decodable {
     let accessToken: String
     let user: UserDTO
@@ -384,6 +397,12 @@ actor APIClient {
         return response.message
     }
 
+    func updateProfile(name: String, taxMode: TaxMode, userType: UserType) async throws -> User {
+        let body = UpdateProfileRequest(name: name, taxMode: taxMode.apiValue, userType: userType.apiValue)
+        let dto: UserDTO = try await put("api/v1/auth/me", body: body)
+        return dto.toDomain()
+    }
+
     // MARK: Transactions
 
     func createTransaction(_ tx: Transaction) async throws -> Transaction {
@@ -402,14 +421,14 @@ actor APIClient {
         return dto.toDomain()
     }
 
-    func getTransactions(from: Date? = nil, to: Date? = nil, limit: Int = 200) async throws -> [Transaction] {
+    func getTransactions(from: Date? = nil, to: Date? = nil, perPage: Int = 200) async throws -> [Transaction] {
         let fmt = ISO8601DateFormatter()
         fmt.formatOptions = [.withInternetDateTime]
-        var query: [String: String] = ["limit": "\(limit)"]
+        var query: [String: String] = ["page": "1", "per_page": "\(min(perPage, 500))"]
         if let from { query["from_date"] = fmt.string(from: from) }
         if let to   { query["to_date"]   = fmt.string(from: to) }
-        let dtos: [TransactionDTO] = try await get("api/v1/transactions", query: query, authorized: true)
-        return dtos.map { $0.toDomain() }
+        let paginated: PaginatedTransactionsDTO = try await get("api/v1/transactions", query: query, authorized: true)
+        return paginated.items.map { $0.toDomain() }
     }
 
     func deleteTransaction(id: UUID) async throws {
@@ -476,6 +495,21 @@ actor APIClient {
     }
 
     // MARK: Private helpers
+
+    private func put<B: Encodable, R: Decodable>(
+        _ path: String,
+        body: B,
+        authorized: Bool = true
+    ) async throws -> R {
+        var req = URLRequest(url: baseURL.appendingPathComponent(path))
+        req.httpMethod = "PUT"
+        req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        if authorized, let token = KeychainStore.load() {
+            req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        req.httpBody = try makeEncoder().encode(body)
+        return try await execute(req)
+    }
 
     private func post<B: Encodable, R: Decodable>(
         _ path: String,

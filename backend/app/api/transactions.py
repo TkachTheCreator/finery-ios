@@ -1,8 +1,9 @@
+import math
 import uuid
 from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy import select, and_
+from sqlalchemy import select, and_, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.auth import current_user
@@ -21,7 +22,6 @@ async def create(
     user: User = Depends(current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    # Auto-classify if category not provided
     if body.direction == "income" and not body.income_category:
         body = body.model_copy(update={"income_category": classify(body.description, "income")})
     if body.direction == "expense" and not body.expense_category:
@@ -34,13 +34,13 @@ async def create(
     return tx
 
 
-@router.get("", response_model=list[TransactionOut])
+@router.get("")
 async def list_transactions(
     from_date: datetime | None = Query(None),
     to_date: datetime | None = Query(None),
     direction: str | None = Query(None),
-    limit: int = Query(100, le=500),
-    offset: int = Query(0),
+    page: int = Query(1, ge=1),
+    per_page: int = Query(50, ge=1, le=500),
     user: User = Depends(current_user),
     db: AsyncSession = Depends(get_db),
 ):
@@ -52,20 +52,34 @@ async def list_transactions(
     if direction:
         filters.append(Transaction.direction == direction)
 
+    # Total count
+    count_result = await db.execute(
+        select(func.count()).select_from(Transaction).where(and_(*filters))
+    )
+    total = count_result.scalar_one()
+
+    # Paginated items
+    offset = (page - 1) * per_page
     result = await db.execute(
         select(Transaction)
         .where(and_(*filters))
         .order_by(Transaction.date.desc())
-        .limit(limit)
+        .limit(per_page)
         .offset(offset)
     )
-    return result.scalars().all()
+    items = result.scalars().all()
+
+    return {
+        "items": [TransactionOut.model_validate(tx) for tx in items],
+        "total": total,
+        "page": page,
+        "pages": max(1, math.ceil(total / per_page)),
+    }
 
 
 @router.get("/{tx_id}", response_model=TransactionOut)
 async def get(tx_id: uuid.UUID, user: User = Depends(current_user), db: AsyncSession = Depends(get_db)):
-    tx = await _get_or_404(tx_id, user.id, db)
-    return tx
+    return await _get_or_404(tx_id, user.id, db)
 
 
 @router.patch("/{tx_id}", response_model=TransactionOut)

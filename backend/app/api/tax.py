@@ -8,7 +8,7 @@ from app.api.auth import current_user
 from app.core.database import get_db
 from app.models.transaction import Transaction
 from app.models.user import User
-from app.services.tax import calculate_tax_for_period
+from app.services.tax import calculate_tax_for_period, calculate_tax_npd
 
 router = APIRouter(prefix="/tax", tags=["tax"])
 
@@ -32,7 +32,8 @@ async def tax_status(
         {"amount": str(tx.amount), "direction": tx.direction, "client_type": tx.client_type}
         for tx in rows
     ]
-    return calculate_tax_for_period(tx_dicts)
+    # Use the tax mode stored in the user's profile
+    return calculate_tax_for_period(tx_dicts, tax_mode=user.tax_mode)
 
 
 @router.get("/calculate")
@@ -41,9 +42,8 @@ async def calculate(
     client_type: str = Query("individual"),
 ):
     from decimal import Decimal
-    from app.services.tax import calculate_tax
     amt = Decimal(str(amount))
-    tax = calculate_tax(amt, client_type)
+    tax = calculate_tax_npd(amt, client_type)
     return {
         "amount": amt,
         "client_type": client_type,

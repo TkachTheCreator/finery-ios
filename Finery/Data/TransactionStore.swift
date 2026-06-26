@@ -25,7 +25,7 @@ final class TransactionStore {
             let cal  = Calendar.current
             let year = cal.component(.year, from: Date())
             let from = cal.date(from: DateComponents(year: year - 1, month: 1, day: 1))!
-            transactions = try await APIClient.shared.getTransactions(from: from, limit: 500)
+            transactions = try await APIClient.shared.getTransactions(from: from, perPage: 500)
             loadedAt = Date()
         } catch {}
     }
