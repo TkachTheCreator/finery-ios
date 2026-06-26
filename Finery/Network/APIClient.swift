@@ -334,9 +334,9 @@ actor APIClient {
     static let shared = APIClient()
 
     #if targetEnvironment(simulator)
-    private let baseURL = URL(string: "http://localhost:8000")!
+    private let baseURL = URL(string: "http://127.0.0.1:8000")!
     #else
-    private let baseURL = URL(string: "http://10.192.204.89:8000")!
+    private let baseURL = URL(string: "http://10.192.202.143:8000")!
     #endif
     private let session: URLSession
 
