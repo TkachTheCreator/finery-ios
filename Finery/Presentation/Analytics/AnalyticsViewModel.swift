@@ -15,6 +15,7 @@ final class AnalyticsViewModel {
     var errorMessage: String?
     var exportedPDFData: Data?
     var showingPDFShare = false
+    var seasonalAnalysis: SeasonalAnalysis? = nil
 
     var incomeChange: Double {
         guard previousMonthIncome > 0 else { return 0 }
@@ -62,6 +63,65 @@ final class AnalyticsViewModel {
         } catch {
             errorMessage = error.localizedDescription
         }
+
+        seasonalAnalysis = computeSeasonalAnalysis()
+    }
+
+    // MARK: - Seasonal Analysis
+
+    private func computeSeasonalAnalysis() -> SeasonalAnalysis? {
+        let transactions = SharedDataService.shared.transactions
+        guard !transactions.isEmpty else { return nil }
+
+        let cal = Calendar.current
+        // Group totals by (year, month)
+        var byYearMonth: [Int: [Int: (income: Decimal, expense: Decimal)]] = [:]
+        for tx in transactions {
+            let y = cal.component(.year,  from: tx.date)
+            let m = cal.component(.month, from: tx.date)
+            if byYearMonth[y] == nil { byYearMonth[y] = [:] }
+            var cur = byYearMonth[y]![m] ?? (0, 0)
+            if tx.direction == .income  { cur.income  += tx.amount }
+            else                        { cur.expense += tx.amount }
+            byYearMonth[y]![m] = cur
+        }
+
+        // Average per calendar month across all years
+        var averages: [MonthlyAverage] = []
+        for month in 1...12 {
+            var incomes: [Decimal]  = []
+            var expenses: [Decimal] = []
+            for (_, mdata) in byYearMonth {
+                if let d = mdata[month] { incomes.append(d.income); expenses.append(d.expense) }
+            }
+            let avgI = incomes.isEmpty  ? 0 : incomes.reduce(0, +)  / Decimal(incomes.count)
+            let avgE = expenses.isEmpty ? 0 : expenses.reduce(0, +) / Decimal(expenses.count)
+            averages.append(MonthlyAverage(month: month, avgIncome: avgI, avgExpense: avgE))
+        }
+
+        let best  = averages.max(by: { $0.avgIncome < $1.avgIncome }) ?? averages[0]
+        let worst = averages.min(by: { $0.avgIncome < $1.avgIncome }) ?? averages[0]
+        let overallAvg = averages.reduce(Decimal(0)) { $0 + $1.avgIncome } / 12
+
+        func diffPct(_ val: Decimal) -> Int {
+            guard overallAvg > 0 else { return 0 }
+            return Int(NSDecimalNumber(decimal: (val - overallAvg) / overallAvg * 100).doubleValue)
+        }
+
+        let curMonth = cal.component(.month, from: Date())
+        let curAvg   = averages.first(where: { $0.month == curMonth })?.avgIncome ?? 0
+        let diff     = diffPct(curAvg)
+        let dir      = diff >= 0 ? "выше" : "ниже"
+        let curLabel = averages.first(where: { $0.month == curMonth })?.shortLabel ?? ""
+        let insight  = "\(curLabel) исторически \(dir) среднего на \(abs(diff))%"
+
+        return SeasonalAnalysis(
+            monthlyAverages: averages,
+            bestMonth: best.month, worstMonth: worst.month,
+            currentMonthInsight: insight,
+            bestMonthDiffPct: diffPct(best.avgIncome),
+            worstMonthDiffPct: diffPct(worst.avgIncome)
+        )
     }
 
     // MARK: - PDF Export

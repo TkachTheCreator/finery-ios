@@ -1,8 +1,14 @@
 import SwiftUI
 import Charts
 
+private enum AnalyticsMode: String, CaseIterable {
+    case dynamics   = "Динамика"
+    case seasonal   = "Сезонность"
+}
+
 struct AnalyticsView: View {
     @State var viewModel: AnalyticsViewModel
+    @State private var mode: AnalyticsMode = .dynamics
 
     init(viewModel: AnalyticsViewModel) {
         _viewModel = State(wrappedValue: viewModel)
@@ -16,6 +22,11 @@ struct AnalyticsView: View {
                 VStack(alignment: .leading, spacing: 0) {
                     pageHeader
                     hairline
+                    modePicker
+                    hairline
+                    if mode == .seasonal {
+                        seasonalSection
+                    } else {
                     comparisonSection
                     hairline
                     barChartSection
@@ -34,6 +45,7 @@ struct AnalyticsView: View {
                             accentColor: FC.muted
                         )
                     }
+                    } // end else (dynamics mode)
                     Color.clear.frame(height: 40)
                 }
             }
@@ -265,6 +277,123 @@ struct AnalyticsView: View {
     }
 
     // MARK: Helpers
+
+    // MARK: Mode Picker
+
+    private var modePicker: some View {
+        Picker("Режим", selection: $mode) {
+            ForEach(AnalyticsMode.allCases, id: \.self) { m in
+                Text(m.rawValue).tag(m)
+            }
+        }
+        .pickerStyle(.segmented)
+        .padding(.horizontal, 20)
+        .padding(.vertical, 12)
+    }
+
+    // MARK: Seasonal Section
+
+    @ViewBuilder
+    private var seasonalSection: some View {
+        if let data = viewModel.seasonalAnalysis {
+            VStack(alignment: .leading, spacing: 0) {
+                // Insight card
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("СЕЗОННЫЙ АНАЛИЗ").fLabel()
+                    Text(data.currentMonthInsight)
+                        .font(.system(.subheadline, design: .default, weight: .medium))
+                        .foregroundStyle(FC.ink)
+
+                    let best  = data.monthlyAverages.first(where: { $0.month == data.bestMonth })
+                    let worst = data.monthlyAverages.first(where: { $0.month == data.worstMonth })
+
+                    if let b = best {
+                        HStack(spacing: 6) {
+                            Image(systemName: "arrow.up.circle.fill").foregroundStyle(Color(h: "4A7A2E"))
+                            Text("Лучший месяц — \(b.shortLabel) (+\(data.bestMonthDiffPct)% к среднему)")
+                                .font(.system(.caption, design: .default)).foregroundStyle(FC.muted)
+                        }
+                    }
+                    if let w = worst {
+                        HStack(spacing: 6) {
+                            Image(systemName: "arrow.down.circle.fill").foregroundStyle(FC.danger)
+                            Text("Слабый месяц — \(w.shortLabel) (\(data.worstMonthDiffPct)% к среднему)")
+                                .font(.system(.caption, design: .default)).foregroundStyle(FC.muted)
+                        }
+                    }
+                }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 16)
+
+                hairline
+
+                // Bar chart
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("ДОХОД ПО МЕСЯЦАМ").fLabel()
+                    Chart {
+                        ForEach(data.monthlyAverages) { avg in
+                            BarMark(
+                                x: .value("Месяц", avg.shortLabel),
+                                y: .value("Доход", avg.avgIncomeDouble)
+                            )
+                            .foregroundStyle(
+                                avg.month == data.bestMonth
+                                    ? Color(h: "5A9A2E")   // highlighted best — green
+                                    : FC.cobalt.opacity(0.75)
+                            )
+                            .cornerRadius(3)
+
+                            BarMark(
+                                x: .value("Месяц", avg.shortLabel),
+                                y: .value("Расход", -avg.avgExpenseDouble)
+                            )
+                            .foregroundStyle(
+                                avg.month == data.worstMonth
+                                    ? FC.danger
+                                    : FC.muted.opacity(0.4)
+                            )
+                            .cornerRadius(3)
+                        }
+                    }
+                    .chartYAxis {
+                        AxisMarks {
+                            AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5)).foregroundStyle(FC.border)
+                            AxisValueLabel()
+                                .font(.system(.caption2))
+                                .foregroundStyle(FC.muted)
+                        }
+                    }
+                    .chartXAxis {
+                        AxisMarks { _ in
+                            AxisValueLabel()
+                                .font(.system(size: 9, design: .default))
+                                .foregroundStyle(FC.muted)
+                        }
+                    }
+                    .frame(height: 200)
+
+                    HStack(spacing: 16) {
+                        legendItem(color: FC.cobalt.opacity(0.75), label: "Доходы (ср.)")
+                        legendItem(color: FC.muted.opacity(0.4), label: "Расходы (ср.)")
+                    }
+                }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 16)
+            }
+        } else {
+            VStack(spacing: 12) {
+                Image(systemName: "chart.bar.xaxis")
+                    .font(.system(size: 40, weight: .light))
+                    .foregroundStyle(FC.muted.opacity(0.5))
+                Text("Недостаточно данных для сезонного анализа")
+                    .font(.system(.subheadline, design: .default))
+                    .foregroundStyle(FC.muted)
+                    .multilineTextAlignment(.center)
+            }
+            .padding(40)
+            .frame(maxWidth: .infinity)
+        }
+    }
 
     private var hairline: some View {
         Rectangle().fill(FC.border).frame(height: 0.5)

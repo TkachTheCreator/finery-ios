@@ -5,10 +5,11 @@ import Observation
 @MainActor
 final class TaxViewModel {
 
-    var taxStatus:       TaxStatus?
-    var monthlyHistory:  [MonthlyData] = []
+    var taxStatus:        TaxStatus?
+    var monthlyHistory:   [MonthlyData] = []
     var cashFlowForecast: CashFlowForecast?
-    var userType:        UserType = .freelancer
+    var npdForecast:      NpdForecast?
+    var userType:         UserType = .freelancer
     var isLoading = false
 
     private let getMonthlyDynamics: GetMonthlyDynamicsUseCase
@@ -51,6 +52,12 @@ final class TaxViewModel {
             monthlyHistory = h
             cashFlowForecast = await computeForecast(history: h)
 
+            if svc.taxMode == .npd {
+                npdForecast = computeNpdForecast()
+            } else {
+                npdForecast = nil
+            }
+
             if let status = svc.taxStatus {
                 NotificationService.shared.scheduleTaxReminder(
                     deadline: status.nextDeadline, amount: status.taxDue, daysBefore: 5)
@@ -63,6 +70,38 @@ final class TaxViewModel {
 
     var totalTaxYear:    Decimal { monthlyHistory.reduce(0) { $0 + $1.taxAmount } }
     var totalIncomeYear: Decimal { monthlyHistory.reduce(0) { $0 + $1.income } }
+
+    // MARK: - NPD Forecast
+
+    private func computeNpdForecast() -> NpdForecast {
+        let svc = SharedDataService.shared
+        let limit: Decimal = 2_400_000
+        let cal = Calendar.current
+        let currentYear = cal.component(.year, from: Date())
+        let thirtyDaysAgo = cal.date(byAdding: .day, value: -30, to: Date())!
+
+        let ytd = svc.transactions
+            .filter { $0.direction == .income && cal.component(.year, from: $0.date) == currentYear }
+            .reduce(Decimal(0)) { $0 + $1.amount }
+
+        let recent = svc.transactions
+            .filter { $0.direction == .income && $0.date >= thirtyDaysAgo }
+            .reduce(Decimal(0)) { $0 + $1.amount }
+
+        let dailyAvg = recent / 30
+        let remaining = max(0, limit - ytd)
+
+        var daysToLimit: Int? = nil
+        var limitDate: Date? = nil
+        if dailyAvg > 0 {
+            let days = Int(NSDecimalNumber(decimal: remaining / dailyAvg).doubleValue)
+            daysToLimit = max(0, days)
+            limitDate = cal.date(byAdding: .day, value: max(0, days), to: Date())
+        }
+
+        return NpdForecast(ytdIncome: ytd, limit: limit, dailyAvg: dailyAvg,
+                           daysToLimit: daysToLimit, limitDate: limitDate)
+    }
 
     // MARK: - Cash Flow Forecast
 

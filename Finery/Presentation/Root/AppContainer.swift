@@ -11,8 +11,10 @@ final class AppContainer {
     let dashboard:    DashboardViewModel
     let transactions: TransactionsViewModel
     let analytics:    AnalyticsViewModel
+    let clients:      ClientsViewModel
     let tax:          TaxViewModel
     let settings:     SettingsViewModel
+    let invoices:     InvoicesViewModel
 
     let transactionRepository: any TransactionRepository
     let userRepository:        any UserRepository
@@ -49,5 +51,7 @@ final class AppContainer {
         )
 
         settings = SettingsViewModel(userRepository: usrRepo)
+        clients  = ClientsViewModel()
+        invoices = InvoicesViewModel()
     }
 }
