@@ -192,6 +192,70 @@ private struct TaxStatusDTO: Decodable {
     let daysUntilDeadline: Int
 }
 
+private struct ClientDTO: Decodable {
+    let id: UUID
+    let userId: UUID
+    let name: String
+    let email: String?
+    let phone: String?
+    let totalPaid: Double
+    let lastPayment: Date?
+    let status: String
+    let notes: String?
+    let createdAt: Date
+
+    func toDomain() -> Client {
+        Client(
+            id: id, name: name, email: email, phone: phone,
+            totalPaid: Decimal(totalPaid),
+            lastPayment: lastPayment,
+            status: ClientStatus(rawValue: status) ?? .active,
+            notes: notes, createdAt: createdAt
+        )
+    }
+}
+
+private struct InvoiceItemDTO: Decodable { let name: String; let amount: Double }
+private struct InvoiceDTO: Decodable {
+    let id: UUID; let userId: UUID; let number: String; let date: Date
+    let clientId: UUID?; let clientName: String
+    let items: [InvoiceItemDTO]; let includeVat: Bool
+    let executorName: String; let total: Double; let createdAt: Date
+
+    func toDomain() -> Invoice {
+        Invoice(id: id, number: number, date: date, clientId: clientId,
+                clientName: clientName,
+                items: items.map { InvoiceItem(name: $0.name, amount: Decimal($0.amount)) },
+                includeVat: includeVat, executorName: executorName,
+                total: Decimal(total), createdAt: createdAt)
+    }
+}
+
+private struct SeasonalMonthDTO: Decodable {
+    let month: Int; let label: String
+    let avgIncome: Double; let avgExpense: Double
+}
+private struct SeasonalMonthInfoDTO: Decodable { let month: Int; let label: String; let diffPct: Int }
+private struct SeasonalDTO: Decodable {
+    let monthlyAverages: [SeasonalMonthDTO]
+    let bestMonth: SeasonalMonthInfoDTO
+    let worstMonth: SeasonalMonthInfoDTO
+    let currentMonthInsight: String
+
+    func toDomain() -> SeasonalAnalysis {
+        SeasonalAnalysis(
+            monthlyAverages: monthlyAverages.map {
+                MonthlyAverage(month: $0.month, avgIncome: Decimal($0.avgIncome), avgExpense: Decimal($0.avgExpense))
+            },
+            bestMonth: bestMonth.month,
+            worstMonth: worstMonth.month,
+            currentMonthInsight: currentMonthInsight,
+            bestMonthDiffPct: bestMonth.diffPct,
+            worstMonthDiffPct: worstMonth.diffPct
+        )
+    }
+}
+
 // MARK: - API value mappings
 
 private extension TaxMode {
@@ -499,7 +563,68 @@ actor APIClient {
         )
     }
 
+    // MARK: Clients
+
+    func getClients() async throws -> [Client] {
+        let dtos: [ClientDTO] = try await get("api/v1/clients", authorized: true)
+        return dtos.map { $0.toDomain() }
+    }
+
+    func createClient(name: String, email: String?, phone: String?, status: String, notes: String?) async throws -> Client {
+        struct Body: Encodable { let name: String; let email: String?; let phone: String?; let status: String; let notes: String? }
+        let dto: ClientDTO = try await post("api/v1/clients", body: Body(name: name, email: email, phone: phone, status: status, notes: notes), authorized: true)
+        return dto.toDomain()
+    }
+
+    func deleteClient(id: UUID) async throws {
+        try await deleteRequest("api/v1/clients/\(id.uuidString)")
+    }
+
+    // MARK: Invoices
+
+    func getInvoices() async throws -> [Invoice] {
+        let dtos: [InvoiceDTO] = try await get("api/v1/invoices", authorized: true)
+        return dtos.map { $0.toDomain() }
+    }
+
+    func createInvoice(_ invoice: Invoice) async throws -> Invoice {
+        struct ItemBody: Encodable { let name: String; let amount: String }
+        struct Body: Encodable {
+            let number: String; let date: Date; let clientId: UUID?
+            let clientName: String; let items: [ItemBody]
+            let includeVat: Bool; let executorName: String; let total: String
+        }
+        let body = Body(
+            number: invoice.number, date: invoice.date, clientId: invoice.clientId,
+            clientName: invoice.clientName,
+            items: invoice.items.map { ItemBody(name: $0.name, amount: "\($0.amount)") },
+            includeVat: invoice.includeVat, executorName: invoice.executorName,
+            total: "\(invoice.computedTotal)"
+        )
+        let dto: InvoiceDTO = try await post("api/v1/invoices", body: body, authorized: true)
+        return dto.toDomain()
+    }
+
+    // MARK: Seasonal
+
+    func getSeasonalData() async throws -> SeasonalAnalysis {
+        let dto: SeasonalDTO = try await get("api/v1/analytics/seasonal", authorized: true)
+        return dto.toDomain()
+    }
+
     // MARK: Private helpers
+
+    func deleteRequest(_ path: String) async throws {
+        var req = URLRequest(url: baseURL.appendingPathComponent(path))
+        req.httpMethod = "DELETE"
+        if let token = KeychainStore.load() { req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization") }
+        let (_, response): (Data, URLResponse)
+        do { (_, response) = try await session.data(for: req) }
+        catch { throw NetworkError.noConnection }
+        guard let http = response as? HTTPURLResponse, (200...299).contains(http.statusCode) else {
+            throw NetworkError.serverError((response as? HTTPURLResponse)?.statusCode ?? 0, nil)
+        }
+    }
 
     private func put<B: Encodable, R: Decodable>(
         _ path: String,

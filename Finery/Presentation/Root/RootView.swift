@@ -139,6 +139,10 @@ struct RootView: View {
                     AnalyticsView(viewModel: c.analytics)
                         .transition(slideTransition)
                 }
+                if selectedTab == .clients {
+                    ClientsView(viewModel: c.clients)
+                        .transition(slideTransition)
+                }
                 if selectedTab == .tax {
                     TaxView(viewModel: c.tax)
                         .transition(slideTransition)

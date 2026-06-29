@@ -6,6 +6,7 @@ enum FineryTab: Int, CaseIterable {
     case dashboard = 0
     case transactions
     case analytics
+    case clients
     case tax
     case settings
 
@@ -14,6 +15,7 @@ enum FineryTab: Int, CaseIterable {
         case .dashboard:    "house"
         case .transactions: "list.bullet"
         case .analytics:    "chart.bar"
+        case .clients:      "person.2"
         case .tax:          "percent"
         case .settings:     "gearshape"
         }
@@ -24,6 +26,7 @@ enum FineryTab: Int, CaseIterable {
         case .dashboard:    "Главная"
         case .transactions: "Операции"
         case .analytics:    "Аналитика"
+        case .clients:      "Клиенты"
         case .tax:          "Налоги"
         case .settings:     "Настройки"
         }

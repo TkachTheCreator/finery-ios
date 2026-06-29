@@ -24,6 +24,10 @@ struct TaxView: View {
                         if status.showNpdLimit {
                             npdLimitCard(status)
                                 .cardAppear(appeared: appeared, delay: 0.16)
+                            if let nf = viewModel.npdForecast {
+                                npdForecastCard(nf)
+                                    .cardAppear(appeared: appeared, delay: 0.22)
+                            }
                         } else {
                             usnTaxCard(status)
                                 .cardAppear(appeared: appeared, delay: 0.16)
@@ -158,6 +162,82 @@ struct TaxView: View {
         }
         .padding(20)
         .glassCard()
+    }
+
+    // MARK: - NPD Forecast Card
+
+    private func npdForecastCard(_ forecast: NpdForecast) -> some View {
+        VStack(alignment: .leading, spacing: 14) {
+            Text("ПРОГНОЗ ЛИМИТА НПД").fLabel()
+
+            // Progress bar
+            GeometryReader { geo in
+                ZStack(alignment: .leading) {
+                    RoundedRectangle(cornerRadius: 4).fill(FC.border.opacity(0.5)).frame(height: 8)
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(forecastProgressColor(forecast.usedPercent))
+                        .frame(width: geo.size.width * CGFloat(min(forecast.usedPercent, 100) / 100), height: 8)
+                }
+            }
+            .frame(height: 8)
+
+            // Used / Remaining
+            HStack {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("ИСПОЛЬЗОВАНО").fLabel()
+                    Text(forecast.ytdIncome.rub())
+                        .font(.system(.subheadline, design: .rounded, weight: .semibold))
+                        .monospacedDigit()
+                        .foregroundStyle(FC.ink)
+                }
+                Spacer()
+                VStack(alignment: .trailing, spacing: 2) {
+                    Text("ОСТАЛОСЬ").fLabel()
+                    Text(forecast.remaining.rub())
+                        .font(.system(.subheadline, design: .rounded, weight: .semibold))
+                        .monospacedDigit()
+                        .foregroundStyle(FC.cobalt)
+                }
+            }
+
+            // Velocity
+            if let days = forecast.daysToLimit {
+                let color = days < 30 ? FC.danger : days < 90 ? FC.amber : Color(h: "1A7A4A")
+                HStack(spacing: 8) {
+                    Image(systemName: days < 30 ? "exclamationmark.triangle.fill" : "calendar.badge.clock")
+                        .foregroundStyle(color)
+                        .font(.system(size: 13))
+                    Text("При текущем темпе превысите через \(days) дн.")
+                        .font(.system(.caption, design: .rounded))
+                        .foregroundStyle(FC.muted)
+                }
+                .padding(10)
+                .background(color.opacity(0.08))
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+                .overlay(RoundedRectangle(cornerRadius: 8).stroke(color.opacity(0.2), lineWidth: 0.5))
+
+                if days < 60 {
+                    HStack(spacing: 8) {
+                        Image(systemName: "lightbulb.fill").foregroundStyle(FC.amber).font(.system(size: 12))
+                        Text("Рассмотрите переход на УСН 6%")
+                            .font(.system(.caption, design: .rounded))
+                            .foregroundStyle(FC.muted)
+                    }
+                }
+            } else {
+                Text("Темп поступлений пока не определён")
+                    .font(.system(.caption, design: .rounded))
+                    .foregroundStyle(FC.muted)
+            }
+        }
+        .padding(20)
+        .glassCard()
+    }
+
+    private func forecastProgressColor(_ pct: Double) -> Color {
+        if pct >= 100 { return FC.danger }
+        if pct >= 80  { return FC.amber }
+        return FC.cobalt
     }
 
     // MARK: - USN Tax Card (УСН 6% / УСН 15%)
