@@ -49,6 +49,9 @@ struct TaxView: View {
                     } else if viewModel.userType == .other {
                         personalTrackerStub
                             .cardAppear(appeared: appeared, delay: 0.08)
+                    } else {
+                        noDataStub
+                            .cardAppear(appeared: appeared, delay: 0.08)
                     }
 
                     Color.clear.frame(height: 40)
@@ -450,6 +453,39 @@ struct TaxView: View {
         }
         .padding(20)
         .glassCard()
+    }
+
+    // MARK: - No Data Stub
+
+    private var noDataStub: some View {
+        VStack(spacing: 20) {
+            Image(systemName: "wifi.slash")
+                .font(.system(size: 48, weight: .light))
+                .foregroundStyle(FC.muted)
+            VStack(spacing: 8) {
+                Text("Нет данных")
+                    .font(.system(.title3, design: .rounded, weight: .semibold))
+                    .foregroundStyle(FC.ink)
+                Text("Налоговый статус загружается с сервера.\nПроверьте подключение и обновите экран.")
+                    .font(.system(.subheadline, design: .rounded))
+                    .foregroundStyle(FC.muted)
+                    .multilineTextAlignment(.center)
+            }
+            Button {
+                Task { await viewModel.load() }
+            } label: {
+                Text("Обновить")
+                    .font(.system(.subheadline, design: .rounded, weight: .medium))
+                    .foregroundStyle(FC.cobalt)
+                    .padding(.horizontal, 24)
+                    .padding(.vertical, 10)
+                    .background(FC.cobalt.opacity(0.1))
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+            }
+        }
+        .padding(.horizontal, 32)
+        .padding(.vertical, 64)
+        .frame(maxWidth: .infinity)
     }
 
     // MARK: - Personal Tracker Stub

@@ -1,13 +1,18 @@
+import os
+import secrets
+
 from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
     DATABASE_URL: str = "postgresql+asyncpg://finery:finery@localhost:5432/finery"
-    SECRET_KEY: str = "dev-secret-key-change-in-production"
+    SECRET_KEY: str = os.getenv("SECRET_KEY", secrets.token_hex(32))
     ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 10080  # 7 days
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440  # 24 hours
 
-    model_config = {"env_file": ".env"}
+    ENV: str = "development"
+
+    model_config = {"env_file": ".env", "extra": "ignore"}
 
 
 settings = Settings()

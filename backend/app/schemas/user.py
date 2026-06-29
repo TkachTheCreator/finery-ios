@@ -1,15 +1,23 @@
 import uuid
 from datetime import datetime
+from typing import Literal
 
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, field_validator
 
 
 class UserRegister(BaseModel):
     email: EmailStr
     password: str
     name: str
-    tax_mode: str = "npd"
-    user_type: str = "freelancer"
+    tax_mode: Literal["npd", "usn6", "usn15", "patent", "none"] = "npd"
+    user_type: Literal["freelancer", "ip", "blogger", "self_employed", "other"] = "freelancer"
+
+    @field_validator("password")
+    @classmethod
+    def password_min_length(cls, v: str) -> str:
+        if len(v) < 8:
+            raise ValueError("Пароль минимум 8 символов")
+        return v
 
 
 class UserLogin(BaseModel):
@@ -36,8 +44,8 @@ class TokenOut(BaseModel):
 
 class UserUpdate(BaseModel):
     name: str | None = None
-    tax_mode: str | None = None   # npd | usn6 | usn15 | patent | none
-    user_type: str | None = None  # freelancer | ip | blogger | self_employed | other
+    tax_mode: Literal["npd", "usn6", "usn15", "patent", "none"] | None = None
+    user_type: Literal["freelancer", "ip", "blogger", "self_employed", "other"] | None = None
 
 
 class ForgotPasswordIn(BaseModel):

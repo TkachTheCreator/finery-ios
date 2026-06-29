@@ -14,7 +14,7 @@ services:
     environment:
       POSTGRES_DB: finery
       POSTGRES_USER: finery
-      POSTGRES_PASSWORD: finery_secret
+      POSTGRES_PASSWORD: "Finery$ecret2026!"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: always

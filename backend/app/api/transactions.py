@@ -3,11 +3,12 @@ import uuid
 from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy import select, and_, func
+from sqlalchemy import and_, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.auth import current_user
 from app.core.database import get_db
+from app.models.client import Client
 from app.models.transaction import Transaction
 from app.models.user import User
 from app.schemas.transaction import TransactionCreate, TransactionOut, TransactionUpdate
@@ -22,6 +23,13 @@ async def create(
     user: User = Depends(current_user),
     db: AsyncSession = Depends(get_db),
 ):
+    if body.client_id is not None:
+        client_result = await db.execute(
+            select(Client).where(and_(Client.id == body.client_id, Client.user_id == user.id))
+        )
+        if not client_result.scalar_one_or_none():
+            raise HTTPException(status_code=404, detail="Client not found")
+
     if body.direction == "income" and not body.income_category:
         body = body.model_copy(update={"income_category": classify(body.description, "income")})
     if body.direction == "expense" and not body.expense_category:
@@ -40,7 +48,7 @@ async def list_transactions(
     to_date: datetime | None = Query(None),
     direction: str | None = Query(None),
     page: int = Query(1, ge=1),
-    per_page: int = Query(50, ge=1, le=500),
+    per_page: int = Query(50, ge=1, le=100),
     user: User = Depends(current_user),
     db: AsyncSession = Depends(get_db),
 ):
@@ -52,13 +60,11 @@ async def list_transactions(
     if direction:
         filters.append(Transaction.direction == direction)
 
-    # Total count
     count_result = await db.execute(
         select(func.count()).select_from(Transaction).where(and_(*filters))
     )
     total = count_result.scalar_one()
 
-    # Paginated items
     offset = (page - 1) * per_page
     result = await db.execute(
         select(Transaction)
