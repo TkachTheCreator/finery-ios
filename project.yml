@@ -189,3 +189,21 @@ targets:
           - "$(inherited)"
           - "@executable_path/Frameworks"
           - "@loader_path/Frameworks"
+
+  FineryUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: FineryUITests
+    dependencies:
+      - target: Finery
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.tkachev.finery.uitests
+        SWIFT_VERSION: "6.0"
+        GENERATE_INFOPLIST_FILE: YES
+        LD_RUNPATH_SEARCH_PATHS:
+          - "$(inherited)"
+          - "@executable_path/Frameworks"
+          - "@loader_path/Frameworks"

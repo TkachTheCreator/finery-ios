@@ -42,6 +42,7 @@ async def tax_status(
 async def calculate(
     amount: float = Query(...),
     client_type: str = Query("individual"),
+    user: User = Depends(current_user),
 ):
     amt = Decimal(str(amount))
     tax = calculate_tax_npd(amt, client_type)

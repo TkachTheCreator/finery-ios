@@ -2,9 +2,13 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
 
 from app.api import auth, transactions, analytics, tax, clients, invoices
+from app.core.config import settings
 from app.core.database import create_tables
+from app.core.limiter import limiter
 
 
 @asynccontextmanager
@@ -16,19 +20,31 @@ async def lifespan(app: FastAPI):
     yield
 
 
+_is_production = settings.ENV == "production"
+
 app = FastAPI(
     title="Finery API",
     description="Финансовый менеджер для фрилансеров и самозанятых",
     version="1.0.0",
     lifespan=lifespan,
+    docs_url=None if _is_production else "/docs",
+    redoc_url=None,
 )
+
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=[
+        "http://85.239.41.204:8000",
+        "http://localhost:3000",
+        "capacitor://localhost",
+        "ionic://localhost",
+    ],
+    allow_credentials=False,
+    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allow_headers=["Authorization", "Content-Type"],
 )
 
 app.include_router(auth.router,         prefix="/api/v1")

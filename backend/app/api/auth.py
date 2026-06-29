@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta, timezone
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from jose import jwt
 from passlib.context import CryptContext
 from sqlalchemy import select
@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
 from app.core.database import get_db
+from app.core.limiter import limiter
 from app.models.user import User
 from app.schemas.user import ForgotPasswordIn, ForgotPasswordOut, TokenOut, UserLogin, UserOut, UserRegister, UserUpdate
 
@@ -38,7 +39,7 @@ async def get_current_user(token: str, db: AsyncSession) -> User:
     result = await db.execute(select(User).where(User.id == user_id))
     user = result.scalar_one_or_none()
     if not user:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
     return user
 
 
@@ -55,7 +56,8 @@ async def current_user(
 
 
 @router.post("/register", response_model=TokenOut, status_code=201)
-async def register(body: UserRegister, db: AsyncSession = Depends(get_db)):
+@limiter.limit("5/minute")
+async def register(request: Request, body: UserRegister, db: AsyncSession = Depends(get_db)):
     existing = await db.execute(select(User).where(User.email == body.email))
     if existing.scalar_one_or_none():
         raise HTTPException(status_code=409, detail="Email already registered")
@@ -78,13 +80,13 @@ async def register(body: UserRegister, db: AsyncSession = Depends(get_db)):
 
 
 @router.post("/login", response_model=TokenOut)
-async def login(body: UserLogin, db: AsyncSession = Depends(get_db)):
+@limiter.limit("5/minute")
+async def login(request: Request, body: UserLogin, db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(User).where(User.email == body.email))
     user = result.scalar_one_or_none()
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    if not _verify(body.password, user.hashed_password):
-        raise HTTPException(status_code=401, detail="Invalid password")
+    # Unified message prevents user enumeration via different error codes
+    if not user or not _verify(body.password, user.hashed_password):
+        raise HTTPException(status_code=401, detail="Неверный email или пароль")
 
     return TokenOut(
         access_token=_create_token(str(user.id)),
@@ -116,8 +118,6 @@ async def update_me(
 
 @router.post("/forgot-password", response_model=ForgotPasswordOut)
 async def forgot_password(body: ForgotPasswordIn, db: AsyncSession = Depends(get_db)):
-    result = await db.execute(select(User).where(User.email == body.email))
-    user = result.scalar_one_or_none()
-    if not user:
-        raise HTTPException(status_code=404, detail="Email not found")
-    return ForgotPasswordOut(message="Письмо отправлено")
+    # Always return 200 regardless of whether email exists (prevent user enumeration)
+    await db.execute(select(User).where(User.email == body.email))
+    return ForgotPasswordOut(message="Если email существует, письмо отправлено")

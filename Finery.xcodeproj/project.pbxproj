@@ -60,6 +60,7 @@
 		83A1CEE1D24421BC3A2C5054 /* GetMonthlyDynamicsUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BBDDAAF81E5B7A4C4D22783 /* GetMonthlyDynamicsUseCase.swift */; };
 		855F45860FA1BB1228C677B7 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9FDB18528D5474099877283 /* DashboardView.swift */; };
 		8D0140B10201060ACBAD81ED /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90EB6D6C94F4C5C5E5716B66 /* LoginView.swift */; };
+		8EE633667226AA1DE8A959AE /* ScreenshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44189399A774FD5E8FAE4227 /* ScreenshotTests.swift */; };
 		8F9F6A6C899C207AED931882 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 940998E028CB628BB760FF7D /* RootView.swift */; };
 		90E4BB00223A7EE0CDA8AB30 /* ForgotPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EC1D8CBB961AC2E1444958 /* ForgotPasswordView.swift */; };
 		91F65F1ED379AC120FFD37F5 /* AIAdvisorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD991AABB2B8D7E927E3944 /* AIAdvisorView.swift */; };
@@ -94,6 +95,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		3BB209E13E5EDF9D419E90B3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FE88024E604A1C5DF0261666 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2515D379705AE448BB7D130D;
+			remoteInfo = Finery;
+		};
 		8BEBCACF34A3DA5C44373F4E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = FE88024E604A1C5DF0261666 /* Project object */;
@@ -122,6 +130,7 @@
 		3E1A9031C01D7ABAC3322EC7 /* Insight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Insight.swift; sourceTree = "<group>"; };
 		400E887DDE95D38E6E31F0E5 /* LottieSuccessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LottieSuccessView.swift; sourceTree = "<group>"; };
 		4364BE73D18016B547D1E0B5 /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
+		44189399A774FD5E8FAE4227 /* ScreenshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotTests.swift; sourceTree = "<group>"; };
 		4549C8183DDAA6A1F4D00996 /* FineryTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = FineryTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4E2B0D520284CDD9E5311821 /* InvoicesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvoicesViewModel.swift; sourceTree = "<group>"; };
 		4E3B3F7DAC41282629E2C6B2 /* TaxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaxView.swift; sourceTree = "<group>"; };
@@ -188,6 +197,7 @@
 		EC1DD97467BB97D3809D9D2F /* AddTransactionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTransactionViewModel.swift; sourceTree = "<group>"; };
 		F290DAB89D8CFCE0528870E3 /* InsightRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsightRow.swift; sourceTree = "<group>"; };
 		F7A7AB35CED17D75500E5AF1 /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
+		F8810F65A98B400AFE5A590F /* FineryUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = FineryUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F9FDB18528D5474099877283 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
 		FAD991AABB2B8D7E927E3944 /* AIAdvisorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIAdvisorView.swift; sourceTree = "<group>"; };
 		FC923A07AB37977277909C3D /* TaxViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaxViewModel.swift; sourceTree = "<group>"; };
@@ -214,6 +224,7 @@
 				8FBCCF9833F5AA4643284D82 /* Finery */,
 				4BC6EF36881826E0F768ACDD /* FineryShare */,
 				437E92DB0EE17E04892611C6 /* FineryTests */,
+				D9D1057C86A8A4E3D9E8A2FF /* FineryUITests */,
 				08598EB0963FA22A635ABCBA /* FineryWidget */,
 				D52C16B1DE4768134BF7005C /* Products */,
 			);
@@ -529,9 +540,18 @@
 				9F40AEF0915FDE1ADF55A664 /* Finery.app */,
 				8E269B3C38185B26E8B4184F /* FineryShare.appex */,
 				4549C8183DDAA6A1F4D00996 /* FineryTests.xctest */,
+				F8810F65A98B400AFE5A590F /* FineryUITests.xctest */,
 				B0948239B5CC62ED44EAD4F7 /* FineryWidget.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		D9D1057C86A8A4E3D9E8A2FF /* FineryUITests */ = {
+			isa = PBXGroup;
+			children = (
+				44189399A774FD5E8FAE4227 /* ScreenshotTests.swift */,
+			);
+			path = FineryUITests;
 			sourceTree = "<group>";
 		};
 		DC3298720877FB259B52014D /* Invoice */ = {
@@ -617,6 +637,24 @@
 			productReference = 4549C8183DDAA6A1F4D00996 /* FineryTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		5C06D7CDFAC4737927523827 /* FineryUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EAA957028AC4516FD0E686F3 /* Build configuration list for PBXNativeTarget "FineryUITests" */;
+			buildPhases = (
+				9B6A5697B4A51CE864C70488 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				9BBD9971A1539529D4C57516 /* PBXTargetDependency */,
+			);
+			name = FineryUITests;
+			packageProductDependencies = (
+			);
+			productName = FineryUITests;
+			productReference = F8810F65A98B400AFE5A590F /* FineryUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 		DF31E32ADCC64C831609F20B /* FineryShare */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = FFD4E6377EC56F1F017546FF /* Build configuration list for PBXNativeTarget "FineryShare" */;
@@ -664,6 +702,9 @@
 						DevelopmentTeam = "";
 						ProvisioningStyle = Automatic;
 					};
+					5C06D7CDFAC4737927523827 = {
+						TestTargetID = 2515D379705AE448BB7D130D;
+					};
 					DF31E32ADCC64C831609F20B = {
 						DevelopmentTeam = "";
 						ProvisioningStyle = Automatic;
@@ -696,6 +737,7 @@
 				2515D379705AE448BB7D130D /* Finery */,
 				DF31E32ADCC64C831609F20B /* FineryShare */,
 				4CE30BA1FB6463193BB581B9 /* FineryTests */,
+				5C06D7CDFAC4737927523827 /* FineryUITests */,
 				FB3BF94C50472C3384D73E03 /* FineryWidget */,
 			);
 		};
@@ -737,6 +779,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				F32D6FF0C5E47010341EA8E2 /* TaxCalculatorTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9B6A5697B4A51CE864C70488 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8EE633667226AA1DE8A959AE /* ScreenshotTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -829,9 +879,52 @@
 			target = 2515D379705AE448BB7D130D /* Finery */;
 			targetProxy = 8BEBCACF34A3DA5C44373F4E /* PBXContainerItemProxy */;
 		};
+		9BBD9971A1539529D4C57516 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2515D379705AE448BB7D130D /* Finery */;
+			targetProxy = 3BB209E13E5EDF9D419E90B3 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		0C6E3C43071EBD6C1DE26CD1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.tkachev.finery.uitests;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Finery;
+			};
+			name = Release;
+		};
+		3CE94438B4D1EF91388C6EFE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.tkachev.finery.uitests;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Finery;
+			};
+			name = Debug;
+		};
 		4401BD545DAD916375AF8ECD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1189,6 +1282,15 @@
 			buildConfigurations = (
 				999F84D491EC4A5F542C0A1B /* Debug */,
 				4401BD545DAD916375AF8ECD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		EAA957028AC4516FD0E686F3 /* Build configuration list for PBXNativeTarget "FineryUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3CE94438B4D1EF91388C6EFE /* Debug */,
+				0C6E3C43071EBD6C1DE26CD1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
