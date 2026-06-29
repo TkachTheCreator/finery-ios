@@ -68,6 +68,7 @@
 		D1E17F9EB7662E4DDC587927 /* TransactionEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBFB152A8697C84E2E8ECF71 /* TransactionEntity.swift */; };
 		D5B323A2400D0070F2213C0D /* Transaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF7D02C675F33D63441B89E /* Transaction.swift */; };
 		D7182FC815B11F3DD24A2F60 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA49D022D88246DAE9865205 /* SplashView.swift */; };
+		D789751EE9F1C41C9E192FDF /* FineryWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = E139FBE98B7DA646DE25EFD3 /* FineryWidget.swift */; };
 		D94CCCD1E9570EDA6DF9A8C7 /* TransactionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E139A4F9AFC176D183F3632 /* TransactionsView.swift */; };
 		E9DEF104FE00898537267D34 /* TaxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3B3F7DAC41282629E2C6B2 /* TaxView.swift */; };
 		EF17431F6C6E5E98DAFC0E60 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDCE5CF5E48714BC763B1ED2 /* User.swift */; };
@@ -94,6 +95,7 @@
 /* Begin PBXFileReference section */
 		037A0F1ACA321DF3BE7740A4 /* CashFlowForecast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CashFlowForecast.swift; sourceTree = "<group>"; };
 		0C00BB60C8DA88F1771E5540 /* AddTransactionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTransactionView.swift; sourceTree = "<group>"; };
+		0D88CD843413770BF082111D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		12B56BD4CA668CF84630EEE1 /* PreviewData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewData.swift; sourceTree = "<group>"; };
 		186B0AECC2A01E3E467153CD /* StoreBackedTransactionRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreBackedTransactionRepository.swift; sourceTree = "<group>"; };
 		1F93123DFD18F0824E532091 /* MonthlyData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthlyData.swift; sourceTree = "<group>"; };
@@ -113,6 +115,7 @@
 		51872C806C150DBEB4911CE0 /* TransactionSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionSource.swift; sourceTree = "<group>"; };
 		52B7428812D629E1EEDF5B7D /* GetInsightsUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetInsightsUseCase.swift; sourceTree = "<group>"; };
 		536977A95B8339D67FF45B42 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		5537288A26312E121FEE587C /* Finery.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Finery.entitlements; sourceTree = "<group>"; };
 		5B9757BE2B397BAF4F9FA65C /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
 		5E139A4F9AFC176D183F3632 /* TransactionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionsView.swift; sourceTree = "<group>"; };
 		5F2C94236A147B2275A4C7B4 /* TransactionsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionsViewModel.swift; sourceTree = "<group>"; };
@@ -138,6 +141,7 @@
 		A808E46673806C37D5BF707B /* UserRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRepository.swift; sourceTree = "<group>"; };
 		A8BB4775422C9B1A7C044A2F /* AuthFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthFlowView.swift; sourceTree = "<group>"; };
 		AB8D7D57EA3C0EC851F0F031 /* AIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIService.swift; sourceTree = "<group>"; };
+		B0948239B5CC62ED44EAD4F7 /* FineryWidget.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = FineryWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		B73BE6B840255FE525903F14 /* AnalyticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsView.swift; sourceTree = "<group>"; };
 		B84589DEF693D5737501347D /* ClassifyTransactionUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassifyTransactionUseCase.swift; sourceTree = "<group>"; };
 		BA49D022D88246DAE9865205 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
@@ -152,6 +156,7 @@
 		DBA3BDDB6EC21859BC0FAF0A /* TransactionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionStore.swift; sourceTree = "<group>"; };
 		DCE055888C0EC773FBED99DC /* success.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = success.json; sourceTree = "<group>"; };
 		DFD3FEDDD06A99D9BC586E2C /* DashboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewModel.swift; sourceTree = "<group>"; };
+		E139FBE98B7DA646DE25EFD3 /* FineryWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FineryWidget.swift; sourceTree = "<group>"; };
 		E262ACD8872F105202BFDD43 /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
 		E4A3D50A4B2CBBE238524D0D /* AnalyticsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsViewModel.swift; sourceTree = "<group>"; };
 		E93820A671554C608923316D /* TransactionRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionRepository.swift; sourceTree = "<group>"; };
@@ -184,6 +189,7 @@
 			children = (
 				8FBCCF9833F5AA4643284D82 /* Finery */,
 				437E92DB0EE17E04892611C6 /* FineryTests */,
+				08598EB0963FA22A635ABCBA /* FineryWidget */,
 				D52C16B1DE4768134BF7005C /* Products */,
 			);
 			sourceTree = "<group>";
@@ -206,6 +212,15 @@
 				2BF5014B27266B9CEA6DC11C /* UserEntity.swift */,
 			);
 			path = SwiftData;
+			sourceTree = "<group>";
+		};
+		08598EB0963FA22A635ABCBA /* FineryWidget */ = {
+			isa = PBXGroup;
+			children = (
+				E139FBE98B7DA646DE25EFD3 /* FineryWidget.swift */,
+				0D88CD843413770BF082111D /* Info.plist */,
+			);
+			path = FineryWidget;
 			sourceTree = "<group>";
 		};
 		0AE98E9682AA193DD926E0A5 /* Domain */ = {
@@ -375,6 +390,7 @@
 		8FBCCF9833F5AA4643284D82 /* Finery */ = {
 			isa = PBXGroup;
 			children = (
+				5537288A26312E121FEE587C /* Finery.entitlements */,
 				6981B8C3897A3FE9152E16A3 /* App */,
 				1D859BB1E5263BF014ADFCDB /* Data */,
 				0AE98E9682AA193DD926E0A5 /* Domain */,
@@ -463,6 +479,7 @@
 			children = (
 				9F40AEF0915FDE1ADF55A664 /* Finery.app */,
 				4549C8183DDAA6A1F4D00996 /* FineryTests.xctest */,
+				B0948239B5CC62ED44EAD4F7 /* FineryWidget.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -539,6 +556,23 @@
 			productReference = 4549C8183DDAA6A1F4D00996 /* FineryTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		FB3BF94C50472C3384D73E03 /* FineryWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C2936D04E168324253212F35 /* Build configuration list for PBXNativeTarget "FineryWidget" */;
+			buildPhases = (
+				0F510575AEF8280CA421E296 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = FineryWidget;
+			packageProductDependencies = (
+			);
+			productName = FineryWidget;
+			productReference = B0948239B5CC62ED44EAD4F7 /* FineryWidget.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -549,6 +583,10 @@
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
 					2515D379705AE448BB7D130D = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+					FB3BF94C50472C3384D73E03 = {
 						DevelopmentTeam = "";
 						ProvisioningStyle = Automatic;
 					};
@@ -575,6 +613,7 @@
 			targets = (
 				2515D379705AE448BB7D130D /* Finery */,
 				4CE30BA1FB6463193BB581B9 /* FineryTests */,
+				FB3BF94C50472C3384D73E03 /* FineryWidget */,
 			);
 		};
 /* End PBXProject section */
@@ -592,6 +631,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		0F510575AEF8280CA421E296 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D789751EE9F1C41C9E192FDF /* FineryWidget.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		374DBC46FDB6CA29490AEBF2 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -684,6 +731,34 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		4401BD545DAD916375AF8ECD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = FineryWidget/FineryWidget.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				INFOPLIST_FILE = FineryWidget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tkachev.finery.widget;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_STRICT_CONCURRENCY = minimal;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		49F1083F16C4892521826D98 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -740,10 +815,38 @@
 			};
 			name = Release;
 		};
+		999F84D491EC4A5F542C0A1B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = FineryWidget/FineryWidget.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				INFOPLIST_FILE = FineryWidget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tkachev.finery.widget;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_STRICT_CONCURRENCY = minimal;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
 		AF11DBEAFEBFACC91CB75F68 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Finery/Finery.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -852,6 +955,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Finery/Finery.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -920,6 +1024,15 @@
 			buildConfigurations = (
 				AF11DBEAFEBFACC91CB75F68 /* Debug */,
 				EADEF6514C3AC2C52820AD0A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		C2936D04E168324253212F35 /* Build configuration list for PBXNativeTarget "FineryWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				999F84D491EC4A5F542C0A1B /* Debug */,
+				4401BD545DAD916375AF8ECD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
