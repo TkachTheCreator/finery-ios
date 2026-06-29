@@ -83,6 +83,8 @@ final class SharedDataService {
         isLoading = true
         defer { isLoading = false }
 
+        await processPendingTransactions()
+
         let cal = Calendar.current
         let year         = cal.component(.year, from: referenceDate)
         let startOfMonth = cal.date(from: cal.dateComponents([.year, .month], from: referenceDate))!
@@ -120,6 +122,31 @@ final class SharedDataService {
             saveToCache()
             saveToWidget()
         }
+    }
+
+    // MARK: - Process transactions queued by Share Extension
+
+    func processPendingTransactions() async {
+        let defaults = UserDefaults(suiteName: "group.com.tkachev.finery")
+        guard let pending = defaults?.array(forKey: "pending_transactions")
+                as? [[String: Any]], !pending.isEmpty else { return }
+
+        for item in pending {
+            guard let amount    = item["amount"]      as? Double,
+                  let dirRaw   = item["direction"]    as? String,
+                  let desc     = item["description"]  as? String else { continue }
+
+            let dir = TransactionDirection(rawValue: dirRaw) ?? .expense
+            let tx  = Transaction(
+                amount:      Decimal(amount),
+                direction:   dir,
+                description: desc,
+                date:        Date()
+            )
+            try? await addTransaction(tx)
+        }
+
+        defaults?.removeObject(forKey: "pending_transactions")
     }
 
     // MARK: - Write to App Group for widget
