@@ -31,7 +31,9 @@
 		42F92C1337CD08F72B200AF2 /* TaxCalculatorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9925A0E4CA8F1006122C1BD8 /* TaxCalculatorService.swift */; };
 		447D6B5CA8337259EC304907 /* Pow in Frameworks */ = {isa = PBXBuildFile; productRef = CA9FE20FDDBC787F3252883A /* Pow */; };
 		46A5C4A951725A7ACCCEC222 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A7AB35CED17D75500E5AF1 /* APIClient.swift */; };
+		4A35287097CCC4C3E2479F16 /* SMSParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F4EBBF2422130E162828054 /* SMSParser.swift */; };
 		4B117A31774BF9F428CFB325 /* TransactionSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51872C806C150DBEB4911CE0 /* TransactionSource.swift */; };
+		4D452DD8653EBD5719C17E71 /* ShareParseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39BAA951EBB47E6056A50796 /* ShareParseView.swift */; };
 		4DA6EEBAB8E662AE8B083851 /* PnL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B38440EFFA21F1F82715A28 /* PnL.swift */; };
 		53249838281A74655483AFB7 /* VoiceInputManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62B4BED05BA08985B221A10E /* VoiceInputManager.swift */; };
 		532DD8E6ECC926BCC1FD1509 /* TaxViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC923A07AB37977277909C3D /* TaxViewModel.swift */; };
@@ -43,6 +45,7 @@
 		5F258607B2857A0A18A56191 /* FineryLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 863573B06FC5E41B69167E2D /* FineryLoadingView.swift */; };
 		615CA91F82633A7A2C1F40E1 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9712285D88F65D5F9E23430 /* SettingsView.swift */; };
 		63F588343BAA0A9F61EF7E98 /* HapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F2B3F9FFFE9B4D34E99D83B /* HapticManager.swift */; };
+		66A5600124C7BC8D79DED2F3 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE781407181245CE7FA36D7 /* ShareViewController.swift */; };
 		6DCA2D6AF64B014023F819EC /* FloatingTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E8A3D0228E2EE3ADAE37A86 /* FloatingTabBar.swift */; };
 		6DF61355766320364D5B7694 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9757BE2B397BAF4F9FA65C /* SettingsViewModel.swift */; };
 		73A07650822DCFC310BAAA24 /* AddTransactionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC1DD97467BB97D3809D9D2F /* AddTransactionViewModel.swift */; };
@@ -106,6 +109,7 @@
 		33A4C68A92997653ED71CE4E /* MockRepositories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockRepositories.swift; sourceTree = "<group>"; };
 		37EC1D8CBB961AC2E1444958 /* ForgotPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordView.swift; sourceTree = "<group>"; };
 		38A22F96E80B26D493834CA4 /* FineryPDFGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FineryPDFGenerator.swift; sourceTree = "<group>"; };
+		39BAA951EBB47E6056A50796 /* ShareParseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareParseView.swift; sourceTree = "<group>"; };
 		3E1A9031C01D7ABAC3322EC7 /* Insight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Insight.swift; sourceTree = "<group>"; };
 		400E887DDE95D38E6E31F0E5 /* LottieSuccessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LottieSuccessView.swift; sourceTree = "<group>"; };
 		4364BE73D18016B547D1E0B5 /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
@@ -122,15 +126,18 @@
 		62B4BED05BA08985B221A10E /* VoiceInputManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceInputManager.swift; sourceTree = "<group>"; };
 		64B6E0D5E7B5285B6516722D /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		7E73C5652F8D4587F8E71CE1 /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
+		7F4EBBF2422130E162828054 /* SMSParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SMSParser.swift; sourceTree = "<group>"; };
 		82440E40D8C6C2AE2D27D8A5 /* TaxMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaxMode.swift; sourceTree = "<group>"; };
 		863573B06FC5E41B69167E2D /* FineryLoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FineryLoadingView.swift; sourceTree = "<group>"; };
 		866B1A5E002A254F53748A3D /* AppContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppContainer.swift; sourceTree = "<group>"; };
 		8B38440EFFA21F1F82715A28 /* PnL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PnL.swift; sourceTree = "<group>"; };
+		8E269B3C38185B26E8B4184F /* FineryShare.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = FineryShare.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		8FCDD1C9C2F31381AC106478 /* TaxCalculatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaxCalculatorTests.swift; sourceTree = "<group>"; };
 		90EB6D6C94F4C5C5E5716B66 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		9286A23592206481E6E093FA /* ExpenseCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpenseCategory.swift; sourceTree = "<group>"; };
 		940998E028CB628BB760FF7D /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		94113177E3F1122E055454B2 /* FineryApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FineryApp.swift; sourceTree = "<group>"; };
+		95678B2FCADDFF394411419B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		974BD75AB3FE1C6176DB1293 /* GetPnLUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetPnLUseCase.swift; sourceTree = "<group>"; };
 		9925A0E4CA8F1006122C1BD8 /* TaxCalculatorService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaxCalculatorService.swift; sourceTree = "<group>"; };
 		9AF7D02C675F33D63441B89E /* Transaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transaction.swift; sourceTree = "<group>"; };
@@ -156,6 +163,7 @@
 		DBA3BDDB6EC21859BC0FAF0A /* TransactionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionStore.swift; sourceTree = "<group>"; };
 		DCE055888C0EC773FBED99DC /* success.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = success.json; sourceTree = "<group>"; };
 		DFD3FEDDD06A99D9BC586E2C /* DashboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewModel.swift; sourceTree = "<group>"; };
+		DFE781407181245CE7FA36D7 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
 		E139FBE98B7DA646DE25EFD3 /* FineryWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FineryWidget.swift; sourceTree = "<group>"; };
 		E262ACD8872F105202BFDD43 /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
 		E4A3D50A4B2CBBE238524D0D /* AnalyticsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsViewModel.swift; sourceTree = "<group>"; };
@@ -188,6 +196,7 @@
 			isa = PBXGroup;
 			children = (
 				8FBCCF9833F5AA4643284D82 /* Finery */,
+				4BC6EF36881826E0F768ACDD /* FineryShare */,
 				437E92DB0EE17E04892611C6 /* FineryTests */,
 				08598EB0963FA22A635ABCBA /* FineryWidget */,
 				D52C16B1DE4768134BF7005C /* Products */,
@@ -351,6 +360,17 @@
 			path = FineryTests;
 			sourceTree = "<group>";
 		};
+		4BC6EF36881826E0F768ACDD /* FineryShare */ = {
+			isa = PBXGroup;
+			children = (
+				95678B2FCADDFF394411419B /* Info.plist */,
+				39BAA951EBB47E6056A50796 /* ShareParseView.swift */,
+				DFE781407181245CE7FA36D7 /* ShareViewController.swift */,
+				7F4EBBF2422130E162828054 /* SMSParser.swift */,
+			);
+			path = FineryShare;
+			sourceTree = "<group>";
+		};
 		64C33EB15D5B8909E5AF5A98 /* Tax */ = {
 			isa = PBXGroup;
 			children = (
@@ -478,6 +498,7 @@
 			isa = PBXGroup;
 			children = (
 				9F40AEF0915FDE1ADF55A664 /* Finery.app */,
+				8E269B3C38185B26E8B4184F /* FineryShare.appex */,
 				4549C8183DDAA6A1F4D00996 /* FineryTests.xctest */,
 				B0948239B5CC62ED44EAD4F7 /* FineryWidget.appex */,
 			);
@@ -556,6 +577,23 @@
 			productReference = 4549C8183DDAA6A1F4D00996 /* FineryTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		DF31E32ADCC64C831609F20B /* FineryShare */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FFD4E6377EC56F1F017546FF /* Build configuration list for PBXNativeTarget "FineryShare" */;
+			buildPhases = (
+				36B8C1BF6DB31A7443591E49 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = FineryShare;
+			packageProductDependencies = (
+			);
+			productName = FineryShare;
+			productReference = 8E269B3C38185B26E8B4184F /* FineryShare.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		FB3BF94C50472C3384D73E03 /* FineryWidget */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = C2936D04E168324253212F35 /* Build configuration list for PBXNativeTarget "FineryWidget" */;
@@ -586,6 +624,10 @@
 						DevelopmentTeam = "";
 						ProvisioningStyle = Automatic;
 					};
+					DF31E32ADCC64C831609F20B = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
 					FB3BF94C50472C3384D73E03 = {
 						DevelopmentTeam = "";
 						ProvisioningStyle = Automatic;
@@ -612,6 +654,7 @@
 			projectRoot = "";
 			targets = (
 				2515D379705AE448BB7D130D /* Finery */,
+				DF31E32ADCC64C831609F20B /* FineryShare */,
 				4CE30BA1FB6463193BB581B9 /* FineryTests */,
 				FB3BF94C50472C3384D73E03 /* FineryWidget */,
 			);
@@ -636,6 +679,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				D789751EE9F1C41C9E192FDF /* FineryWidget.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		36B8C1BF6DB31A7443591E49 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4A35287097CCC4C3E2479F16 /* SMSParser.swift in Sources */,
+				4D452DD8653EBD5719C17E71 /* ShareParseView.swift in Sources */,
+				66A5600124C7BC8D79DED2F3 /* ShareViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -815,6 +868,34 @@
 			};
 			name = Release;
 		};
+		84CCB428A0E70B7A52F3E4D4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = FineryShare/FineryShare.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				INFOPLIST_FILE = FineryShare/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tkachev.finery.share;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_STRICT_CONCURRENCY = minimal;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		999F84D491EC4A5F542C0A1B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -834,6 +915,33 @@
 				);
 				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tkachev.finery.widget;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_STRICT_CONCURRENCY = minimal;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		A17B33B7CEDAD996FA35F1A9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = FineryShare/FineryShare.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				INFOPLIST_FILE = FineryShare/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tkachev.finery.share;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_STRICT_CONCURRENCY = minimal;
@@ -1033,6 +1141,15 @@
 			buildConfigurations = (
 				999F84D491EC4A5F542C0A1B /* Debug */,
 				4401BD545DAD916375AF8ECD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		FFD4E6377EC56F1F017546FF /* Build configuration list for PBXNativeTarget "FineryShare" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A17B33B7CEDAD996FA35F1A9 /* Debug */,
+				84CCB428A0E70B7A52F3E4D4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
