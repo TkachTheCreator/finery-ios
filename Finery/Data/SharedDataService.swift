@@ -1,5 +1,6 @@
 import Foundation
 import Observation
+import WidgetKit
 
 /// Central data hub. All ViewModels read from here; one API round-trip
 /// populates every screen simultaneously.
@@ -115,7 +116,35 @@ final class SharedDataService {
         lastUpdated = Date()
 
         // Persist fresh data for offline use
-        if !networkFailed { saveToCache() }
+        if !networkFailed {
+            saveToCache()
+            saveToWidget()
+        }
+    }
+
+    // MARK: - Write to App Group for widget
+
+    private func saveToWidget() {
+        let defaults = UserDefaults(suiteName: "group.com.tkachev.finery")
+        defaults?.set(NSDecimalNumber(decimal: totalIncome ).doubleValue, forKey: "widget_income")
+        defaults?.set(NSDecimalNumber(decimal: totalExpense).doubleValue, forKey: "widget_expense")
+        defaults?.set(NSDecimalNumber(decimal: taxAmount   ).doubleValue, forKey: "widget_tax")
+        defaults?.set(taxMode.rawValue,                                   forKey: "widget_taxMode")
+
+        struct WidgetTx: Codable {
+            let amount: Double; let direction: String
+            let description: String; let date: Date
+        }
+        let widgetTxs = transactions.prefix(3).map {
+            WidgetTx(amount: NSDecimalNumber(decimal: $0.amount).doubleValue,
+                     direction: $0.direction.rawValue,
+                     description: $0.description,
+                     date: $0.date)
+        }
+        if let data = try? JSONEncoder().encode(Array(widgetTxs)) {
+            defaults?.set(data, forKey: "widget_transactions")
+        }
+        WidgetCenter.shared.reloadAllTimelines()
     }
 
     // MARK: - Mutations

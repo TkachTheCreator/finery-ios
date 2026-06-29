@@ -26,6 +26,8 @@ targets:
       - path: Finery
         excludes:
           - Info.plist
+    entitlements:
+      path: Finery/Finery.entitlements
     info:
       path: Finery/Info.plist
       properties:
@@ -43,6 +45,10 @@ targets:
         NSAppTransportSecurity:
           NSAllowsArbitraryLoads: true
         ANTHROPIC_API_KEY: ""
+        CFBundleURLTypes:
+          - CFBundleURLSchemes:
+              - finery
+            CFBundleURLName: com.tkachev.finery
     dependencies:
       - package: Pow
         product: Pow
@@ -66,6 +72,49 @@ targets:
         LD_RUNPATH_SEARCH_PATHS:
           - "$(inherited)"
           - "@executable_path/Frameworks"
+      configs:
+        Debug:
+          SWIFT_OPTIMIZATION_LEVEL: "-Onone"
+          DEBUG_INFORMATION_FORMAT: dwarf
+        Release:
+          SWIFT_OPTIMIZATION_LEVEL: "-O"
+          SWIFT_COMPILATION_MODE: wholemodule
+          DEBUG_INFORMATION_FORMAT: "dwarf-with-dsym"
+
+  FineryWidget:
+    type: app-extension
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: FineryWidget
+        excludes:
+          - "*.entitlements"
+    entitlements:
+      path: FineryWidget/FineryWidget.entitlements
+    info:
+      path: FineryWidget/Info.plist
+      properties:
+        CFBundleDisplayName: FineryWidget
+        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.tkachev.finery.widget
+        SWIFT_VERSION: "6.0"
+        DEVELOPMENT_TEAM: ""
+        CODE_SIGN_STYLE: Automatic
+        CODE_SIGN_IDENTITY: "iPhone Developer"
+        MARKETING_VERSION: "1.0.0"
+        CURRENT_PROJECT_VERSION: "1"
+        ENABLE_USER_SCRIPT_SANDBOXING: NO
+        SWIFT_STRICT_CONCURRENCY: minimal
+        TARGETED_DEVICE_FAMILY: "1,2"
+        LD_RUNPATH_SEARCH_PATHS:
+          - "$(inherited)"
+          - "@executable_path/Frameworks"
+          - "@executable_path/../../Frameworks"
       configs:
         Debug:
           SWIFT_OPTIMIZATION_LEVEL: "-Onone"

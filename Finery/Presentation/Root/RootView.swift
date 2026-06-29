@@ -8,7 +8,8 @@ struct RootView: View {
     @State private var container: AppContainer?
     @State private var phase: Phase = .splash
     @State private var showReAuth = false
-    @State private var showChat   = false
+    @State private var showChat            = false
+    @State private var showAddTransaction  = false
     @State private var selectedTab: FineryTab = .dashboard
     @State private var goingRight = true
 
@@ -104,6 +105,21 @@ struct RootView: View {
         }
         .animation(.fineryPage, value: phase)
         .fontDesign(.rounded)
+        .onOpenURL { url in
+            guard url.scheme == "finery" else { return }
+            if url.host == "add-transaction", phase == .main {
+                showAddTransaction = true
+            }
+        }
+        .sheet(isPresented: $showAddTransaction) {
+            if let c = container {
+                AddTransactionView(
+                    viewModel: AddTransactionViewModel(
+                        transactionRepository: c.transactionRepository
+                    )
+                )
+            }
+        }
     }
 
     // MARK: Main TabView (custom with directional transitions)
