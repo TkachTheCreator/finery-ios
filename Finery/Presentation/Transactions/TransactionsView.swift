@@ -261,7 +261,7 @@ struct TransactionsView: View {
                 )
         }
         .padding(.trailing, 20)
-        .padding(.bottom, 24)
+        .padding(.bottom, 100)
     }
 
     // MARK: Helpers

@@ -16,8 +16,10 @@ struct ClientsView: View {
             VStack(spacing: 0) {
                 header
                 searchBar
-                filterChips
-                    .padding(.bottom, 8)
+                if !viewModel.clients.isEmpty {
+                    filterChips
+                        .padding(.bottom, 8)
+                }
                 if viewModel.isLoading {
                     Spacer()
                     ProgressView().tint(FC.cobalt)
