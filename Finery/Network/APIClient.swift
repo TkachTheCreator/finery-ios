@@ -501,21 +501,7 @@ actor APIClient {
     }
 
     func deleteTransaction(id: UUID) async throws {
-        var req = URLRequest(url: baseURL.appendingPathComponent("transactions/\(id.uuidString)"))
-        req.httpMethod = "DELETE"
-        if let token = KeychainStore.load() {
-            req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        }
-        let (_, response): (Data, URLResponse)
-        do {
-            (_, response) = try await session.data(for: req)
-        } catch {
-            throw NetworkError.noConnection
-        }
-        guard let http = response as? HTTPURLResponse, (200...299).contains(http.statusCode) else {
-            let code = (response as? HTTPURLResponse)?.statusCode ?? 0
-            throw NetworkError.serverError(code, nil)
-        }
+        try await deleteRequest("transactions/\(id.uuidString)")
     }
 
     // MARK: Analytics

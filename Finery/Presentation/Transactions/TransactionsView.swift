@@ -192,27 +192,27 @@ struct TransactionsView: View {
                         Circle()
                             .fill(FC.border)
                             .frame(width: 38, height: 38)
-                            .shimmering(active: true, duration: 1.4)
+                            .shimmering(active: true)
                         VStack(alignment: .leading, spacing: 6) {
                             RoundedRectangle(cornerRadius: 4)
                                 .fill(FC.border)
                                 .frame(width: 130, height: 12)
-                                .shimmering(active: true, duration: 1.4)
+                                .shimmering(active: true)
                             RoundedRectangle(cornerRadius: 4)
                                 .fill(FC.surface)
                                 .frame(width: 80, height: 10)
-                                .shimmering(active: true, duration: 1.4)
+                                .shimmering(active: true)
                         }
                         Spacer()
                         VStack(alignment: .trailing, spacing: 6) {
                             RoundedRectangle(cornerRadius: 4)
                                 .fill(FC.border)
                                 .frame(width: 65, height: 12)
-                                .shimmering(active: true, duration: 1.4)
+                                .shimmering(active: true)
                             RoundedRectangle(cornerRadius: 4)
                                 .fill(FC.surface)
                                 .frame(width: 36, height: 10)
-                                .shimmering(active: true, duration: 1.4)
+                                .shimmering(active: true)
                         }
                     }
                     .padding(.vertical, 10)

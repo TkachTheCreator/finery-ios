@@ -42,8 +42,7 @@ struct DashboardView: View {
                 appeared = true
             }
             if let status = viewModel.taxStatus {
-                let raw = Double(status.limitUsedPercent.description) ?? 0
-                let target = raw > 100 ? 1.0 : raw / 100.0
+                let target = min(status.limitUsedPercent / 100.0, 1.0)
                 withAnimation(.spring(response: 1.2, dampingFraction: 0.8).delay(0.4)) {
                     barProgress = target
                 }
