@@ -105,6 +105,12 @@ struct RootView: View {
         }
         .animation(.fineryPage, value: phase)
         .fontDesign(.rounded)
+        .onChange(of: SharedDataService.shared.isLoggedOut) { _, loggedOut in
+            if loggedOut {
+                withAnimation(.fineryPage) { phase = .welcome }
+                selectedTab = .dashboard
+            }
+        }
         .onOpenURL { url in
             guard url.scheme == "finery" else { return }
             if url.host == "add-transaction", phase == .main {

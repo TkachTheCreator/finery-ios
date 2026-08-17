@@ -176,10 +176,33 @@ struct SettingsView: View {
     private var infoSection: some View {
         VStack(alignment: .leading, spacing: 0) {
             sectionHeader("О ПРИЛОЖЕНИИ")
-            infoRow(label: "Версия", value: "1.0.0")
+            infoRow(label: "Версия", value: appVersion)
             hairline
-            infoRow(label: "Сборка", value: "1")
+            infoRow(label: "Сборка", value: appBuild)
+            hairline
+            Button {
+                viewModel.logout()
+            } label: {
+                HStack {
+                    Text("Выйти из аккаунта")
+                        .font(.system(.body))
+                        .foregroundStyle(FC.danger)
+                    Spacer()
+                }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 14)
+                .background(FC.background)
+            }
+            .buttonStyle(.plain)
         }
+    }
+
+    private var appVersion: String {
+        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "—"
+    }
+
+    private var appBuild: String {
+        Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "—"
     }
 
     // MARK: Toast
@@ -200,7 +223,7 @@ struct SettingsView: View {
                 .background(FC.surface)
                 .overlay(Rectangle().stroke(FC.border, lineWidth: 0.5))
                 .transition(.move(edge: .bottom).combined(with: .opacity))
-                .padding(.bottom, 48)
+                .padding(.bottom, 110)
             }
         }
         .animation(.spring(duration: 0.3), value: viewModel.savedFeedback)
