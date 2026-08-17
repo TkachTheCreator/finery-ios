@@ -398,9 +398,9 @@ actor APIClient {
     static let shared = APIClient()
 
     #if targetEnvironment(simulator)
-    private let baseURL = URL(string: "http://127.0.0.1:8000")!
+    private let baseURL = URL(string: "http://127.0.0.1:8000/api/v1")!
     #else
-    private let baseURL = URL(string: "http://85.239.41.204:8000")!
+    private let baseURL = URL(string: "https://api.finery.pro/api/v1")!
     #endif
     private let session: URLSession
 
@@ -428,7 +428,7 @@ actor APIClient {
             taxMode: taxMode.apiValue, userType: userType.apiValue
         )
         do {
-            let dto: TokenDTO = try await post("api/v1/auth/register", body: body)
+            let dto: TokenDTO = try await post("auth/register", body: body)
             KeychainStore.save(dto.accessToken)
             return (dto.accessToken, dto.user.toDomain())
         } catch NetworkError.emailTaken {
@@ -441,7 +441,7 @@ actor APIClient {
     func login(email: String, password: String) async throws -> (token: String, user: User) {
         let body = LoginRequest(email: email, password: password)
         do {
-            let dto: TokenDTO = try await post("api/v1/auth/login", body: body)
+            let dto: TokenDTO = try await post("auth/login", body: body)
             KeychainStore.save(dto.accessToken)
             return (dto.accessToken, dto.user.toDomain())
         } catch NetworkError.userNotFound {
@@ -457,18 +457,18 @@ actor APIClient {
 
     func forgotPassword(email: String) async throws -> String {
         let body = ForgotPasswordRequest(email: email)
-        let response: ForgotPasswordResponse = try await post("api/v1/auth/forgot-password", body: body)
+        let response: ForgotPasswordResponse = try await post("auth/forgot-password", body: body)
         return response.message
     }
 
     func getCurrentUser() async throws -> User {
-        let dto: UserDTO = try await get("api/v1/auth/me", authorized: true)
+        let dto: UserDTO = try await get("auth/me", authorized: true)
         return dto.toDomain()
     }
 
     func updateProfile(name: String, taxMode: TaxMode, userType: UserType) async throws -> User {
         let body = UpdateProfileRequest(name: name, taxMode: taxMode.apiValue, userType: userType.apiValue)
-        let dto: UserDTO = try await put("api/v1/auth/me", body: body)
+        let dto: UserDTO = try await put("auth/me", body: body)
         return dto.toDomain()
     }
 
@@ -486,7 +486,7 @@ actor APIClient {
             clientType: tx.clientType?.apiValue,
             notes: tx.notes
         )
-        let dto: TransactionDTO = try await post("api/v1/transactions", body: body, authorized: true)
+        let dto: TransactionDTO = try await post("transactions", body: body, authorized: true)
         return dto.toDomain()
     }
 
@@ -496,12 +496,12 @@ actor APIClient {
         var query: [String: String] = ["page": "1", "per_page": "\(min(perPage, 500))"]
         if let from { query["from_date"] = fmt.string(from: from) }
         if let to   { query["to_date"]   = fmt.string(from: to) }
-        let paginated: PaginatedTransactionsDTO = try await get("api/v1/transactions", query: query, authorized: true)
+        let paginated: PaginatedTransactionsDTO = try await get("transactions", query: query, authorized: true)
         return paginated.items.map { $0.toDomain() }
     }
 
     func deleteTransaction(id: UUID) async throws {
-        var req = URLRequest(url: baseURL.appendingPathComponent("api/v1/transactions/\(id.uuidString)"))
+        var req = URLRequest(url: baseURL.appendingPathComponent("transactions/\(id.uuidString)"))
         req.httpMethod = "DELETE"
         if let token = KeychainStore.load() {
             req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
@@ -524,7 +524,7 @@ actor APIClient {
         let fmt = ISO8601DateFormatter()
         fmt.formatOptions = [.withInternetDateTime]
         let dto: PnLDTO = try await get(
-            "api/v1/analytics/pnl",
+            "analytics/pnl",
             query: ["from_date": fmt.string(from: from), "to_date": fmt.string(from: to)],
             authorized: true
         )
@@ -540,7 +540,7 @@ actor APIClient {
 
     func getTaxStatus(year: Int, taxMode: TaxMode) async throws -> TaxStatus {
         let dto: TaxStatusDTO = try await get(
-            "api/v1/tax/status",
+            "tax/status",
             query: ["year": "\(year)"],
             authorized: true
         )
@@ -566,24 +566,24 @@ actor APIClient {
     // MARK: Clients
 
     func getClients() async throws -> [Client] {
-        let dtos: [ClientDTO] = try await get("api/v1/clients", authorized: true)
+        let dtos: [ClientDTO] = try await get("clients", authorized: true)
         return dtos.map { $0.toDomain() }
     }
 
     func createClient(name: String, email: String?, phone: String?, status: String, notes: String?) async throws -> Client {
         struct Body: Encodable { let name: String; let email: String?; let phone: String?; let status: String; let notes: String? }
-        let dto: ClientDTO = try await post("api/v1/clients", body: Body(name: name, email: email, phone: phone, status: status, notes: notes), authorized: true)
+        let dto: ClientDTO = try await post("clients", body: Body(name: name, email: email, phone: phone, status: status, notes: notes), authorized: true)
         return dto.toDomain()
     }
 
     func deleteClient(id: UUID) async throws {
-        try await deleteRequest("api/v1/clients/\(id.uuidString)")
+        try await deleteRequest("clients/\(id.uuidString)")
     }
 
     // MARK: Invoices
 
     func getInvoices() async throws -> [Invoice] {
-        let dtos: [InvoiceDTO] = try await get("api/v1/invoices", authorized: true)
+        let dtos: [InvoiceDTO] = try await get("invoices", authorized: true)
         return dtos.map { $0.toDomain() }
     }
 
@@ -601,14 +601,14 @@ actor APIClient {
             includeVat: invoice.includeVat, executorName: invoice.executorName,
             total: "\(invoice.computedTotal)"
         )
-        let dto: InvoiceDTO = try await post("api/v1/invoices", body: body, authorized: true)
+        let dto: InvoiceDTO = try await post("invoices", body: body, authorized: true)
         return dto.toDomain()
     }
 
     // MARK: Seasonal
 
     func getSeasonalData() async throws -> SeasonalAnalysis {
-        let dto: SeasonalDTO = try await get("api/v1/analytics/seasonal", authorized: true)
+        let dto: SeasonalDTO = try await get("analytics/seasonal", authorized: true)
         return dto.toDomain()
     }
 
