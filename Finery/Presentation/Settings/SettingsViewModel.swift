@@ -17,9 +17,16 @@ final class SettingsViewModel {
     }
 
     func load() async {
-        if let u = try? await userRepository.fetchUser() {
+        // Prefer fresh network data already in SharedDataService
+        if let u = SharedDataService.shared.currentUser {
+            user = u
+        } else if let u = try? await userRepository.fetchUser() {
             user = u
         }
+    }
+
+    func logout() {
+        SharedDataService.shared.logout()
     }
 
     func save() async {

@@ -17,9 +17,10 @@ final class SharedDataService {
     private(set) var taxStatus:   TaxStatus?
     private(set) var currentUser: User?
 
-    private(set) var isLoading  = false
-    private(set) var isOffline  = false
+    private(set) var isLoading   = false
+    private(set) var isOffline   = false
     private(set) var lastUpdated: Date?
+    private(set) var isLoggedOut = false
 
     // MARK: - Computed shortcuts
 
@@ -199,5 +200,12 @@ final class SharedDataService {
         lastUpdated = nil
         isOffline = false
         TransactionStore.shared.reset()
+    }
+
+    func logout() {
+        APIClient.shared.logout()
+        UserDefaults.standard.removeObject(forKey: "finery_welcome_seen")
+        reset()
+        isLoggedOut = true
     }
 }
