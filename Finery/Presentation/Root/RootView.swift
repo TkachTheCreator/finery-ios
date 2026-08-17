@@ -163,10 +163,9 @@ struct RootView: View {
             ))
             .padding(.bottom, 20)
 
-            // AI FAB — above the tab bar, visible only on Dashboard
+            // AI FAB — above the tab bar on the left, visible only on Dashboard
             if selectedTab == .dashboard {
                 HStack {
-                    Spacer()
                     Button { showChat = true } label: {
                         Image(systemName: "sparkles")
                             .font(.system(size: 22, weight: .medium))
@@ -177,8 +176,9 @@ struct RootView: View {
                             .shadow(color: FC.cobalt.opacity(0.35), radius: 12, x: 0, y: 6)
                     }
                     .buttonStyle(ScaleButtonStyle())
+                    Spacer()
                 }
-                .padding(.trailing, 20)
+                .padding(.leading, 20)
                 .padding(.bottom, 104)
                 .transition(.opacity.combined(with: .scale(scale: 0.8)))
             }

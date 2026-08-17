@@ -48,6 +48,11 @@ private enum KeychainStore {
     }
 
     static func load() -> String? {
+        #if DEBUG
+        if let debugToken = UserDefaults.standard.string(forKey: "DEBUG_JWT_TOKEN") {
+            return debugToken
+        }
+        #endif
         let query: [String: Any] = [
             kSecClass as String:       kSecClassGenericPassword,
             kSecAttrService as String: service,
