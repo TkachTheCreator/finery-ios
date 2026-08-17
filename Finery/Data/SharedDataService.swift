@@ -91,17 +91,19 @@ final class SharedDataService {
         let endOfMonth   = cal.date(byAdding: .second, value: -1,
                                     to: cal.date(byAdding: .month, value: 1, to: startOfMonth)!)!
         let fromTwoYears = cal.date(from: DateComponents(year: year - 1, month: 1, day: 1))!
+        // Fetch user first so taxMode is correct before launching parallel calls
+        if let u = try? await APIClient.shared.getCurrentUser() {
+            currentUser = u
+        }
         let resolvedMode = currentUser?.taxMode ?? .npd
 
-        async let txTask   = APIClient.shared.getTransactions(from: fromTwoYears, perPage: 500)
-        async let pnlTask  = APIClient.shared.getPnL(from: startOfMonth, to: endOfMonth)
-        async let taxTask  = APIClient.shared.getTaxStatus(year: year, taxMode: resolvedMode)
-        async let userTask = APIClient.shared.getCurrentUser()
+        async let txTask  = APIClient.shared.getTransactions(from: fromTwoYears, perPage: 500)
+        async let pnlTask = APIClient.shared.getPnL(from: startOfMonth, to: endOfMonth)
+        async let taxTask = APIClient.shared.getTaxStatus(year: year, taxMode: resolvedMode)
 
-        let txResult   = try? await txTask
-        let pnlResult  = try? await pnlTask
-        let taxResult  = try? await taxTask
-        let userResult = try? await userTask
+        let txResult  = try? await txTask
+        let pnlResult = try? await pnlTask
+        let taxResult = try? await taxTask
 
         // Network is offline when all primary calls fail
         let networkFailed = txResult == nil && pnlResult == nil
@@ -111,9 +113,8 @@ final class SharedDataService {
             transactions = txs
             TransactionStore.shared.syncFromService(txs)
         }
-        if let p = pnlResult  { pnl = p }
-        if let t = taxResult  { taxStatus = t }
-        if let u = userResult { currentUser = u }
+        if let p = pnlResult { pnl = p }
+        if let t = taxResult { taxStatus = t }
 
         lastUpdated = Date()
 

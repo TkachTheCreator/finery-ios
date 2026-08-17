@@ -5,6 +5,7 @@ final class NotificationService: @unchecked Sendable {
     static let shared = NotificationService()
     private init() {}
 
+    @discardableResult
     func requestPermission() async -> Bool {
         let center = UNUserNotificationCenter.current()
         do {
