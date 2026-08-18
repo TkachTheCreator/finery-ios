@@ -31,7 +31,8 @@ final class InvoicesViewModel {
     }
 
     var computedTotal: Decimal {
-        newItems.reduce(0) { $0 + $1.amount }
+        let base = newItems.reduce(0) { $0 + $1.amount }
+        return includeVat ? base * Decimal(1.2) : base
     }
 
     func load() async {
@@ -165,11 +166,3 @@ struct InvoicePDFGenerator {
     }
 }
 
-private extension Decimal {
-    func rub() -> String {
-        let fmt = NumberFormatter()
-        fmt.numberStyle = .decimal; fmt.locale = Locale(identifier: "ru_RU")
-        fmt.maximumFractionDigits = 0
-        return (fmt.string(from: self as NSDecimalNumber) ?? "\(self)") + "\u{202F}₽"
-    }
-}

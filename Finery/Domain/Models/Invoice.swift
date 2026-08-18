@@ -36,7 +36,10 @@ struct Invoice: Identifiable, Codable, Sendable {
         self.createdAt = createdAt
     }
 
-    var computedTotal: Decimal { items.reduce(0) { $0 + $1.amount } }
+    var computedTotal: Decimal {
+        let base = items.reduce(0) { $0 + $1.amount }
+        return includeVat ? base * Decimal(1.2) : base
+    }
 }
 
 struct InvoiceItem: Codable, Sendable, Identifiable {

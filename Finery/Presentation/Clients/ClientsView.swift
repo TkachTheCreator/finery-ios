@@ -373,11 +373,3 @@ struct ClientDetailView: View {
     }
 }
 
-private extension Decimal {
-    func rub() -> String {
-        let fmt = NumberFormatter()
-        fmt.numberStyle = .decimal; fmt.locale = Locale(identifier: "ru_RU")
-        fmt.maximumFractionDigits = 0
-        return (fmt.string(from: self as NSDecimalNumber) ?? "\(self)") + "\u{202F}₽"
-    }
-}

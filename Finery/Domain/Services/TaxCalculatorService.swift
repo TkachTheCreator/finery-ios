@@ -41,7 +41,6 @@ struct TaxCalculatorService: Sendable {
     // USN: quarterly — 28 April / July / October / January
     func nextQuarterlyDeadline(for date: Date = Date()) -> Date {
         let cal = Calendar.current
-        let month = cal.component(.month, from: date)
         let year  = cal.component(.year, from: date)
 
         let slots: [(month: Int, yearOffset: Int)] = [(4, 0), (7, 0), (10, 0), (1, 1)]
