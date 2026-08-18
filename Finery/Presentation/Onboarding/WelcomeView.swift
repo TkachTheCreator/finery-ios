@@ -28,25 +28,27 @@ struct WelcomeView: View {
     ]
 
     var body: some View {
-        ZStack {
-            FC.background.ignoresSafeArea()
+        GeometryReader { geo in
+            ZStack {
+                FC.background.ignoresSafeArea()
 
-            VStack(spacing: 0) {
-                // Icon zone — top ~60%
-                ZStack {
-                    SlideIconView(icon: slides[current].icon)
-                        .id(current)
-                        .transition(.asymmetric(
-                            insertion: .move(edge: .trailing).combined(with: .opacity),
-                            removal:   .move(edge: .leading).combined(with: .opacity)
-                        ))
+                VStack(spacing: 0) {
+                    // Icon zone — top ~62%
+                    ZStack {
+                        SlideIconView(icon: slides[current].icon)
+                            .id(current)
+                            .transition(.asymmetric(
+                                insertion: .move(edge: .trailing).combined(with: .opacity),
+                                removal:   .move(edge: .leading).combined(with: .opacity)
+                            ))
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .animation(.spring(response: 0.5, dampingFraction: 0.85), value: current)
+
+                    // Bottom block — fixed ~38%
+                    bottomBlock
+                        .frame(height: geo.size.height * 0.38)
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .animation(.spring(response: 0.5, dampingFraction: 0.85), value: current)
-
-                // Bottom block — fixed ~38%
-                bottomBlock
-                    .frame(height: UIScreen.main.bounds.height * 0.38)
             }
         }
     }

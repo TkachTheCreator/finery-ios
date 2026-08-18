@@ -59,13 +59,16 @@ final class TaxViewModel {
             }
 
             if let status = svc.taxStatus {
+                let daysBefore = svc.currentUser?.taxReminderDaysBefore ?? 5
                 NotificationService.shared.scheduleTaxReminder(
-                    deadline: status.nextDeadline, amount: status.taxDue, daysBefore: 5)
+                    deadline: status.nextDeadline, amount: status.taxDue, daysBefore: daysBefore)
                 if status.isNearLimit {
                     NotificationService.shared.scheduleNpdLimitWarning(usedPercent: status.limitUsedPercent)
                 }
             }
-        } catch {}
+        } catch {
+            // getMonthlyDynamics failure is non-fatal — charts stay empty
+        }
     }
 
     var totalTaxYear:    Decimal { monthlyHistory.reduce(0) { $0 + $1.taxAmount } }

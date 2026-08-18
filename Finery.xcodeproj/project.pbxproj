@@ -30,7 +30,6 @@
 		366AC8A43E427CB937DCB1F1 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B594F31B53AA1F9EDB46E9 /* Constants.swift */; };
 		38E4A622E0DB6FF0B1DA2219 /* ClassifyTransactionUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = B84589DEF693D5737501347D /* ClassifyTransactionUseCase.swift */; };
 		3A02770F74D88D2B7E6969E7 /* AnalyticsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4A3D50A4B2CBBE238524D0D /* AnalyticsViewModel.swift */; };
-		3C0CDAA5557803A99A8C721D /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2182632BEFCE4CB0A8A9362F /* OnboardingView.swift */; };
 		3EA59CEC864D0D95A65A44BB /* GetInsightsUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B7428812D629E1EEDF5B7D /* GetInsightsUseCase.swift */; };
 		42F92C1337CD08F72B200AF2 /* TaxCalculatorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9925A0E4CA8F1006122C1BD8 /* TaxCalculatorService.swift */; };
 		447D6B5CA8337259EC304907 /* Pow in Frameworks */ = {isa = PBXBuildFile; productRef = CA9FE20FDDBC787F3252883A /* Pow */; };
@@ -118,7 +117,6 @@
 		12B56BD4CA668CF84630EEE1 /* PreviewData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewData.swift; sourceTree = "<group>"; };
 		186B0AECC2A01E3E467153CD /* StoreBackedTransactionRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreBackedTransactionRepository.swift; sourceTree = "<group>"; };
 		1F93123DFD18F0824E532091 /* MonthlyData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthlyData.swift; sourceTree = "<group>"; };
-		2182632BEFCE4CB0A8A9362F /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		21AE10AC2F9610FBD58E82A5 /* CalculateTaxUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculateTaxUseCase.swift; sourceTree = "<group>"; };
 		2BF5014B27266B9CEA6DC11C /* UserEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserEntity.swift; sourceTree = "<group>"; };
 		2D3C9EFD3FC5B539D890FE46 /* SharedDataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedDataService.swift; sourceTree = "<group>"; };
@@ -377,7 +375,6 @@
 		423693FC4B12046F813FCF0B /* Onboarding */ = {
 			isa = PBXGroup;
 			children = (
-				2182632BEFCE4CB0A8A9362F /* OnboardingView.swift */,
 				7E73C5652F8D4587F8E71CE1 /* WelcomeView.swift */,
 			);
 			path = Onboarding;
@@ -838,7 +835,6 @@
 				5455763DEB51751F2BD30444 /* MonthlyData.swift in Sources */,
 				254EC4E96239C9836A221B88 /* NotificationService.swift in Sources */,
 				69EE6214CEEE4E981569C361 /* NpdForecast.swift in Sources */,
-				3C0CDAA5557803A99A8C721D /* OnboardingView.swift in Sources */,
 				4DA6EEBAB8E662AE8B083851 /* PnL.swift in Sources */,
 				154314B4625FFD8511918D86 /* PreviewData.swift in Sources */,
 				8F9F6A6C899C207AED931882 /* RootView.swift in Sources */,

@@ -110,12 +110,9 @@ final class AddTransactionViewModel {
             notes: notes.trimmingCharacters(in: .whitespaces).isEmpty ? nil : notes
         )
 
-        print("💾 Saving: direction=\(direction), incomeCategory=\(incomeCategory), expenseCategory=\(expenseCategory), userSelected=\(userSelectedCategory)")
-
         do {
             if APIClient.shared.isAuthenticated {
                 let synced = try await APIClient.shared.createTransaction(transaction)
-                print("✅ Synced: incomeCategory=\(String(describing: synced.incomeCategory)), expenseCategory=\(String(describing: synced.expenseCategory))")
                 try? await transactionRepository.save(synced)
             } else {
                 try await transactionRepository.save(transaction)
