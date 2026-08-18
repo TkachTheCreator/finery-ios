@@ -2,12 +2,12 @@ import uuid
 from datetime import datetime
 from decimal import Decimal
 
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
 
 
 class ClientCreate(BaseModel):
     name: str
-    email: EmailStr | None = None
+    email: str | None = None
     phone: str | None = None
     status: str = "active"
     notes: str | None = None
@@ -15,7 +15,7 @@ class ClientCreate(BaseModel):
 
 class ClientUpdate(BaseModel):
     name: str | None = None
-    email: EmailStr | None = None
+    email: str | None = None
     phone: str | None = None
     total_paid: Decimal | None = None
     last_payment: datetime | None = None
