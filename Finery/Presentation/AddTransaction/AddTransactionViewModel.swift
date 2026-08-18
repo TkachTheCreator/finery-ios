@@ -42,7 +42,7 @@ final class AddTransactionViewModel {
 
     var canSave: Bool {
         guard let a = amount else { return false }
-        return a > 0 && !description.trimmingCharacters(in: .whitespaces).isEmpty
+        return a > 0
     }
 
     var activeCategory: String {
@@ -98,7 +98,11 @@ final class AddTransactionViewModel {
         isSaving = true
         defer { isSaving = false }
 
-        let trimmedDesc = description.trimmingCharacters(in: .whitespaces)
+        let trimmedDesc: String = {
+            let d = description.trimmingCharacters(in: .whitespaces)
+            if !d.isEmpty { return d }
+            return direction == .income ? incomeCategory.displayName : expenseCategory.displayName
+        }()
         let transaction = Transaction(
             amount: amount,
             direction: direction,

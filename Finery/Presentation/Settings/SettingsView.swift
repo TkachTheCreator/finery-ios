@@ -1,5 +1,182 @@
 import SwiftUI
 
+// MARK: - Custom Category Model
+
+struct CustomCategory: Identifiable, Codable, Sendable {
+    var id: UUID = UUID()
+    var name: String
+    var type: CategoryKind
+    var icon: String
+
+    enum CategoryKind: String, Codable, Sendable {
+        case income, expense
+    }
+}
+
+@MainActor
+final class CustomCategoryStore {
+    static let shared = CustomCategoryStore()
+    private let key = "finery_custom_categories"
+    private(set) var categories: [CustomCategory] = []
+
+    private init() { load() }
+
+    private func load() {
+        guard let data = UserDefaults.standard.data(forKey: key),
+              let saved = try? JSONDecoder().decode([CustomCategory].self, from: data)
+        else { seedDefaults(); return }
+        categories = saved
+    }
+
+    private func seedDefaults() {
+        categories = [
+            CustomCategory(name: "Основной доход", type: .income,  icon: "briefcase"),
+            CustomCategory(name: "Подработка",      type: .income,  icon: "star"),
+            CustomCategory(name: "Еда",             type: .expense, icon: "fork.knife"),
+            CustomCategory(name: "Транспорт",       type: .expense, icon: "car"),
+            CustomCategory(name: "Прочее",          type: .expense, icon: "ellipsis.circle"),
+        ]
+        persist()
+    }
+
+    func add(name: String, type: CustomCategory.CategoryKind, icon: String) {
+        categories.append(CustomCategory(name: name, type: type, icon: icon))
+        persist()
+    }
+
+    func delete(_ category: CustomCategory) {
+        categories.removeAll { $0.id == category.id }
+        persist()
+    }
+
+    private func persist() {
+        UserDefaults.standard.set(try? JSONEncoder().encode(categories), forKey: key)
+    }
+}
+
+// MARK: - Categories Screen
+
+struct CategoriesView: View {
+    @State private var store = CustomCategoryStore.shared
+    @State private var showAdd = false
+    @State private var addKind: CustomCategory.CategoryKind = .income
+    @State private var newName = ""
+    @State private var newIcon = "tag"
+
+    private let icons = [
+        "tag", "star", "heart", "briefcase", "car", "fork.knife",
+        "house", "cart", "wifi", "phone", "book", "graduationcap",
+        "music.note", "gamecontroller", "airplane", "cross.case",
+        "ellipsis.circle", "bolt", "drop", "pawprint"
+    ]
+
+    var body: some View {
+        ZStack {
+            FC.background.ignoresSafeArea()
+            List {
+                categorySection(kind: .income,  title: "Доходы")
+                categorySection(kind: .expense, title: "Расходы")
+            }
+            .listStyle(.insetGrouped)
+            .scrollContentBackground(.hidden)
+        }
+        .navigationTitle("Категории")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .confirmationAction) {
+                Menu {
+                    Button("+ Доход")  { addKind = .income;  showAdd = true }
+                    Button("+ Расход") { addKind = .expense; showAdd = true }
+                } label: { Image(systemName: "plus") }
+            }
+        }
+        .sheet(isPresented: $showAdd) { addSheet }
+    }
+
+    @ViewBuilder
+    private func categorySection(kind: CustomCategory.CategoryKind, title: String) -> some View {
+        Section(title) {
+            ForEach(store.categories.filter { $0.type == kind }) { cat in
+                HStack(spacing: 12) {
+                    Image(systemName: cat.icon)
+                        .font(.system(size: 15))
+                        .foregroundStyle(FC.cobalt)
+                        .frame(width: 28)
+                    Text(cat.name)
+                        .font(.system(.body, design: .rounded))
+                        .foregroundStyle(FC.ink)
+                }
+            }
+            .onDelete { idx in
+                let filtered = store.categories.filter { $0.type == kind }
+                idx.forEach { store.delete(filtered[$0]) }
+            }
+        }
+    }
+
+    private var addSheet: some View {
+        NavigationView {
+            ZStack {
+                FC.background.ignoresSafeArea()
+                VStack(alignment: .leading, spacing: 20) {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("НАЗВАНИЕ").fLabel()
+                        TextField("Название категории", text: $newName)
+                            .font(.system(.body, design: .rounded))
+                            .padding(12)
+                            .background(FC.surface)
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                            .overlay(RoundedRectangle(cornerRadius: 10).stroke(FC.border, lineWidth: 0.5))
+                    }
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("ИКОНКА").fLabel()
+                        LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 5), spacing: 12) {
+                            ForEach(icons, id: \.self) { icon in
+                                Button { newIcon = icon } label: {
+                                    Image(systemName: icon)
+                                        .font(.system(size: 18))
+                                        .foregroundStyle(newIcon == icon ? .white : FC.ink)
+                                        .frame(width: 48, height: 48)
+                                        .background(newIcon == icon ? FC.cobalt : FC.surface)
+                                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(FC.border, lineWidth: 0.5))
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        }
+                    }
+                    Spacer()
+                    Button {
+                        let n = newName.trimmingCharacters(in: .whitespaces)
+                        guard !n.isEmpty else { return }
+                        store.add(name: n, type: addKind, icon: newIcon)
+                        newName = ""; newIcon = "tag"; showAdd = false
+                    } label: {
+                        Text("Добавить")
+                            .font(.system(.body, design: .rounded, weight: .semibold))
+                            .foregroundStyle(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 14)
+                            .background(FC.cobalt.opacity(newName.isEmpty ? 0.4 : 1))
+                            .clipShape(RoundedRectangle(cornerRadius: 14))
+                    }
+                    .disabled(newName.trimmingCharacters(in: .whitespaces).isEmpty)
+                }
+                .padding(20)
+            }
+            .navigationTitle("Новая категория (\(addKind == .income ? "Доход" : "Расход"))")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Отмена") { showAdd = false }
+                }
+            }
+        }
+    }
+}
+
+// MARK: - Settings
+
 struct SettingsView: View {
     @State var viewModel: SettingsViewModel
 
@@ -8,32 +185,36 @@ struct SettingsView: View {
     }
 
     var body: some View {
-        ZStack {
-            FC.background.ignoresSafeArea()
-            ScrollView(showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 0) {
-                    pageHeader
-                    hairline
-                    profileSection
-                    sectionGap
-                    taxSection
-                    sectionGap
-                    notificationsSection
-                    sectionGap
-                    infoSection
-                    Color.clear.frame(height: 40)
+        NavigationStack {
+            ZStack {
+                FC.background.ignoresSafeArea()
+                ScrollView(showsIndicators: false) {
+                    VStack(alignment: .leading, spacing: 0) {
+                        pageHeader
+                        hairline
+                        profileSection
+                        sectionGap
+                        taxSection
+                        sectionGap
+                        notificationsSection
+                        sectionGap
+                        categoriesSection
+                        sectionGap
+                        infoSection
+                        Color.clear.frame(height: 40)
+                    }
                 }
             }
-        }
-        .task { await viewModel.load() }
-        .overlay(savedToast, alignment: .bottom)
-        .alert("Ошибка сохранения", isPresented: Binding(
-            get: { viewModel.errorMessage != nil },
-            set: { if !$0 { viewModel.errorMessage = nil } }
-        )) {
-            Button("OK", role: .cancel) { viewModel.errorMessage = nil }
-        } message: {
-            Text(viewModel.errorMessage ?? "")
+            .task { await viewModel.load() }
+            .overlay(savedToast, alignment: .bottom)
+            .alert("Ошибка сохранения", isPresented: Binding(
+                get: { viewModel.errorMessage != nil },
+                set: { if !$0 { viewModel.errorMessage = nil } }
+            )) {
+                Button("OK", role: .cancel) { viewModel.errorMessage = nil }
+            } message: {
+                Text(viewModel.errorMessage ?? "")
+            }
         }
     }
 
@@ -168,6 +349,29 @@ struct SettingsView: View {
                     }
                 }
             }
+        }
+    }
+
+    // MARK: Categories
+
+    private var categoriesSection: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            sectionHeader("КАТЕГОРИИ")
+            NavigationLink(destination: CategoriesView()) {
+                HStack {
+                    Text("Управление категориями")
+                        .font(.system(.body))
+                        .foregroundStyle(FC.ink)
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.system(.caption))
+                        .foregroundStyle(FC.muted)
+                }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 14)
+                .background(FC.background)
+            }
+            .buttonStyle(.plain)
         }
     }
 

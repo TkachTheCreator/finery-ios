@@ -20,6 +20,7 @@ struct AddTransactionView: View {
     var body: some View {
         ZStack {
             FC.background.ignoresSafeArea()
+                .onTapGesture { UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil) }
 
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 0) {
@@ -240,24 +241,6 @@ struct AddTransactionView: View {
                 }
                 hairline
             }
-
-            fieldRow(label: "ИСТОЧНИК") {
-                Menu {
-                    ForEach(TransactionSource.allCases, id: \.self) { src in
-                        Button(src.displayName) { viewModel.source = src }
-                    }
-                } label: {
-                    HStack(spacing: 4) {
-                        Text(viewModel.source.displayName)
-                            .font(.system(.body))
-                            .foregroundStyle(FC.ink)
-                        Image(systemName: "chevron.up.chevron.down")
-                            .font(.system(.caption2))
-                            .foregroundStyle(FC.muted)
-                    }
-                }
-            }
-            hairline
 
             fieldRow(label: "ЗАМЕТКИ") {
                 TextField("Опционально", text: $viewModel.notes)

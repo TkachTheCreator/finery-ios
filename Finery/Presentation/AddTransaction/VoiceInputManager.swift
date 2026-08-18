@@ -53,6 +53,10 @@ final class VoiceInputManager: NSObject {
     }
 
     private func requestMicAndRecord() {
+        guard let recognizer, recognizer.isAvailable else {
+            state = .error("Распознавание речи недоступно на этом устройстве")
+            return
+        }
         AVAudioApplication.requestRecordPermission { [weak self] granted in
             Task { @MainActor in
                 guard let self else { return }
