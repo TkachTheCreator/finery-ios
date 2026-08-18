@@ -69,7 +69,7 @@ final class InvoicesViewModel {
 
     func delete(_ invoice: Invoice) async {
         invoices.removeAll { $0.id == invoice.id }
-        try? await APIClient.shared.deleteRequest("api/v1/invoices/\(invoice.id.uuidString)")
+        try? await APIClient.shared.deleteRequest("invoices/\(invoice.id.uuidString)")
     }
 
     private func resetForm() {
