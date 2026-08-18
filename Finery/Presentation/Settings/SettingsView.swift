@@ -13,6 +13,7 @@ struct CustomCategory: Identifiable, Codable, Sendable {
     }
 }
 
+@Observable
 @MainActor
 final class CustomCategoryStore {
     static let shared = CustomCategoryStore()
@@ -57,7 +58,7 @@ final class CustomCategoryStore {
 // MARK: - Categories Screen
 
 struct CategoriesView: View {
-    @State private var store = CustomCategoryStore.shared
+    private let store = CustomCategoryStore.shared
     @State private var showAdd = false
     @State private var addKind: CustomCategory.CategoryKind = .income
     @State private var newName = ""
