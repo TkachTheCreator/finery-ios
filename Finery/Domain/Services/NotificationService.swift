@@ -36,11 +36,18 @@ final class NotificationService: @unchecked Sendable {
     func scheduleNpdLimitWarning(usedPercent: Double) {
         guard usedPercent >= 80 else { return }
         let center = UNUserNotificationCenter.current()
+        center.removePendingNotificationRequests(withIdentifiers: ["finery.npd.warning"])
+
         let content = UNMutableNotificationContent()
         content.title = "Лимит НПД \(Int(usedPercent))%"
         content.body  = "Пора открывать ИП. Осталось мало до лимита 2 400 000 ₽"
         content.sound = .default
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
+
+        // Fire next morning at 9:00 so it doesn't interrupt the current session
+        let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: Date()) ?? Date()
+        var comps = Calendar.current.dateComponents([.year, .month, .day], from: tomorrow)
+        comps.hour = 9; comps.minute = 0
+        let trigger = UNCalendarNotificationTrigger(dateMatching: comps, repeats: false)
         center.add(UNNotificationRequest(identifier: "finery.npd.warning", content: content, trigger: trigger))
     }
 }
