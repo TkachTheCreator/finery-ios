@@ -28,7 +28,7 @@ struct GetInsightsUseCase: Sendable {
         var insights: [Insight] = []
 
         // Tax deadline
-        let deadline = taxCalculator.nextDeadline(for: referenceDate)
+        let deadline = taxCalculator.nextDeadline(for: referenceDate, mode: user.taxMode)
         let daysLeft = calendar.dateComponents([.day], from: referenceDate, to: deadline).day ?? 0
         if daysLeft <= 7 {
             let tax = taxCalculator.calculateTax(for: thisMonth, mode: user.taxMode)

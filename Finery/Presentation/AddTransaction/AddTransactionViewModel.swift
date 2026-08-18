@@ -85,7 +85,8 @@ final class AddTransactionViewModel {
         guard !text.isEmpty else { return }
         if description.isEmpty { description = text }
         if let amount = voice.parsedAmount, amountText.isEmpty {
-            amountText = "\(NSDecimalNumber(decimal: amount).intValue)"
+            let n = NSDecimalNumber(decimal: amount)
+            amountText = n.decimalValue == Decimal(n.intValue) ? "\(n.intValue)" : n.stringValue
         }
         onDescriptionChanged()
     }

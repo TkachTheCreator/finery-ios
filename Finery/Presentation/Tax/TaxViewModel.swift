@@ -78,7 +78,7 @@ final class TaxViewModel {
 
     private func computeNpdForecast() -> NpdForecast {
         let svc = SharedDataService.shared
-        let limit: Decimal = 2_400_000
+        let limit = TaxStatus.npdYearLimit
         let cal = Calendar.current
         let currentYear = cal.component(.year, from: Date())
         let thirtyDaysAgo = cal.date(byAdding: .day, value: -30, to: Date())!
