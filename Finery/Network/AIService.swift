@@ -57,10 +57,7 @@ final class AIService {
 
         let apiKey = Constants.anthropicAPIKey
         guard !apiKey.isEmpty else {
-            messages.append(AIMessage(
-                role: "assistant",
-                content: "⚠️ Добавьте Anthropic API ключ в Constants.swift или Info.plist (ANTHROPIC_API_KEY)"
-            ))
+            messages.append(AIMessage(role: "assistant", content: localAnswer(for: text, income: income, expense: expense, tax: tax, mode: mode)))
             return
         }
 
@@ -91,5 +88,70 @@ final class AIService {
 
     func clearHistory() {
         messages = []
+    }
+
+    // MARK: - Local fallback answers (no API key required)
+
+    private func localAnswer(for text: String, income: Int, expense: Int, tax: Int, mode: String) -> String {
+        let q = text.lowercased()
+
+        if q.contains("снизить налог") || q.contains("оптимизир") || q.contains("уменьшить налог") {
+            return """
+            💡 Способы снизить налог:
+
+            • **НПД**: применяйте правильный тип клиента — физлицо (4%) или юрлицо (6%). Убедитесь, что ставка выбрана верно при каждой операции.
+            • **УСН 6%**: уменьшайте налог на сумму страховых взносов (до 50% для ИП с сотрудниками, до 100% без них).
+            • **УСН 15%**: фиксируйте все расходы — аренда, ПО, оборудование, связь. Каждый рубль расходов снижает базу.
+            • Ваш текущий режим: \(mode). Налог за период: \(tax) ₽.
+            """
+        }
+
+        if q.contains("расход") || q.contains("анализ") || q.contains("трат") {
+            let margin = income > 0 ? Int(Double(income - expense - tax) / Double(income) * 100) : 0
+            return """
+            📊 Анализ за текущий период:
+
+            • Доход: \(income) ₽
+            • Расходы: \(expense) ₽
+            • Налог: \(tax) ₽
+            • Чистая прибыль: \(income - expense - tax) ₽
+            • Маржа: \(margin)%
+
+            \(margin < 40 ? "⚠️ Маржа ниже 40% — для фрилансеров норма 60–80%. Сократите постоянные расходы." : "✅ Маржа в норме. Продолжайте контролировать расходы.")
+            """
+        }
+
+        if q.contains("когда") && (q.contains("платить") || q.contains("налог") || q.contains("дедлайн") || q.contains("срок")) {
+            let deadline: String
+            if mode.lowercased().contains("ндп") || mode.lowercased().contains("npd") || mode.contains("НПД") {
+                deadline = "28-го числа каждого месяца следующего за отчётным"
+            } else {
+                deadline = "28 апреля, 28 июля, 28 октября, 28 января (авансовые платежи по УСН)"
+            }
+            return """
+            📅 Дедлайн для режима \(mode):
+
+            Платить нужно **\(deadline)**.
+
+            • Текущий налог к уплате: \(tax) ₽
+            • Настройте напоминание в Настройках → за сколько дней предупреждать.
+
+            Просрочка — пени 1/300 ставки ЦБ за каждый день. Не откладывайте!
+            """
+        }
+
+        if q.contains("доход") || q.contains("заработок") || q.contains("совет") {
+            return """
+            💰 Советы по росту дохода:
+
+            • Диверсифицируйте источники — не более 70% дохода из одного канала.
+            • Ваш доход за период: \(income) ₽. Расходы: \(expense) ₽.
+            • Повышайте ставку раз в 6 месяцев — инфляция в России ~8% в год.
+            • Выставляйте счета вовремя, используйте раздел «Счета» в приложении.
+            • Для НПД: лимит 2 400 000 ₽/год. При приближении — переходите на УСН.
+            """
+        }
+
+        return "🤖 Полная версия ИИ-советника скоро будет доступна. Пока используйте быстрые вопросы выше — они работают без интернета и дают конкретные советы по вашим данным."
     }
 }
