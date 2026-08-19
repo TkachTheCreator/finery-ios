@@ -40,8 +40,9 @@ final class ClientsViewModel {
         defer { isLoading = false }
         do {
             clients = try await APIClient.shared.getClients()
+        } catch NetworkError.unauthorized {
+            await SharedDataService.shared.handleSessionExpired()
         } catch {
-            // Graceful empty state — backend may not be deployed yet
             clients = []
         }
     }
@@ -62,6 +63,8 @@ final class ClientsViewModel {
             clients.insert(client, at: 0)
             resetForm()
             showAddClient = false
+        } catch NetworkError.unauthorized {
+            await SharedDataService.shared.handleSessionExpired()
         } catch {
             errorMessage = error.localizedDescription
         }

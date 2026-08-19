@@ -161,8 +161,9 @@ final class AddTransactionViewModel {
                 try await transactionRepository.save(transaction)
             }
             didSave = true
+        } catch NetworkError.unauthorized {
+            await SharedDataService.shared.handleSessionExpired()
         } catch NetworkError.noConnection, NetworkError.serverUnavailable {
-            // Network down — store locally; will sync automatically on next successful load
             try? await transactionRepository.save(transaction)
             savedOffline = true
             didSave = true
