@@ -51,6 +51,8 @@ final class SettingsViewModel {
             savedFeedback = true
             try? await Task.sleep(for: .seconds(1.5))
             savedFeedback = false
+        } catch NetworkError.unauthorized {
+            await SharedDataService.shared.handleSessionExpired()
         } catch {
             errorMessage = error.localizedDescription
         }

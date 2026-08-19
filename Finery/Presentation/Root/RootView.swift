@@ -213,8 +213,9 @@ struct RootView: View {
             if needed { showReAuth = true }
         }
         .onChange(of: selectedTab) { previous, current in
-            // Reload Dashboard whenever user returns to it, so Settings changes apply immediately
-            if current == .dashboard && previous != .dashboard {
+            // Reload Dashboard only when returning from Settings (tax mode may have changed)
+            if current == .dashboard && previous == .settings {
+                SharedDataService.shared.invalidate()
                 Task { await c.dashboard.load() }
             }
         }
