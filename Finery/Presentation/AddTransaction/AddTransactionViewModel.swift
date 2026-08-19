@@ -98,11 +98,32 @@ final class AddTransactionViewModel {
     func applyVoiceResult() {
         let text = voice.recognizedText
         guard !text.isEmpty else { return }
-        if description.isEmpty { description = text }
+
+        let lower = text.lowercased()
+
+        // Direction detection
+        let expenseWords = ["расход", "потратил", "потратила", "заплатил", "заплатила", "купил", "купила"]
+        let incomeWords  = ["доход", "получил", "получила", "заработал", "заработала", "поступление"]
+        if expenseWords.contains(where: { lower.contains($0) }) {
+            setDirection(.expense)
+        } else if incomeWords.contains(where: { lower.contains($0) }) {
+            setDirection(.income)
+        }
+
+        // Amount
         if let amount = voice.parsedAmount, amountText.isEmpty {
             let n = NSDecimalNumber(decimal: amount)
             amountText = n.decimalValue == Decimal(n.intValue) ? "\(n.intValue)" : n.stringValue
         }
+
+        // Description — strip direction keywords before filling
+        if description.isEmpty {
+            var cleaned = text
+            for word in expenseWords + incomeWords { cleaned = cleaned.replacingOccurrences(of: word, with: "", options: .caseInsensitive) }
+            let trimmed = cleaned.trimmingCharacters(in: .whitespacesAndNewlines)
+            description = trimmed.isEmpty ? text : trimmed
+        }
+
         onDescriptionChanged()
     }
 

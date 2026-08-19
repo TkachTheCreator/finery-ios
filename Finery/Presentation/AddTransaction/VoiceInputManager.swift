@@ -19,6 +19,11 @@ final class VoiceInputManager: NSObject {
     var recognizedText: String = ""
     var parsedAmount: Decimal?
 
+    var isIdle: Bool {
+        if case .idle = state { return true }
+        return false
+    }
+
     private var recognizer: SFSpeechRecognizer?
     private var audioEngine: AVAudioEngine?
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?

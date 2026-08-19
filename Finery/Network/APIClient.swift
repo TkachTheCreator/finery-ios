@@ -203,7 +203,7 @@ private struct ClientDTO: Decodable {
     let name: String
     let email: String?
     let phone: String?
-    let totalPaid: Double
+    let totalPaid: String
     let lastPayment: Date?
     let status: String
     let notes: String?
@@ -212,7 +212,7 @@ private struct ClientDTO: Decodable {
     func toDomain() -> Client {
         Client(
             id: id, name: name, email: email, phone: phone,
-            totalPaid: Decimal(totalPaid),
+            totalPaid: Decimal(string: totalPaid) ?? 0,
             lastPayment: lastPayment,
             status: ClientStatus(rawValue: status) ?? .active,
             notes: notes, createdAt: createdAt
