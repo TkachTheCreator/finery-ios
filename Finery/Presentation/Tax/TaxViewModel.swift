@@ -33,6 +33,16 @@ final class TaxViewModel {
         // Populate shared store (also syncs TransactionStore for use-cases)
         await SharedDataService.shared.loadAll(referenceDate: referenceDate)
 
+        // loadAll() may have returned immediately because another caller is already
+        // loading. Wait up to 5 s so we read complete data, not a nil snapshot.
+        if SharedDataService.shared.isLoading {
+            var ticks = 0
+            while SharedDataService.shared.isLoading && ticks < 50 {
+                try? await Task.sleep(nanoseconds: 100_000_000)
+                ticks += 1
+            }
+        }
+
         let svc = SharedDataService.shared
         userType = svc.userType
 

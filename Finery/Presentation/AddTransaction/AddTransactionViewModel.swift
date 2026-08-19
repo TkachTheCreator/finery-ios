@@ -23,7 +23,6 @@ final class AddTransactionViewModel {
     var isSaving      = false
     var didSave       = false
     var errorMessage: String?
-    var savedOffline  = false
 
     let voice = VoiceInputManager()
 
@@ -135,14 +134,10 @@ final class AddTransactionViewModel {
             if APIClient.shared.isAuthenticated {
                 let synced = try await APIClient.shared.createTransaction(transaction)
                 try await transactionRepository.save(synced)
+                SharedDataService.shared.invalidate()
             } else {
                 try await transactionRepository.save(transaction)
             }
-            didSave = true
-        } catch NetworkError.noConnection, NetworkError.serverUnavailable {
-            // Offline fallback: save locally and sync on next connection
-            try? await transactionRepository.save(transaction)
-            savedOffline = true
             didSave = true
         } catch {
             errorMessage = error.localizedDescription
