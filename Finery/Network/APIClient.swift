@@ -415,8 +415,8 @@ actor APIClient {
 
     private init() {
         let config = URLSessionConfiguration.default
-        config.timeoutIntervalForRequest = 12
-        config.timeoutIntervalForResource = 30
+        config.timeoutIntervalForRequest  = 30
+        config.timeoutIntervalForResource = 60
         session = URLSession(configuration: config)
     }
 
@@ -668,11 +668,22 @@ actor APIClient {
         return try await execute(req)
     }
 
-    private func execute<R: Decodable>(_ request: URLRequest) async throws -> R {
+    // Codes worth retrying: transient network glitches, not a missing internet connection.
+    private static let retryableCodes: Set<URLError.Code> = [
+        .timedOut, .networkConnectionLost, .cannotConnectToHost,
+        .cannotFindHost, .dnsLookupFailed, .secureConnectionFailed,
+    ]
+
+    private func execute<R: Decodable>(_ request: URLRequest, attempt: Int = 0) async throws -> R {
         let (data, response): (Data, URLResponse)
         do {
             (data, response) = try await session.data(for: request)
         } catch let urlError as URLError {
+            // Retry up to 2 times on transient errors, with 1 s back-off.
+            if Self.retryableCodes.contains(urlError.code), attempt < 2 {
+                try await Task.sleep(nanoseconds: 1_000_000_000)
+                return try await execute(request, attempt: attempt + 1)
+            }
             switch urlError.code {
             case .notConnectedToInternet, .networkConnectionLost, .dataNotAllowed:
                 throw NetworkError.noConnection

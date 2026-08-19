@@ -49,27 +49,57 @@ struct DashboardView: View {
             }
         }
         .overlay(alignment: .top) {
-            if viewModel.isOffline {
+            if SharedDataService.shared.isSlowConnection && !viewModel.isOffline {
+                slowBanner.transition(.move(edge: .top).combined(with: .opacity))
+            } else if viewModel.isOffline {
                 offlineBanner.transition(.move(edge: .top).combined(with: .opacity))
             }
         }
         .animation(.spring(response: 0.4, dampingFraction: 0.8), value: viewModel.isOffline)
+        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: SharedDataService.shared.isSlowConnection)
     }
 
-    // MARK: - Offline Banner
+    // MARK: - Banners
 
-    private var offlineBanner: some View {
+    private var slowBanner: some View {
         HStack(spacing: 8) {
-            Image(systemName: "wifi.slash").fontWeight(.light)
-            Text("Нет подключения · локальные данные")
+            ProgressView().tint(.white).scaleEffect(0.8)
+            Text("Медленное соединение, подождите…")
                 .font(.system(.caption, design: .rounded, weight: .medium))
         }
         .foregroundStyle(.white)
         .padding(.horizontal, 16)
         .padding(.vertical, 10)
-        .background(FC.muted.opacity(0.92))
+        .background(FC.muted.opacity(0.9))
         .clipShape(Capsule())
         .padding(.top, 8)
+        .padding(.horizontal, 20)
+    }
+
+    private var offlineBanner: some View {
+        HStack(spacing: 10) {
+            Image(systemName: "wifi.slash").fontWeight(.light)
+            Text("Сервер недоступен")
+                .font(.system(.caption, design: .rounded, weight: .medium))
+            Spacer(minLength: 0)
+            Button {
+                Task { await viewModel.load() }
+            } label: {
+                Text("Повторить")
+                    .font(.system(.caption, design: .rounded, weight: .semibold))
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 4)
+                    .background(.white.opacity(0.25))
+                    .clipShape(Capsule())
+            }
+        }
+        .foregroundStyle(.white)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
+        .background(FC.danger.opacity(0.88))
+        .clipShape(Capsule())
+        .padding(.top, 8)
+        .padding(.horizontal, 20)
     }
 
     // MARK: - Header

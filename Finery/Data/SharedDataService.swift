@@ -22,6 +22,8 @@ final class SharedDataService {
     private(set) var lastUpdated: Date?
     private(set) var isLoggedOut        = false
     private(set) var sessionExpiredMessage: String?
+    /// True while loadAll is running but data hasn't arrived yet (slow connection).
+    private(set) var isSlowConnection   = false
 
     // MARK: - Computed shortcuts
 
@@ -83,7 +85,15 @@ final class SharedDataService {
         guard APIClient.shared.isAuthenticated else { return }
         guard !isLoading, isStale else { return }
         isLoading = true
-        defer { isLoading = false }
+        isSlowConnection = false
+        defer { isLoading = false; isSlowConnection = false }
+
+        // After 4 s with no data, flag slow connection so the UI can update.
+        let slowTimer = Task {
+            try? await Task.sleep(nanoseconds: 4_000_000_000)
+            if !Task.isCancelled { isSlowConnection = true }
+        }
+        defer { slowTimer.cancel() }
 
         await processPendingTransactions()
 
