@@ -159,9 +159,6 @@ struct AddTransactionView: View {
 
         return Button {
             voice.toggle()
-            if case .idle = voice.state {
-                viewModel.applyVoiceResult()
-            }
         } label: {
             ZStack {
                 Circle()
@@ -178,8 +175,9 @@ struct AddTransactionView: View {
             .scaleEffect(isRecording ? 1.1 : 1.0)
             .animation(.spring(response: 0.3), value: isRecording)
         }
-        .onChange(of: voice.recognizedText) { _, _ in
-            if case .idle = voice.state { viewModel.applyVoiceResult() }
+        // Trigger on state → idle (covers both auto-stop and manual stop)
+        .onChange(of: voice.isIdle) { _, isNowIdle in
+            if isNowIdle { viewModel.applyVoiceResult() }
         }
     }
 

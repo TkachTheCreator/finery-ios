@@ -12,11 +12,12 @@ final class ClientsViewModel {
     // Add form state
     var showAddClient = false
     var newName    = ""
-    var newEmail   = ""
     var newPhone   = ""
     var newStatus  = ClientStatus.active
     var newNotes   = ""
     var isSaving   = false
+
+    let voice = VoiceInputManager()
 
     // Filter + search
     var searchText   = ""
@@ -53,7 +54,7 @@ final class ClientsViewModel {
         do {
             let client = try await APIClient.shared.createClient(
                 name: name,
-                email: newEmail.isEmpty ? nil : newEmail,
+                email: nil,
                 phone: newPhone.isEmpty ? nil : newPhone,
                 status: newStatus.rawValue,
                 notes: newNotes.isEmpty ? nil : newNotes
@@ -63,6 +64,32 @@ final class ClientsViewModel {
             showAddClient = false
         } catch {
             errorMessage = error.localizedDescription
+        }
+    }
+
+    func applyVoiceToClient() {
+        let text = voice.recognizedText
+        guard !text.isEmpty else { return }
+
+        // Extract phone: sequence of 10+ digits possibly with spaces/dashes/+
+        let phoneRegex = /(\+?[\d][\d\s\-]{8,}[\d])/
+        var phoneFound = ""
+        if let match = text.firstMatch(of: phoneRegex) {
+            phoneFound = String(match.0)
+                .replacingOccurrences(of: " ", with: "")
+                .replacingOccurrences(of: "-", with: "")
+            if newPhone.isEmpty { newPhone = phoneFound }
+        }
+
+        // Name: text minus the phone number
+        if newName.isEmpty {
+            let namePart = phoneFound.isEmpty
+                ? text
+                : text.replacingOccurrences(of: phoneFound, with: "").trimmingCharacters(in: .whitespacesAndNewlines)
+            // Capitalise first letter of each word
+            newName = namePart.split(separator: " ")
+                .map { $0.prefix(1).uppercased() + $0.dropFirst() }
+                .joined(separator: " ")
         }
     }
 
@@ -78,7 +105,7 @@ final class ClientsViewModel {
     }
 
     private func resetForm() {
-        newName = ""; newEmail = ""; newPhone = ""
+        newName = ""; newPhone = ""
         newStatus = .active; newNotes = ""
     }
 }

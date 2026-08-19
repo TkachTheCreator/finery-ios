@@ -32,6 +32,13 @@ struct AnalyticsView: View {
                     barChartSection
                     hairline
                     if !viewModel.incomeBreakdown.isEmpty {
+                        hairline
+                        pieSection(
+                            title: "ДОХОДЫ ПО КАТЕГОРИЯМ",
+                            slices: viewModel.incomeBreakdown.map { ($0.category.displayName, $0.amount, $0.percent) },
+                            accentColor: FC.cobalt
+                        )
+                        hairline
                         breakdownSection(
                             title: "СТРУКТУРА ДОХОДОВ",
                             rows: viewModel.incomeBreakdown.map { ($0.category.displayName, $0.category.iconName, $0.amount, $0.percent) }
@@ -39,6 +46,12 @@ struct AnalyticsView: View {
                         hairline
                     }
                     if !viewModel.expenseBreakdown.isEmpty {
+                        pieSection(
+                            title: "РАСХОДЫ ПО КАТЕГОРИЯМ",
+                            slices: viewModel.expenseBreakdown.map { ($0.category.displayName, $0.amount, $0.percent) },
+                            accentColor: FC.danger
+                        )
+                        hairline
                         breakdownSection(
                             title: "СТРУКТУРА РАСХОДОВ",
                             rows: viewModel.expenseBreakdown.map { ($0.category.displayName, $0.category.iconName, $0.amount, $0.percent) },
@@ -274,6 +287,57 @@ struct AnalyticsView: View {
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 20)
+    }
+
+    // MARK: Pie Chart
+
+    private func pieSection(
+        title: String,
+        slices: [(name: String, amount: Decimal, percent: Double)],
+        accentColor: Color
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text(title).fLabel()
+            HStack(alignment: .center, spacing: 20) {
+                Chart(Array(slices.enumerated()), id: \.offset) { idx, item in
+                    SectorMark(
+                        angle: .value("Сумма", max(item.percent, 1)),
+                        innerRadius: .ratio(0.52),
+                        angularInset: 1.5
+                    )
+                    .foregroundStyle(pieColor(idx, base: accentColor))
+                    .cornerRadius(3)
+                }
+                .frame(width: 130, height: 130)
+
+                VStack(alignment: .leading, spacing: 7) {
+                    ForEach(Array(slices.prefix(6).enumerated()), id: \.offset) { idx, item in
+                        HStack(spacing: 7) {
+                            RoundedRectangle(cornerRadius: 2)
+                                .fill(pieColor(idx, base: accentColor))
+                                .frame(width: 10, height: 10)
+                            Text(item.name)
+                                .font(.system(.caption2, design: .default))
+                                .foregroundStyle(FC.ink)
+                                .lineLimit(1)
+                            Spacer(minLength: 4)
+                            Text(String(format: "%.0f%%", item.percent))
+                                .font(.system(.caption2, design: .default, weight: .semibold))
+                                .monospacedDigit()
+                                .foregroundStyle(FC.muted)
+                        }
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 20)
+    }
+
+    private func pieColor(_ index: Int, base: Color) -> Color {
+        let opacities: [Double] = [1.0, 0.72, 0.52, 0.38, 0.26, 0.18]
+        return base.opacity(opacities[min(index, opacities.count - 1)])
     }
 
     // MARK: Helpers

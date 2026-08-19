@@ -1,4 +1,5 @@
 import SwiftUI
+import Speech
 
 struct ClientsView: View {
     @State var viewModel: ClientsViewModel
@@ -243,13 +244,22 @@ struct ClientsView: View {
             ZStack {
                 FC.background.ignoresSafeArea()
                 Form {
-                    Section("Основное") {
-                        TextField("Имя *", text: $viewModel.newName)
-                        TextField("Email", text: $viewModel.newEmail)
-                            .keyboardType(.emailAddress)
-                            .textInputAutocapitalization(.never)
+                    Section {
+                        HStack {
+                            TextField("Имя *", text: $viewModel.newName)
+                            clientMicButton
+                        }
                         TextField("Телефон", text: $viewModel.newPhone)
                             .keyboardType(.phonePad)
+                    } header: {
+                        Text("Основное")
+                    } footer: {
+                        if case .recording = viewModel.voice.state {
+                            Text("Говорите... «Иван Иванов 79001234567»")
+                                .foregroundStyle(FC.cobalt)
+                        } else if case .error(let msg) = viewModel.voice.state {
+                            Text(msg).foregroundStyle(FC.danger)
+                        }
                     }
                     Section("Статус") {
                         Picker("Статус", selection: $viewModel.newStatus) {
@@ -282,6 +292,25 @@ struct ClientsView: View {
                     }
                 }
             }
+        }
+    }
+
+    private var clientMicButton: some View {
+        let voice = viewModel.voice
+        let isRecording: Bool
+        if case .recording = voice.state { isRecording = true } else { isRecording = false }
+
+        return Button {
+            voice.toggle()
+        } label: {
+            Image(systemName: isRecording ? "stop.circle.fill" : "mic.circle")
+                .font(.system(size: 22))
+                .foregroundStyle(isRecording ? FC.danger : FC.cobalt)
+                .animation(.spring(response: 0.3), value: isRecording)
+        }
+        .buttonStyle(.plain)
+        .onChange(of: voice.isIdle) { _, isNowIdle in
+            if isNowIdle { viewModel.applyVoiceToClient() }
         }
     }
 }
