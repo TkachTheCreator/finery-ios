@@ -9,6 +9,8 @@ struct AddTransactionView: View {
     @Environment(\.dismiss) private var dismiss
     @FocusState private var amountFocused: Bool
     @State private var showOverlay: OverlayState = .none
+    @State private var showCategoryPicker = false
+    @State private var showError = false
 
     private enum OverlayState { case none, loading, success }
 
@@ -48,13 +50,29 @@ struct AddTransactionView: View {
                 withAnimation { showOverlay = .success }
             }
         }
+        .onChange(of: viewModel.errorMessage) { _, msg in
+            if msg != nil { showError = true }
+        }
+        .alert("Ошибка сохранения", isPresented: $showError) {
+            Button("OK") { viewModel.errorMessage = nil }
+        } message: {
+            Text(viewModel.errorMessage ?? "")
+        }
+        .sheet(isPresented: $showCategoryPicker) {
+            CategoryPickerSheet(
+                direction: viewModel.direction,
+                onSelect: { viewModel.selectCategory($0) }
+            )
+        }
         .overlay {
             switch showOverlay {
             case .loading:
                 FineryLoadingOverlay(message: "Сохраняем транзакцию...")
                     .transition(.opacity.combined(with: .scale(scale: 0.96)))
             case .success:
-                FinerySuccessOverlay(message: "Готово!") {
+                FinerySuccessOverlay(
+                    message: viewModel.savedOffline ? "Сохранено локально" : "Готово!"
+                ) {
                     showOverlay = .none
                     dismiss()
                 }
@@ -192,20 +210,8 @@ struct AddTransactionView: View {
             hairline
 
             fieldRow(label: "КАТЕГОРИЯ") {
-                Menu {
-                    if viewModel.direction == .income {
-                        ForEach(IncomeCategory.allCases, id: \.self) { cat in
-                            Button(cat.displayName) {
-                                viewModel.selectIncomeCategory(cat)
-                            }
-                        }
-                    } else {
-                        ForEach(ExpenseCategory.allCases, id: \.self) { cat in
-                            Button(cat.displayName) {
-                                viewModel.selectExpenseCategory(cat)
-                            }
-                        }
-                    }
+                Button {
+                    showCategoryPicker = true
                 } label: {
                     HStack(spacing: 4) {
                         Text(viewModel.activeCategory)
