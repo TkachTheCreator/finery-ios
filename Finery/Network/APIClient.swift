@@ -675,6 +675,10 @@ actor APIClient {
     ]
 
     private func execute<R: Decodable>(_ request: URLRequest, attempt: Int = 0) async throws -> R {
+        let method = request.httpMethod ?? "GET"
+        let url    = request.url?.absoluteString ?? "?"
+        print("[API] \(method) \(url) — attempt \(attempt + 1)")
+
         let (data, response): (Data, URLResponse)
         do {
             (data, response) = try await session.data(for: request)
@@ -696,6 +700,7 @@ actor APIClient {
         guard let http = response as? HTTPURLResponse else {
             throw NetworkError.noConnection
         }
+        print("[API] \(method) \(url) → \(http.statusCode)")
         switch http.statusCode {
         case 200...299:
             do {
