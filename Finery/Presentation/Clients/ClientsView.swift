@@ -37,7 +37,7 @@ struct ClientsView: View {
             guard !appeared else { return }
             withAnimation(.spring(response: 0.7, dampingFraction: 0.82)) { appeared = true }
         }
-        .sheet(isPresented: $viewModel.showAddClient) { addClientSheet }
+        .sheet(isPresented: $viewModel.showAddClient, onDismiss: { viewModel.voice.stop() }) { addClientSheet }
         .sheet(item: $selectedClient) { ClientDetailView(client: $0, viewModel: viewModel) }
         .alert("Ошибка", isPresented: Binding(
             get: { viewModel.errorMessage != nil },
