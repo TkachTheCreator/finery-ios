@@ -415,7 +415,8 @@ actor APIClient {
 
     private init() {
         let config = URLSessionConfiguration.default
-        config.timeoutIntervalForRequest = 30
+        config.timeoutIntervalForRequest = 12
+        config.timeoutIntervalForResource = 30
         session = URLSession(configuration: config)
     }
 
@@ -692,6 +693,7 @@ actor APIClient {
                 throw NetworkError.decodingFailed(error)
             }
         case 401, 403:
+            KeychainStore.delete()   // token is invalid — clear it immediately
             throw NetworkError.unauthorized
         case 404:
             throw NetworkError.userNotFound

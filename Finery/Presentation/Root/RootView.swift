@@ -8,6 +8,7 @@ struct RootView: View {
     @State private var container: AppContainer?
     @State private var phase: Phase = .splash
     @State private var showReAuth = false
+    @State private var showSessionExpiredAlert = false
     @State private var showChat            = false
     @State private var showAddTransaction  = false
     @State private var selectedTab: FineryTab = .dashboard
@@ -107,9 +108,16 @@ struct RootView: View {
         .fontDesign(.rounded)
         .onChange(of: SharedDataService.shared.isLoggedOut) { _, loggedOut in
             if loggedOut {
-                withAnimation(.fineryPage) { phase = .welcome }
+                let expired = SharedDataService.shared.sessionExpiredMessage != nil
+                withAnimation(.fineryPage) { phase = expired ? .login : .welcome }
                 selectedTab = .dashboard
+                if expired { showSessionExpiredAlert = true }
             }
+        }
+        .alert("Сессия истекла", isPresented: $showSessionExpiredAlert) {
+            Button("Войти снова", role: .cancel) {}
+        } message: {
+            Text(SharedDataService.shared.sessionExpiredMessage ?? "")
         }
         .onOpenURL { url in
             guard url.scheme == "finery" else { return }

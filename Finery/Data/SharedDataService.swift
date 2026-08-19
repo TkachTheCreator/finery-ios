@@ -17,10 +17,11 @@ final class SharedDataService {
     private(set) var taxStatus:   TaxStatus?
     private(set) var currentUser: User?
 
-    private(set) var isLoading   = false
-    private(set) var isOffline   = false
+    private(set) var isLoading          = false
+    private(set) var isOffline          = false
     private(set) var lastUpdated: Date?
-    private(set) var isLoggedOut = false
+    private(set) var isLoggedOut        = false
+    private(set) var sessionExpiredMessage: String?
 
     // MARK: - Computed shortcuts
 
@@ -108,7 +109,7 @@ final class SharedDataService {
             _ = try? await txTask
             _ = try? await pnlTask
             _ = try? await taxTask
-            logout()
+            handleSessionExpired()
             return
         } catch {
             // If the task was cancelled (user switched tabs), bail without touching state
@@ -221,8 +222,19 @@ final class SharedDataService {
     }
 
     func logout() {
+        sessionExpiredMessage = nil
         APIClient.shared.logout()
         UserDefaults.standard.removeObject(forKey: "finery_welcome_seen")
+        reset()
+        isLoggedOut = true
+    }
+
+    /// Called whenever any authenticated API request returns 401.
+    /// Clears the token, sets the expiry message, and triggers logout flow.
+    func handleSessionExpired() {
+        guard !isLoggedOut else { return }
+        sessionExpiredMessage = "Сессия истекла, войдите снова"
+        APIClient.shared.logout()   // clears Keychain token
         reset()
         isLoggedOut = true
     }
