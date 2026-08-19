@@ -17,26 +17,51 @@ struct CustomCategory: Identifiable, Codable, Sendable {
 @MainActor
 final class CustomCategoryStore {
     static let shared = CustomCategoryStore()
-    private let key = "finery_custom_categories"
+    private let key        = "finery_custom_categories"
+    private let migratedKey = "finery_categories_v2_seeded"
     private(set) var categories: [CustomCategory] = []
 
     private init() { load() }
 
     private func load() {
+        let alreadyMigrated = UserDefaults.standard.bool(forKey: migratedKey)
         guard let data = UserDefaults.standard.data(forKey: key),
               let saved = try? JSONDecoder().decode([CustomCategory].self, from: data)
         else { seedDefaults(); return }
-        categories = saved
+
+        if !alreadyMigrated {
+            // Keep only user-created entries (not from old minimal seed)
+            let oldSeedNames: Set<String> = ["Основной доход", "Подработка", "Еда", "Транспорт", "Прочее"]
+            let userAdded = saved.filter { !oldSeedNames.contains($0.name) }
+            seedDefaults()
+            categories.append(contentsOf: userAdded)
+            persist()
+        } else {
+            categories = saved
+        }
     }
 
     private func seedDefaults() {
         categories = [
-            CustomCategory(name: "Основной доход", type: .income,  icon: "briefcase"),
-            CustomCategory(name: "Подработка",      type: .income,  icon: "star"),
-            CustomCategory(name: "Еда",             type: .expense, icon: "fork.knife"),
-            CustomCategory(name: "Транспорт",       type: .expense, icon: "car"),
-            CustomCategory(name: "Прочее",          type: .expense, icon: "ellipsis.circle"),
+            // Доходы (совпадают с displayName перечисления IncomeCategory)
+            CustomCategory(name: "Boosty/Подписки",  type: .income,  icon: "star"),
+            CustomCategory(name: "Донаты",           type: .income,  icon: "heart"),
+            CustomCategory(name: "Реклама",          type: .income,  icon: "megaphone"),
+            CustomCategory(name: "Фриланс",          type: .income,  icon: "briefcase"),
+            CustomCategory(name: "Платформы",        type: .income,  icon: "play.rectangle"),
+            CustomCategory(name: "Курсы/Обучение",   type: .income,  icon: "graduationcap"),
+            CustomCategory(name: "Другое",           type: .income,  icon: "ellipsis.circle"),
+            // Расходы (совпадают с displayName перечисления ExpenseCategory)
+            CustomCategory(name: "Инструменты",      type: .expense, icon: "wrench.and.screwdriver"),
+            CustomCategory(name: "Своя реклама",     type: .expense, icon: "megaphone"),
+            CustomCategory(name: "Оборудование",     type: .expense, icon: "camera"),
+            CustomCategory(name: "Команда",          type: .expense, icon: "person.2"),
+            CustomCategory(name: "Еда",              type: .expense, icon: "fork.knife"),
+            CustomCategory(name: "Транспорт",        type: .expense, icon: "car"),
+            CustomCategory(name: "Связь",            type: .expense, icon: "phone"),
+            CustomCategory(name: "Другое",           type: .expense, icon: "ellipsis.circle"),
         ]
+        UserDefaults.standard.set(true, forKey: migratedKey)
         persist()
     }
 

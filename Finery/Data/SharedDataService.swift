@@ -92,21 +92,32 @@ final class SharedDataService {
         let endOfMonth   = cal.date(byAdding: .second, value: -1,
                                     to: cal.date(byAdding: .month, value: 1, to: startOfMonth)!)!
         let fromTwoYears = cal.date(from: DateComponents(year: year - 1, month: 1, day: 1))!
-        // Fetch user first so taxMode is correct before launching parallel calls
-        if let u = try? await APIClient.shared.getCurrentUser() {
-            currentUser = u
-        }
         let resolvedMode = currentUser?.taxMode ?? .npd
 
-        async let txTask  = APIClient.shared.getTransactions(from: fromTwoYears, perPage: 500)
-        async let pnlTask = APIClient.shared.getPnL(from: startOfMonth, to: endOfMonth)
-        async let taxTask = APIClient.shared.getTaxStatus(year: year, taxMode: resolvedMode)
+        // All 4 requests run in parallel
+        async let userTask = APIClient.shared.getCurrentUser()
+        async let txTask   = APIClient.shared.getTransactions(from: fromTwoYears, perPage: 500)
+        async let pnlTask  = APIClient.shared.getPnL(from: startOfMonth, to: endOfMonth)
+        async let taxTask  = APIClient.shared.getTaxStatus(year: year, taxMode: resolvedMode)
+
+        // Check user first to detect expired token vs network outage
+        do {
+            let u = try await userTask
+            currentUser = u
+        } catch NetworkError.unauthorized {
+            // Token expired — silently consume other tasks and log out
+            _ = try? await txTask
+            _ = try? await pnlTask
+            _ = try? await taxTask
+            logout()
+            return
+        } catch { /* network error — continue to load what we can */ }
 
         let txResult  = try? await txTask
         let pnlResult = try? await pnlTask
         let taxResult = try? await taxTask
 
-        // Network is offline when all primary calls fail
+        // Network is offline only when all primary data calls fail (not auth issue)
         let networkFailed = txResult == nil && pnlResult == nil
         isOffline = networkFailed
 
