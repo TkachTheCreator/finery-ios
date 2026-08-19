@@ -70,9 +70,7 @@ struct AddTransactionView: View {
                 FineryLoadingOverlay(message: "Сохраняем транзакцию...")
                     .transition(.opacity.combined(with: .scale(scale: 0.96)))
             case .success:
-                FinerySuccessOverlay(
-                    message: viewModel.savedOffline ? "Сохранено локально" : "Готово!"
-                ) {
+                FinerySuccessOverlay(message: "Готово!") {
                     showOverlay = .none
                     dismiss()
                 }

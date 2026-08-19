@@ -105,19 +105,23 @@ final class SharedDataService {
             let u = try await userTask
             currentUser = u
         } catch NetworkError.unauthorized {
-            // Token expired — silently consume other tasks and log out
             _ = try? await txTask
             _ = try? await pnlTask
             _ = try? await taxTask
             logout()
             return
-        } catch { /* network error — continue to load what we can */ }
+        } catch {
+            // If the task was cancelled (user switched tabs), bail without touching state
+            if Task.isCancelled { return }
+        }
 
         let txResult  = try? await txTask
         let pnlResult = try? await pnlTask
         let taxResult = try? await taxTask
 
-        // Network is offline only when all primary data calls fail (not auth issue)
+        // Don't corrupt state on cancellation
+        guard !Task.isCancelled else { return }
+
         let networkFailed = txResult == nil && pnlResult == nil
         isOffline = networkFailed
 
@@ -128,14 +132,17 @@ final class SharedDataService {
         if let p = pnlResult { pnl = p }
         if let t = taxResult { taxStatus = t }
 
-        lastUpdated = Date()
-
-        // Persist fresh data for offline use
+        // Only mark as loaded when data actually arrived — failed/cancelled loads
+        // leave lastUpdated nil so the next call retries immediately.
         if !networkFailed {
+            lastUpdated = Date()
             saveToCache()
             saveToWidget()
         }
     }
+
+    /// Force the next loadAll() to fetch fresh data regardless of the 30-second window.
+    func invalidate() { lastUpdated = nil }
 
     // MARK: - Process transactions queued by Share Extension
 
