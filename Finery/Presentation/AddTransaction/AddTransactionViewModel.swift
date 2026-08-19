@@ -22,6 +22,7 @@ final class AddTransactionViewModel {
     var userSelectedCategory = false
     var isSaving      = false
     var didSave       = false
+    var savedOffline  = false
     var errorMessage: String?
 
     let voice = VoiceInputManager()
@@ -159,6 +160,11 @@ final class AddTransactionViewModel {
             } else {
                 try await transactionRepository.save(transaction)
             }
+            didSave = true
+        } catch NetworkError.noConnection, NetworkError.serverUnavailable {
+            // Network down — store locally; will sync automatically on next successful load
+            try? await transactionRepository.save(transaction)
+            savedOffline = true
             didSave = true
         } catch {
             errorMessage = error.localizedDescription

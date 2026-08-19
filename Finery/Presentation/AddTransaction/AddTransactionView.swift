@@ -41,6 +41,7 @@ struct AddTransactionView: View {
             }
         }
         .onAppear { amountFocused = true }
+        .onDisappear { viewModel.voice.stop() }
         .onChange(of: viewModel.isSaving) { _, saving in
             if saving { withAnimation { showOverlay = .loading } }
         }
@@ -70,7 +71,9 @@ struct AddTransactionView: View {
                 FineryLoadingOverlay(message: "Сохраняем транзакцию...")
                     .transition(.opacity.combined(with: .scale(scale: 0.96)))
             case .success:
-                FinerySuccessOverlay(message: "Готово!") {
+                FinerySuccessOverlay(
+                    message: viewModel.savedOffline ? "Сохранено локально" : "Готово!"
+                ) {
                     showOverlay = .none
                     dismiss()
                 }
