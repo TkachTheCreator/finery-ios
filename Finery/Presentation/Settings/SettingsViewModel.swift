@@ -30,8 +30,12 @@ final class SettingsViewModel {
     }
 
     func save() async {
+        print("[DEBUG] SettingsViewModel.save() — START")
         isSaving = true
-        defer { isSaving = false }
+        defer {
+            isSaving = false
+            print("[DEBUG] SettingsViewModel.save() — DONE, isSaving=false")
+        }
         do {
             errorMessage = nil
             // Persist locally first

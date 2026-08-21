@@ -36,13 +36,20 @@ final class ClientsViewModel {
     }
 
     func load() async {
+        print("[DEBUG] ClientsViewModel.load() — START")
         isLoading = true
-        defer { isLoading = false }
+        defer {
+            isLoading = false
+            print("[DEBUG] ClientsViewModel.load() — DONE, isLoading=false")
+        }
         do {
             clients = try await APIClient.shared.getClients()
+            print("[DEBUG] ClientsViewModel — loaded \(clients.count) clients")
         } catch NetworkError.unauthorized {
+            print("[DEBUG] ClientsViewModel — 401, session expired")
             await SharedDataService.shared.handleSessionExpired()
         } catch {
+            print("[DEBUG] ClientsViewModel — error: \(error)")
             clients = []
         }
     }

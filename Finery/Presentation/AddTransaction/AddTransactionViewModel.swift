@@ -131,9 +131,13 @@ final class AddTransactionViewModel {
     // MARK: Save
 
     func save() async {
+        print("[DEBUG] AddTransactionViewModel.save() — START")
         guard let amount, canSave else { return }
         isSaving = true
-        defer { isSaving = false }
+        defer {
+            isSaving = false
+            print("[DEBUG] AddTransactionViewModel.save() — DONE, isSaving=false")
+        }
 
         let trimmedDesc: String = {
             let d = description.trimmingCharacters(in: .whitespaces)

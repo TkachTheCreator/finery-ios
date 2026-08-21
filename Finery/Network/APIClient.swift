@@ -668,10 +668,10 @@ actor APIClient {
         return try await execute(req)
     }
 
-    // Codes worth retrying: transient network glitches, not a missing internet connection.
+    // Only retry on transient transport errors. SSL/TLS failures (secureConnectionFailed)
+    // are NOT retried — they indicate a handshake problem that won't fix itself in 1 s.
     private static let retryableCodes: Set<URLError.Code> = [
         .timedOut, .networkConnectionLost, .cannotConnectToHost,
-        .cannotFindHost, .dnsLookupFailed, .secureConnectionFailed,
     ]
 
     private func execute<R: Decodable>(_ request: URLRequest, attempt: Int = 0) async throws -> R {
@@ -683,9 +683,9 @@ actor APIClient {
         do {
             (data, response) = try await session.data(for: request)
         } catch let urlError as URLError {
-            // Retry up to 2 times on transient errors, with 1 s back-off.
-            if Self.retryableCodes.contains(urlError.code), attempt < 2 {
-                try await Task.sleep(nanoseconds: 1_000_000_000)
+            // One retry with 0.5 s back-off on transient errors only.
+            if Self.retryableCodes.contains(urlError.code), attempt < 1 {
+                try await Task.sleep(nanoseconds: 500_000_000)
                 return try await execute(request, attempt: attempt + 1)
             }
             switch urlError.code {

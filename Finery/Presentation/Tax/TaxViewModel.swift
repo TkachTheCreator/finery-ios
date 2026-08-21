@@ -27,20 +27,25 @@ final class TaxViewModel {
     }
 
     func load(referenceDate: Date = Date()) async {
+        print("[DEBUG] TaxViewModel.load() — START")
         isLoading = true
-        defer { isLoading = false }
+        defer {
+            isLoading = false
+            print("[DEBUG] TaxViewModel.load() — DONE, isLoading=false")
+        }
 
-        // Populate shared store (also syncs TransactionStore for use-cases)
         await SharedDataService.shared.loadAll(referenceDate: referenceDate)
 
-        // loadAll() may have returned immediately because another caller is already
-        // loading. Wait up to 5 s so we read complete data, not a nil snapshot.
+        // loadAll() returned early because another caller holds isLoading.
+        // Wait up to 5 s, but bail immediately on task cancellation.
         if SharedDataService.shared.isLoading {
+            print("[DEBUG] TaxViewModel — waiting for SharedDataService.loadAll to finish")
             var ticks = 0
-            while SharedDataService.shared.isLoading && ticks < 50 {
+            while SharedDataService.shared.isLoading && ticks < 50 && !Task.isCancelled {
                 try? await Task.sleep(nanoseconds: 100_000_000)
                 ticks += 1
             }
+            print("[DEBUG] TaxViewModel — wait done, ticks=\(ticks), cancelled=\(Task.isCancelled)")
         }
 
         let svc = SharedDataService.shared
