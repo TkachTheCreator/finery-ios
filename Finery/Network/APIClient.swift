@@ -724,7 +724,8 @@ actor APIClient {
                 throw NetworkError.decodingFailed(error)
             }
         case 401, 403:
-            KeychainStore.delete()   // token is invalid — clear it immediately
+            // Do NOT delete the token here — that silently breaks isAuthenticated
+            // without triggering logout. Token is cleared only in handleSessionExpired().
             throw NetworkError.unauthorized
         case 404:
             throw NetworkError.userNotFound
