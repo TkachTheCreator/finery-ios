@@ -12,10 +12,11 @@ final class SharedDataService {
 
     // MARK: - State
 
-    private(set) var transactions: [Transaction] = []
-    private(set) var pnl:         PnL?
-    private(set) var taxStatus:   TaxStatus?
-    private(set) var currentUser: User?
+    private(set) var transactions:   [Transaction] = []
+    private(set) var pnl:            PnL?
+    private(set) var taxStatus:      TaxStatus?
+    private(set) var currentUser:    User?
+    var cachedClients: [Client] = []  // populated by ClientsViewModel.load()
 
     private(set) var isLoading          = false
     private(set) var isOffline          = false
@@ -154,6 +155,15 @@ final class SharedDataService {
 
     /// Force the next loadAll() to fetch fresh data regardless of the 30-second window.
     func invalidate() { lastUpdated = nil }
+
+    /// Immediately prepend a newly created transaction to the in-memory list so
+    /// all screens update without waiting for the next loadAll().
+    func appendTransaction(_ tx: Transaction) {
+        transactions.removeAll { $0.id == tx.id }
+        transactions.insert(tx, at: 0)
+        TransactionStore.shared.append(tx)
+        invalidate()
+    }
 
     // MARK: - Process transactions queued by Share Extension
 

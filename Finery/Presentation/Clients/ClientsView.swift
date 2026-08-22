@@ -322,7 +322,11 @@ struct ClientDetailView: View {
     let viewModel: ClientsViewModel
     @Environment(\.dismiss) private var dismiss
 
-    var transactions: [Transaction] { viewModel.clientTransactions(client) }
+    @State private var linkedTransactions: [Transaction] = []
+    @State private var isLoadingTx = false
+    @State private var editingAmount = false
+    @State private var amountText = ""
+    @State private var isSavingAmount = false
 
     var body: some View {
         NavigationView {
@@ -341,8 +345,8 @@ struct ClientDetailView: View {
                             Text(client.name)
                                 .font(.system(.title3, design: .rounded, weight: .semibold))
                                 .foregroundStyle(FC.ink)
-                            if let email = client.email {
-                                Text(email).font(.system(.caption, design: .rounded)).foregroundStyle(FC.muted)
+                            if let phone = client.phone {
+                                Text(phone).font(.system(.caption, design: .rounded)).foregroundStyle(FC.muted)
                             }
                         }
                         .padding()
@@ -350,42 +354,114 @@ struct ClientDetailView: View {
                         .background(FC.surface)
                         .clipShape(RoundedRectangle(cornerRadius: 16))
 
-                        // Stats
-                        HStack(spacing: 0) {
-                            statCell(label: "Оплачено", value: client.totalPaid.rub())
-                            Rectangle().fill(FC.border).frame(width: 1)
-                            statCell(label: "Статус", value: client.status.displayName)
+                        // Stats + amount editing
+                        VStack(spacing: 0) {
+                            HStack(spacing: 0) {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("ОПЛАЧЕНО").font(.system(.caption2, design: .rounded, weight: .semibold)).foregroundStyle(FC.muted)
+                                    if editingAmount {
+                                        HStack(spacing: 4) {
+                                            TextField("0", text: $amountText)
+                                                .keyboardType(.decimalPad)
+                                                .font(.system(.subheadline, design: .rounded, weight: .semibold))
+                                                .foregroundStyle(FC.ink)
+                                            Text("₽").foregroundStyle(FC.muted).font(.system(.caption))
+                                        }
+                                    } else {
+                                        Text(client.totalPaid.rub())
+                                            .font(.system(.subheadline, design: .rounded, weight: .semibold))
+                                            .foregroundStyle(FC.ink)
+                                    }
+                                }
+                                .padding(16)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+
+                                Rectangle().fill(FC.border).frame(width: 1)
+
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("СТАТУС").font(.system(.caption2, design: .rounded, weight: .semibold)).foregroundStyle(FC.muted)
+                                    Text(client.status.displayName)
+                                        .font(.system(.subheadline, design: .rounded, weight: .semibold))
+                                        .foregroundStyle(FC.ink)
+                                }
+                                .padding(16)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            }
+
+                            if editingAmount {
+                                Rectangle().fill(FC.border).frame(height: 0.5)
+                                HStack(spacing: 12) {
+                                    Button("Отмена") {
+                                        editingAmount = false
+                                        amountText = ""
+                                    }
+                                    .font(.system(.subheadline, design: .rounded))
+                                    .foregroundStyle(FC.muted)
+                                    Spacer()
+                                    Button {
+                                        Task { await saveAmount() }
+                                    } label: {
+                                        if isSavingAmount {
+                                            ProgressView().tint(.white).scaleEffect(0.8)
+                                        } else {
+                                            Text("Сохранить")
+                                                .font(.system(.subheadline, design: .rounded, weight: .semibold))
+                                                .foregroundStyle(.white)
+                                        }
+                                    }
+                                    .padding(.horizontal, 16)
+                                    .padding(.vertical, 8)
+                                    .background(FC.cobalt)
+                                    .clipShape(Capsule())
+                                    .disabled(isSavingAmount)
+                                }
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 10)
+                            }
                         }
                         .background(FC.surface)
                         .clipShape(RoundedRectangle(cornerRadius: 16))
 
-                        // Transactions
-                        if !transactions.isEmpty {
-                            VStack(alignment: .leading, spacing: 10) {
+                        // Linked transactions
+                        VStack(alignment: .leading, spacing: 10) {
+                            HStack {
                                 Text("ТРАНЗАКЦИИ").font(.system(.caption2, design: .rounded, weight: .semibold)).foregroundStyle(FC.muted)
-                                ForEach(transactions.prefix(10)) { tx in
+                                Spacer()
+                                if isLoadingTx { ProgressView().scaleEffect(0.7) }
+                            }
+                            if linkedTransactions.isEmpty && !isLoadingTx {
+                                Text("Нет привязанных транзакций")
+                                    .font(.system(.caption, design: .rounded))
+                                    .foregroundStyle(FC.muted)
+                                    .padding(.vertical, 4)
+                            } else {
+                                ForEach(linkedTransactions.prefix(20)) { tx in
                                     HStack {
-                                        Text(tx.description).font(.system(.subheadline, design: .rounded)).foregroundStyle(FC.ink).lineLimit(1)
+                                        VStack(alignment: .leading, spacing: 2) {
+                                            Text(tx.description)
+                                                .font(.system(.subheadline, design: .rounded))
+                                                .foregroundStyle(FC.ink)
+                                                .lineLimit(1)
+                                            Text(tx.date, style: .date)
+                                                .font(.system(.caption2, design: .rounded))
+                                                .foregroundStyle(FC.muted)
+                                        }
                                         Spacer()
-                                        Text(tx.direction == .income ? "+" + tx.amount.rub() : "-" + tx.amount.rub())
+                                        Text((tx.direction == .income ? "+" : "-") + tx.amount.rub())
                                             .font(.system(.subheadline, design: .rounded, weight: .semibold))
+                                            .monospacedDigit()
                                             .foregroundStyle(tx.direction == .income ? FC.cobalt : FC.danger)
                                     }
                                     .padding(.vertical, 4)
-                                    if tx.id != transactions.prefix(10).last?.id {
+                                    if tx.id != linkedTransactions.prefix(20).last?.id {
                                         Rectangle().fill(FC.border.opacity(0.5)).frame(height: 0.5)
                                     }
                                 }
                             }
-                            .padding()
-                            .background(FC.surface)
-                            .clipShape(RoundedRectangle(cornerRadius: 16))
-                        } else {
-                            Text("Нет привязанных транзакций")
-                                .font(.system(.caption, design: .rounded))
-                                .foregroundStyle(FC.muted)
-                                .padding()
                         }
+                        .padding()
+                        .background(FC.surface)
+                        .clipShape(RoundedRectangle(cornerRadius: 16))
                     }
                     .padding(16)
                 }
@@ -393,20 +469,36 @@ struct ClientDetailView: View {
             .navigationTitle(client.name)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    if !editingAmount {
+                        Button {
+                            amountText = "\(NSDecimalNumber(decimal: client.totalPaid).doubleValue)"
+                            editingAmount = true
+                        } label: {
+                            Label("Изменить сумму", systemImage: "pencil")
+                                .font(.system(.caption, design: .rounded))
+                        }
+                        .foregroundStyle(FC.cobalt)
+                    }
+                }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Готово") { dismiss() }
                 }
             }
         }
+        .task {
+            isLoadingTx = true
+            linkedTransactions = await viewModel.fetchClientTransactions(clientId: client.id)
+            isLoadingTx = false
+        }
     }
 
-    private func statCell(label: String, value: String) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(label).font(.system(.caption2, design: .rounded, weight: .semibold)).foregroundStyle(FC.muted)
-            Text(value).font(.system(.subheadline, design: .rounded, weight: .semibold)).foregroundStyle(FC.ink)
-        }
-        .padding(16)
-        .frame(maxWidth: .infinity, alignment: .leading)
+    private func saveAmount() async {
+        guard let decimal = Decimal(string: amountText.replacingOccurrences(of: ",", with: ".")) else { return }
+        isSavingAmount = true
+        await viewModel.updateTotalPaid(client: client, amount: decimal)
+        isSavingAmount = false
+        editingAmount = false
     }
 }
 
