@@ -35,15 +35,21 @@ struct CategoryPickerSheet: View {
                         dismiss()
                     } label: {
                         HStack(spacing: 12) {
-                            Image(systemName: cat.icon)
-                                .font(.system(size: 14))
-                                .foregroundStyle(FC.cobalt)
-                                .frame(width: 24)
+                            ZStack {
+                                Circle().fill(FC.cobalt.opacity(0.12)).frame(width: 30, height: 30)
+                                Image(systemName: cat.icon)
+                                    .font(.system(size: 13, weight: .medium))
+                                    .foregroundStyle(FC.cobalt)
+                            }
                             Text(cat.name)
+                                .font(.system(.body, design: .rounded))
                                 .foregroundStyle(FC.ink)
                             Spacer()
                         }
+                        .contentShape(Rectangle())
                     }
+                    .buttonStyle(.plain)
+                    .listRowBackground(FC.surface)
                 }
                 .onDelete { indices in
                     let cats = categories

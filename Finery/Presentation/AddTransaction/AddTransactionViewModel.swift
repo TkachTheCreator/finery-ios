@@ -14,7 +14,9 @@ final class AddTransactionViewModel {
     var expenseCategory: ExpenseCategory = .other
     var customCategoryName: String?      = nil
     var customCategoryIcon: String?      = nil
-    var clientType   = ClientType.individual
+    var clientType       = ClientType.individual
+    var selectedClientId:   UUID?   = nil
+    var selectedClientName: String? = nil
     var source       = TransactionSource.manual
     var notes        = ""
 
@@ -153,6 +155,7 @@ final class AddTransactionViewModel {
             incomeCategory:  direction == .income  ? incomeCategory  : nil,
             expenseCategory: direction == .expense ? expenseCategory : nil,
             clientType:      direction == .income  ? clientType      : nil,
+            clientId:        direction == .income  ? selectedClientId : nil,
             notes: notes.trimmingCharacters(in: .whitespaces).isEmpty ? nil : notes
         )
 
@@ -160,7 +163,7 @@ final class AddTransactionViewModel {
             if APIClient.shared.isAuthenticated {
                 let synced = try await APIClient.shared.createTransaction(transaction)
                 try await transactionRepository.save(synced)
-                SharedDataService.shared.invalidate()
+                SharedDataService.shared.appendTransaction(synced)
             } else {
                 try await transactionRepository.save(transaction)
             }

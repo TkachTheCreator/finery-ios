@@ -10,6 +10,7 @@ struct Transaction: Identifiable, Codable, Sendable {
     var incomeCategory: IncomeCategory?
     var expenseCategory: ExpenseCategory?
     var clientType: ClientType?
+    var clientId: UUID?
     var notes: String?
     let createdAt: Date
 
@@ -23,6 +24,7 @@ struct Transaction: Identifiable, Codable, Sendable {
         incomeCategory: IncomeCategory? = nil,
         expenseCategory: ExpenseCategory? = nil,
         clientType: ClientType? = nil,
+        clientId: UUID? = nil,
         notes: String? = nil,
         createdAt: Date = Date()
     ) {
@@ -35,6 +37,7 @@ struct Transaction: Identifiable, Codable, Sendable {
         self.incomeCategory = incomeCategory
         self.expenseCategory = expenseCategory
         self.clientType = clientType
+        self.clientId = clientId
         self.notes = notes
         self.createdAt = createdAt
     }

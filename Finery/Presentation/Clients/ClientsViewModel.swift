@@ -44,6 +44,7 @@ final class ClientsViewModel {
         }
         do {
             clients = try await APIClient.shared.getClients()
+            SharedDataService.shared.cachedClients = clients
             print("[DEBUG] ClientsViewModel — loaded \(clients.count) clients")
         } catch NetworkError.unauthorized {
             print("[DEBUG] ClientsViewModel — 401, session expired")
@@ -100,6 +101,28 @@ final class ClientsViewModel {
             newName = namePart.split(separator: " ")
                 .map { $0.prefix(1).uppercased() + $0.dropFirst() }
                 .joined(separator: " ")
+        }
+    }
+
+    func updateTotalPaid(client: Client, amount: Decimal) async {
+        do {
+            let updated = try await APIClient.shared.updateClientTotalPaid(id: client.id, totalPaid: amount)
+            if let idx = clients.firstIndex(where: { $0.id == client.id }) {
+                clients[idx] = updated
+                SharedDataService.shared.cachedClients = clients
+            }
+        } catch NetworkError.unauthorized {
+            await SharedDataService.shared.handleSessionExpired()
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    func fetchClientTransactions(clientId: UUID) async -> [Transaction] {
+        do {
+            return try await APIClient.shared.getClientTransactions(clientId: clientId)
+        } catch {
+            return []
         }
     }
 

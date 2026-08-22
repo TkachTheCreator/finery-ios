@@ -136,7 +136,7 @@ private struct UserDTO: Decodable {
 }
 
 private struct TransactionRequestDTO: Encodable {
-    let amount: String        // sent as string to preserve Decimal precision
+    let amount: String
     let direction: String
     let description: String
     let date: Date
@@ -144,13 +144,14 @@ private struct TransactionRequestDTO: Encodable {
     let incomeCategory: String?
     let expenseCategory: String?
     let clientType: String?
+    let clientId: UUID?
     let notes: String?
 }
 
 private struct TransactionDTO: Decodable {
     let id: UUID
     let userId: UUID
-    let amount: String        // backend serialises Decimal as string
+    let amount: String
     let direction: String
     let description: String
     let date: Date
@@ -158,6 +159,7 @@ private struct TransactionDTO: Decodable {
     let incomeCategory: String?
     let expenseCategory: String?
     let clientType: String?
+    let clientId: UUID?
     let notes: String?
     let createdAt: Date
 
@@ -172,6 +174,7 @@ private struct TransactionDTO: Decodable {
             incomeCategory: incomeCategory.flatMap { IncomeCategory(apiValue: $0) },
             expenseCategory: expenseCategory.flatMap { ExpenseCategory(apiValue: $0) },
             clientType: clientType.flatMap { ClientType(apiValue: $0) },
+            clientId: clientId,
             notes: notes,
             createdAt: createdAt
         )
@@ -490,9 +493,21 @@ actor APIClient {
             incomeCategory: tx.incomeCategory?.apiValue,
             expenseCategory: tx.expenseCategory?.apiValue,
             clientType: tx.clientType?.apiValue,
+            clientId: tx.clientId,
             notes: tx.notes
         )
         let dto: TransactionDTO = try await post("transactions", body: body, authorized: true)
+        return dto.toDomain()
+    }
+
+    func getClientTransactions(clientId: UUID) async throws -> [Transaction] {
+        let dtos: [TransactionDTO] = try await get("clients/\(clientId.uuidString)/transactions", authorized: true)
+        return dtos.map { $0.toDomain() }
+    }
+
+    func updateClientTotalPaid(id: UUID, totalPaid: Decimal) async throws -> Client {
+        struct Body: Encodable { let totalPaid: String }
+        let dto: ClientDTO = try await put("clients/\(id.uuidString)", body: Body(totalPaid: "\(totalPaid)"))
         return dto.toDomain()
     }
 
