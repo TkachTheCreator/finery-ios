@@ -83,7 +83,11 @@ final class SharedDataService {
     // MARK: - Load from network
 
     func loadAll(referenceDate: Date = Date()) async {
-        guard APIClient.shared.isAuthenticated else { return }
+        guard APIClient.shared.isAuthenticated else {
+            // Token missing but UI still shows main app — force re-login.
+            handleSessionExpired()
+            return
+        }
         guard !isLoading, isStale else { return }
         isLoading = true
         isSlowConnection = false

@@ -160,13 +160,13 @@ final class AddTransactionViewModel {
         )
 
         do {
-            if APIClient.shared.isAuthenticated {
-                let synced = try await APIClient.shared.createTransaction(transaction)
-                try await transactionRepository.save(synced)
-                SharedDataService.shared.appendTransaction(synced)
-            } else {
-                try await transactionRepository.save(transaction)
+            guard APIClient.shared.isAuthenticated else {
+                await SharedDataService.shared.handleSessionExpired()
+                return
             }
+            let synced = try await APIClient.shared.createTransaction(transaction)
+            try await transactionRepository.save(synced)
+            SharedDataService.shared.appendTransaction(synced)
             didSave = true
         } catch NetworkError.unauthorized {
             await SharedDataService.shared.handleSessionExpired()
