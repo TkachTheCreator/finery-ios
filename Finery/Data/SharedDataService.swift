@@ -127,9 +127,27 @@ final class SharedDataService {
             if Task.isCancelled { return }
         }
 
-        let txResult  = try? await txTask
-        let pnlResult = try? await pnlTask
-        let taxResult = try? await taxTask
+        // Await remaining tasks; if any returns 401 treat it as session expiry.
+        let txResult: [Transaction]?
+        do { txResult = try await txTask }
+        catch NetworkError.unauthorized {
+            _ = try? await pnlTask; _ = try? await taxTask
+            handleSessionExpired(); return
+        }
+        catch { txResult = nil }
+
+        let pnlResult: PnL?
+        do { pnlResult = try await pnlTask }
+        catch NetworkError.unauthorized {
+            _ = try? await taxTask
+            handleSessionExpired(); return
+        }
+        catch { pnlResult = nil }
+
+        let taxResult: TaxStatus?
+        do { taxResult = try await taxTask }
+        catch NetworkError.unauthorized { handleSessionExpired(); return }
+        catch { taxResult = nil }
 
         // Don't corrupt state on cancellation
         guard !Task.isCancelled else { return }
