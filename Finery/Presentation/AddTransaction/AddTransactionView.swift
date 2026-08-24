@@ -11,6 +11,7 @@ struct AddTransactionView: View {
     @State private var showOverlay: OverlayState = .none
     @State private var showCategoryPicker = false
     @State private var showError = false
+    @State private var showDeleteConfirm = false
 
     private enum OverlayState { case none, loading, success }
 
@@ -36,12 +37,29 @@ struct AddTransactionView: View {
                     Spacer(minLength: 40)
                     saveButton
                         .padding(.horizontal, 20)
-                        .padding(.bottom, 36)
+                    if viewModel.isEditing {
+                        Button(role: .destructive) { showDeleteConfirm = true } label: {
+                            Text("Удалить транзакцию")
+                                .font(.system(.subheadline, design: .rounded))
+                                .foregroundStyle(FC.danger)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 14)
+                                .background(FC.danger.opacity(0.08))
+                                .clipShape(RoundedRectangle(cornerRadius: 14))
+                        }
+                        .padding(.horizontal, 20)
+                    }
+                    Spacer(minLength: 36)
                 }
             }
         }
         .onAppear { amountFocused = true }
         .onDisappear { viewModel.voice.stop() }
+        .keyboardDoneButton()
+        .confirmationDialog("Удалить транзакцию?", isPresented: $showDeleteConfirm, titleVisibility: .visible) {
+            Button("Удалить", role: .destructive) { Task { await viewModel.deleteExisting() } }
+            Button("Отмена", role: .cancel) {}
+        }
         .onChange(of: viewModel.isSaving) { _, saving in
             if saving { withAnimation { showOverlay = .loading } }
         }
@@ -93,14 +111,19 @@ struct AddTransactionView: View {
                 .font(.system(.body, design: .default, weight: .regular))
                 .foregroundStyle(FC.muted)
             Spacer()
-            Text("Транзакция")
+            Text(viewModel.isEditing ? "Редактировать" : "Транзакция")
                 .font(.system(.subheadline, design: .default, weight: .semibold))
                 .foregroundStyle(FC.ink)
             Spacer()
-            Button("Сохранить") { Task { await viewModel.save() } }
-                .font(.system(.body, design: .default, weight: .semibold))
-                .foregroundStyle(FC.cobalt.opacity(viewModel.canSave ? 1.0 : 0.5))
-                .disabled(!viewModel.canSave)
+            Button(viewModel.isEditing ? "Сохранить" : "Добавить") {
+                Task {
+                    if viewModel.isEditing { await viewModel.update() }
+                    else                   { await viewModel.save()   }
+                }
+            }
+            .font(.system(.body, design: .default, weight: .semibold))
+            .foregroundStyle(FC.cobalt.opacity(viewModel.canSave ? 1.0 : 0.5))
+            .disabled(!viewModel.canSave)
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 14)

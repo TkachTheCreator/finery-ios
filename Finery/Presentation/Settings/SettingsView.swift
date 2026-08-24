@@ -232,6 +232,7 @@ struct SettingsView: View {
                 }
             }
             .task { await viewModel.load() }
+            .keyboardDoneButton()
             .overlay(savedToast, alignment: .bottom)
             .alert("Ошибка сохранения", isPresented: Binding(
                 get: { viewModel.errorMessage != nil },

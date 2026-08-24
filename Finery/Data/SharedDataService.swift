@@ -178,12 +178,18 @@ final class SharedDataService {
     /// Force the next loadAll() to fetch fresh data regardless of the 30-second window.
     func invalidate() { lastUpdated = nil }
 
-    /// Immediately prepend a newly created transaction to the in-memory list so
-    /// all screens update without waiting for the next loadAll().
+    /// Immediately prepend or update a transaction in the in-memory list.
     func appendTransaction(_ tx: Transaction) {
         transactions.removeAll { $0.id == tx.id }
         transactions.insert(tx, at: 0)
         TransactionStore.shared.append(tx)
+        invalidate()
+    }
+
+    /// Immediately remove a deleted transaction from the in-memory list.
+    func removeTransaction(id: UUID) {
+        transactions.removeAll { $0.id == id }
+        TransactionStore.shared.remove(id: id)
         invalidate()
     }
 

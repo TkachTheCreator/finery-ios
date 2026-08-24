@@ -6,6 +6,7 @@ struct TransactionsView: View {
     @State var viewModel: TransactionsViewModel
     @State private var showAdd = false
     @State private var appeared = false
+    @State private var editingTransaction: Transaction? = nil
 
     init(viewModel: TransactionsViewModel) {
         _viewModel = State(wrappedValue: viewModel)
@@ -50,6 +51,12 @@ struct TransactionsView: View {
         .sheet(isPresented: $showAdd) {
             AddTransactionView(
                 viewModel: viewModel.makeAddTransactionViewModel(),
+                onSave: { Task { await viewModel.load() } }
+            )
+        }
+        .sheet(item: $editingTransaction) { tx in
+            AddTransactionView(
+                viewModel: viewModel.makeEditTransactionViewModel(tx),
                 onSave: { Task { await viewModel.load() } }
             )
         }
@@ -158,6 +165,8 @@ struct TransactionsView: View {
                             .listRowBackground(Color.clear)
                             .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
                             .listRowSeparator(.hidden)
+                            .contentShape(Rectangle())
+                            .onTapGesture { editingTransaction = tx }
                             .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                                 Button(role: .destructive) {
                                     Task { await viewModel.delete(id: tx.id) }

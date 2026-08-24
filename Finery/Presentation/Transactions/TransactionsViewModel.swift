@@ -87,6 +87,10 @@ final class TransactionsViewModel {
         AddTransactionViewModel(transactionRepository: transactionRepository)
     }
 
+    func makeEditTransactionViewModel(_ tx: Transaction) -> AddTransactionViewModel {
+        AddTransactionViewModel(transactionRepository: transactionRepository, existing: tx)
+    }
+
     // MARK: Private
 
     private func filterFromService() {

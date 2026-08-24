@@ -1,15 +1,18 @@
 import uuid
 from datetime import datetime
 from decimal import Decimal
+from typing import Literal
 
 from pydantic import BaseModel
+
+ClientStatusLiteral = Literal["active", "completed"]
 
 
 class ClientCreate(BaseModel):
     name: str
     email: str | None = None
     phone: str | None = None
-    status: str = "active"
+    status: ClientStatusLiteral = "active"
     notes: str | None = None
 
 
@@ -19,7 +22,7 @@ class ClientUpdate(BaseModel):
     phone: str | None = None
     total_paid: Decimal | None = None
     last_payment: datetime | None = None
-    status: str | None = None
+    status: ClientStatusLiteral | None = None
     notes: str | None = None
 
 

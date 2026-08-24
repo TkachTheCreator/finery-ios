@@ -104,6 +104,31 @@ final class ClientsViewModel {
         }
     }
 
+    func updateClient(id: UUID, name: String, phone: String?, status: ClientStatus, notes: String?) async {
+        do {
+            let updated = try await APIClient.shared.updateClient(
+                id: id, name: name, phone: phone, status: status.rawValue, notes: notes)
+            if let idx = clients.firstIndex(where: { $0.id == id }) {
+                clients[idx] = updated
+                SharedDataService.shared.cachedClients = clients
+            }
+        } catch NetworkError.unauthorized {
+            await SharedDataService.shared.handleSessionExpired()
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    func deleteClient(id: UUID) async {
+        clients.removeAll { $0.id == id }
+        SharedDataService.shared.cachedClients = clients
+        do {
+            try await APIClient.shared.deleteClient(id: id)
+        } catch NetworkError.unauthorized {
+            await SharedDataService.shared.handleSessionExpired()
+        } catch { }
+    }
+
     func updateTotalPaid(client: Client, amount: Decimal) async {
         do {
             let updated = try await APIClient.shared.updateClientTotalPaid(id: client.id, totalPaid: amount)

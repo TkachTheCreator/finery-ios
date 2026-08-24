@@ -525,6 +525,47 @@ actor APIClient {
         try await deleteRequest("transactions/\(id.uuidString)")
     }
 
+    func updateTransaction(
+        id: UUID,
+        amount: Decimal,
+        direction: TransactionDirection,
+        description: String,
+        date: Date,
+        incomeCategory: IncomeCategory?,
+        expenseCategory: ExpenseCategory?,
+        clientType: ClientType?,
+        notes: String?
+    ) async throws -> Transaction {
+        struct Body: Encodable {
+            let amount: String
+            let direction: String
+            let description: String
+            let date: Date
+            let incomeCategory: String?
+            let expenseCategory: String?
+            let clientType: String?
+            let notes: String?
+        }
+        let body = Body(
+            amount: "\(amount)",
+            direction: direction.rawValue,
+            description: description,
+            date: date,
+            incomeCategory: incomeCategory?.apiValue,
+            expenseCategory: expenseCategory?.apiValue,
+            clientType: clientType?.apiValue,
+            notes: notes
+        )
+        let dto: TransactionDTO = try await patch("transactions/\(id.uuidString)", body: body, authorized: true)
+        return dto.toDomain()
+    }
+
+    func updateClient(id: UUID, name: String, phone: String?, status: String, notes: String?) async throws -> Client {
+        struct Body: Encodable { let name: String; let phone: String?; let status: String; let notes: String? }
+        let dto: ClientDTO = try await put("clients/\(id.uuidString)", body: Body(name: name, phone: phone, status: status, notes: notes))
+        return dto.toDomain()
+    }
+
     // MARK: Analytics
 
     func getPnL(from: Date, to: Date) async throws -> PnL {
@@ -640,6 +681,21 @@ actor APIClient {
     ) async throws -> R {
         var req = URLRequest(url: baseURL.appendingPathComponent(path))
         req.httpMethod = "PUT"
+        req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        if authorized, let token = KeychainStore.load() {
+            req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        req.httpBody = try makeEncoder().encode(body)
+        return try await execute(req)
+    }
+
+    private func patch<B: Encodable, R: Decodable>(
+        _ path: String,
+        body: B,
+        authorized: Bool = true
+    ) async throws -> R {
+        var req = URLRequest(url: baseURL.appendingPathComponent(path))
+        req.httpMethod = "PATCH"
         req.setValue("application/json", forHTTPHeaderField: "Content-Type")
         if authorized, let token = KeychainStore.load() {
             req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")

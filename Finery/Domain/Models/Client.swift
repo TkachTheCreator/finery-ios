@@ -36,13 +36,11 @@ struct Client: Identifiable, Codable, Sendable {
 
 enum ClientStatus: String, Codable, CaseIterable, Sendable {
     case active    = "active"
-    case debt      = "debt"
     case completed = "completed"
 
     var displayName: String {
         switch self {
         case .active:    "Активный"
-        case .debt:      "Должник"
         case .completed: "Завершён"
         }
     }

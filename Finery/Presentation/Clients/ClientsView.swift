@@ -106,7 +106,6 @@ struct ClientsView: View {
             HStack(spacing: 8) {
                 filterChip(label: "Все", value: nil)
                 filterChip(label: "Активные", value: .active)
-                filterChip(label: "Должники", value: .debt)
                 filterChip(label: "Завершены", value: .completed)
             }
             .padding(.horizontal, 16)
@@ -205,7 +204,6 @@ struct ClientsView: View {
     private func statusColor(_ status: ClientStatus) -> Color {
         switch status {
         case .active:    FC.cobalt
-        case .debt:      FC.danger
         case .completed: FC.muted
         }
     }
@@ -278,6 +276,7 @@ struct ClientsView: View {
             }
             .navigationTitle("Новый клиент")
             .navigationBarTitleDisplayMode(.inline)
+            .keyboardDoneButton()
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Отмена") { viewModel.showAddClient = false }
@@ -327,6 +326,8 @@ struct ClientDetailView: View {
     @State private var editingAmount = false
     @State private var amountText = ""
     @State private var isSavingAmount = false
+    @State private var showEditSheet = false
+    @State private var showDeleteConfirm = false
 
     var body: some View {
         NavigationView {
@@ -475,15 +476,37 @@ struct ClientDetailView: View {
                             amountText = "\(NSDecimalNumber(decimal: client.totalPaid).doubleValue)"
                             editingAmount = true
                         } label: {
-                            Label("Изменить сумму", systemImage: "pencil")
+                            Label("Сумма", systemImage: "pencil")
                                 .font(.system(.caption, design: .rounded))
                         }
                         .foregroundStyle(FC.cobalt)
                     }
                 }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Menu {
+                        Button { showEditSheet = true } label: {
+                            Label("Редактировать", systemImage: "pencil")
+                        }
+                        Button(role: .destructive) { showDeleteConfirm = true } label: {
+                            Label("Удалить клиента", systemImage: "trash")
+                        }
+                    } label: {
+                        Image(systemName: "ellipsis.circle")
+                            .foregroundStyle(FC.cobalt)
+                    }
+                }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Готово") { dismiss() }
                 }
+            }
+            .sheet(isPresented: $showEditSheet) {
+                ClientEditSheet(client: client, viewModel: viewModel)
+            }
+            .confirmationDialog("Удалить клиента \(client.name)?", isPresented: $showDeleteConfirm, titleVisibility: .visible) {
+                Button("Удалить", role: .destructive) {
+                    Task { await viewModel.deleteClient(id: client.id); dismiss() }
+                }
+                Button("Отмена", role: .cancel) {}
             }
         }
         .task {
@@ -499,6 +522,81 @@ struct ClientDetailView: View {
         await viewModel.updateTotalPaid(client: client, amount: decimal)
         isSavingAmount = false
         editingAmount = false
+    }
+}
+
+// MARK: - Client Edit Sheet
+
+struct ClientEditSheet: View {
+    let client: Client
+    let viewModel: ClientsViewModel
+    @Environment(\.dismiss) private var dismiss
+
+    @State private var name: String
+    @State private var phone: String
+    @State private var status: ClientStatus
+    @State private var notes: String
+    @State private var isSaving = false
+
+    init(client: Client, viewModel: ClientsViewModel) {
+        self.client = client
+        self.viewModel = viewModel
+        _name   = State(wrappedValue: client.name)
+        _phone  = State(wrappedValue: client.phone ?? "")
+        _status = State(wrappedValue: client.status)
+        _notes  = State(wrappedValue: client.notes ?? "")
+    }
+
+    var body: some View {
+        NavigationView {
+            ZStack {
+                FC.background.ignoresSafeArea()
+                Form {
+                    Section("Основное") {
+                        TextField("Имя *", text: $name)
+                        TextField("Телефон", text: $phone).keyboardType(.phonePad)
+                    }
+                    Section("Статус") {
+                        Picker("Статус", selection: $status) {
+                            ForEach(ClientStatus.allCases, id: \.self) {
+                                Text($0.displayName).tag($0)
+                            }
+                        }
+                        .pickerStyle(.segmented)
+                    }
+                    Section("Заметки") {
+                        TextField("Заметки", text: $notes, axis: .vertical).lineLimit(3...6)
+                    }
+                }
+                .scrollContentBackground(.hidden)
+            }
+            .navigationTitle("Редактировать")
+            .navigationBarTitleDisplayMode(.inline)
+            .keyboardDoneButton()
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) { Button("Отмена") { dismiss() } }
+                ToolbarItem(placement: .confirmationAction) {
+                    if isSaving { ProgressView() } else {
+                        Button("Сохранить") {
+                            Task {
+                                isSaving = true
+                                await viewModel.updateClient(
+                                    id: client.id,
+                                    name: name.trimmingCharacters(in: .whitespaces),
+                                    phone: phone.isEmpty ? nil : phone,
+                                    status: status,
+                                    notes: notes.isEmpty ? nil : notes
+                                )
+                                isSaving = false
+                                dismiss()
+                            }
+                        }
+                        .fontWeight(.semibold)
+                        .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
+                    }
+                }
+            }
+        }
     }
 }
 
