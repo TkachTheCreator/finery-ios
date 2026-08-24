@@ -31,9 +31,26 @@ final class AddTransactionViewModel {
 
     private let transactionRepository: any TransactionRepository
     private let classifier = ClassifyTransactionUseCase()
+    private(set) var editingId: UUID? = nil
+    var isEditing: Bool { editingId != nil }
 
-    init(transactionRepository: any TransactionRepository) {
+    init(transactionRepository: any TransactionRepository, existing: Transaction? = nil) {
         self.transactionRepository = transactionRepository
+        if let tx = existing {
+            editingId       = tx.id
+            let n           = NSDecimalNumber(decimal: tx.amount)
+            amountText      = n.decimalValue == Decimal(n.intValue) ? "\(n.intValue)" : n.stringValue
+            direction       = tx.direction
+            description     = tx.description
+            date            = tx.date
+            source          = tx.source
+            incomeCategory  = tx.incomeCategory  ?? .other
+            expenseCategory = tx.expenseCategory ?? .other
+            clientType      = tx.clientType      ?? .individual
+            selectedClientId   = tx.clientId
+            notes           = tx.notes ?? ""
+            userSelectedCategory = tx.incomeCategory != nil || tx.expenseCategory != nil
+        }
     }
 
     // MARK: Computed
@@ -174,6 +191,60 @@ final class AddTransactionViewModel {
             try? await transactionRepository.save(transaction)
             savedOffline = true
             didSave = true
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    // MARK: Update (edit mode)
+
+    func update() async {
+        guard let amount, canSave, let id = editingId else { return }
+        print("[DEBUG] AddTransactionViewModel.update() — START")
+        isSaving = true
+        defer { isSaving = false; print("[DEBUG] AddTransactionViewModel.update() — DONE") }
+
+        let trimmedDesc = description.trimmingCharacters(in: .whitespaces).isEmpty ? activeCategory : description.trimmingCharacters(in: .whitespaces)
+
+        do {
+            guard APIClient.shared.isAuthenticated else {
+                await SharedDataService.shared.handleSessionExpired(); return
+            }
+            let updated = try await APIClient.shared.updateTransaction(
+                id: id,
+                amount: amount,
+                direction: direction,
+                description: trimmedDesc,
+                date: date,
+                incomeCategory: direction == .income ? incomeCategory : nil,
+                expenseCategory: direction == .expense ? expenseCategory : nil,
+                clientType: direction == .income ? clientType : nil,
+                notes: notes.isEmpty ? nil : notes
+            )
+            SharedDataService.shared.appendTransaction(updated)
+            didSave = true
+        } catch NetworkError.unauthorized {
+            await SharedDataService.shared.handleSessionExpired()
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    // MARK: Delete (edit mode)
+
+    func deleteExisting() async {
+        guard let id = editingId else { return }
+        isSaving = true
+        defer { isSaving = false }
+        do {
+            guard APIClient.shared.isAuthenticated else {
+                await SharedDataService.shared.handleSessionExpired(); return
+            }
+            try await APIClient.shared.deleteTransaction(id: id)
+            SharedDataService.shared.removeTransaction(id: id)
+            didSave = true
+        } catch NetworkError.unauthorized {
+            await SharedDataService.shared.handleSessionExpired()
         } catch {
             errorMessage = error.localizedDescription
         }
