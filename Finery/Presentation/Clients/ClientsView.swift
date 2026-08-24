@@ -328,6 +328,7 @@ struct ClientDetailView: View {
     @State private var isSavingAmount = false
     @State private var showEditSheet = false
     @State private var showDeleteConfirm = false
+    @State private var showAddTransaction = false
 
     var body: some View {
         NavigationView {
@@ -428,7 +429,20 @@ struct ClientDetailView: View {
                             HStack {
                                 Text("ТРАНЗАКЦИИ").font(.system(.caption2, design: .rounded, weight: .semibold)).foregroundStyle(FC.muted)
                                 Spacer()
-                                if isLoadingTx { ProgressView().scaleEffect(0.7) }
+                                if isLoadingTx {
+                                    ProgressView().scaleEffect(0.7)
+                                } else {
+                                    Button {
+                                        showAddTransaction = true
+                                    } label: {
+                                        HStack(spacing: 4) {
+                                            Image(systemName: "plus")
+                                            Text("Добавить")
+                                        }
+                                        .font(.system(.caption, design: .rounded, weight: .semibold))
+                                        .foregroundStyle(FC.cobalt)
+                                    }
+                                }
                             }
                             if linkedTransactions.isEmpty && !isLoadingTx {
                                 Text("Нет привязанных транзакций")
@@ -501,6 +515,18 @@ struct ClientDetailView: View {
             }
             .sheet(isPresented: $showEditSheet) {
                 ClientEditSheet(client: client, viewModel: viewModel)
+            }
+            .sheet(isPresented: $showAddTransaction) {
+                AddTransactionView(
+                    viewModel: viewModel.makeAddTransactionViewModel(client: client),
+                    onSave: {
+                        Task {
+                            isLoadingTx = true
+                            linkedTransactions = await viewModel.fetchClientTransactions(clientId: client.id)
+                            isLoadingTx = false
+                        }
+                    }
+                )
             }
             .confirmationDialog("Удалить клиента \(client.name)?", isPresented: $showDeleteConfirm, titleVisibility: .visible) {
                 Button("Удалить", role: .destructive) {

@@ -142,24 +142,26 @@ final class VoiceInputManager: NSObject {
     }
 
     private func cleanupAudio() {
-        // Order matters: cancel task first so its callbacks don't fire
-        // against a partially-torn-down engine.
+        // Correct teardown order to prevent req.append(buffer) after endAudio():
+        // 1. Cancel task — stops result callbacks from firing
         recognitionTask?.cancel()
         recognitionTask = nil
 
-        // Finalize before removing tap so Speech framework sees clean EOF
-        recognitionRequest?.endAudio()
-        recognitionRequest = nil
-
-        // Remove tap before stopping engine to prevent callbacks on stopped bus
+        // 2. Remove tap — prevents the audio callback from appending more data
         if tapInstalled {
             audioEngine?.inputNode.removeTap(onBus: 0)
             tapInstalled = false
         }
 
+        // 3. Stop engine — no more audio flows after this
         audioEngine?.stop()
         audioEngine = nil
 
+        // 4. Only THEN finalize the request (safe: no more appends possible)
+        recognitionRequest?.endAudio()
+        recognitionRequest = nil
+
+        // 5. Release audio session last
         try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
     }
 

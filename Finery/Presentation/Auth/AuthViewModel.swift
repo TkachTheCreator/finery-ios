@@ -17,7 +17,8 @@ final class AuthViewModel {
     var taxMode         = TaxMode.npd
     var userType        = UserType.freelancer
 
-    var isLoading    = false
+    var isLoading     = false
+    var isSlowNetwork = false
     var errorMessage: String?
 
     // MARK: Dependencies
@@ -44,8 +45,15 @@ final class AuthViewModel {
     func submit() async -> Bool {
         guard canSubmit else { return false }
         isLoading = true
+        isSlowNetwork = false
         errorMessage = nil
-        defer { isLoading = false }
+        defer { isLoading = false; isSlowNetwork = false }
+
+        let slowTask = Task {
+            try? await Task.sleep(nanoseconds: 5_000_000_000)
+            if !Task.isCancelled { isSlowNetwork = true }
+        }
+        defer { slowTask.cancel() }
 
         do {
             switch mode {

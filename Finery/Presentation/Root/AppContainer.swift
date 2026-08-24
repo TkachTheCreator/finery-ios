@@ -51,7 +51,7 @@ final class AppContainer {
         )
 
         settings = SettingsViewModel(userRepository: usrRepo)
-        clients  = ClientsViewModel()
+        clients  = ClientsViewModel(transactionRepository: storeRepo)
         invoices = InvoicesViewModel()
     }
 }

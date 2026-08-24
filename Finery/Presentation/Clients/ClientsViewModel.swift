@@ -9,6 +9,17 @@ final class ClientsViewModel {
     var isLoading = false
     var errorMessage: String?
 
+    init(transactionRepository: any TransactionRepository) {
+        self.transactionRepository = transactionRepository
+    }
+
+    func makeAddTransactionViewModel(client: Client) -> AddTransactionViewModel {
+        let vm = AddTransactionViewModel(transactionRepository: transactionRepository)
+        vm.selectedClientId   = client.id
+        vm.selectedClientName = client.name
+        return vm
+    }
+
     // Add form state
     var showAddClient = false
     var newName    = ""
@@ -18,6 +29,8 @@ final class ClientsViewModel {
     var isSaving   = false
 
     let voice = VoiceInputManager()
+
+    private let transactionRepository: any TransactionRepository
 
     // Filter + search
     var searchText   = ""
@@ -43,15 +56,18 @@ final class ClientsViewModel {
             print("[DEBUG] ClientsViewModel.load() — DONE, isLoading=false")
         }
         do {
-            clients = try await APIClient.shared.getClients()
-            SharedDataService.shared.cachedClients = clients
-            print("[DEBUG] ClientsViewModel — loaded \(clients.count) clients")
+            let loaded = try await APIClient.shared.getClients()
+            clients = loaded
+            SharedDataService.shared.persistClients(loaded)
+            print("[DEBUG] ClientsViewModel — loaded \(loaded.count) clients")
         } catch NetworkError.unauthorized {
             print("[DEBUG] ClientsViewModel — 401, session expired")
             await SharedDataService.shared.handleSessionExpired()
         } catch {
             print("[DEBUG] ClientsViewModel — error: \(error)")
-            clients = []
+            if clients.isEmpty {
+                clients = SharedDataService.shared.cachedClients
+            }
         }
     }
 
@@ -110,7 +126,7 @@ final class ClientsViewModel {
                 id: id, name: name, phone: phone, status: status.rawValue, notes: notes)
             if let idx = clients.firstIndex(where: { $0.id == id }) {
                 clients[idx] = updated
-                SharedDataService.shared.cachedClients = clients
+                SharedDataService.shared.persistClients(clients)
             }
         } catch NetworkError.unauthorized {
             await SharedDataService.shared.handleSessionExpired()
@@ -121,7 +137,7 @@ final class ClientsViewModel {
 
     func deleteClient(id: UUID) async {
         clients.removeAll { $0.id == id }
-        SharedDataService.shared.cachedClients = clients
+        SharedDataService.shared.persistClients(clients)
         do {
             try await APIClient.shared.deleteClient(id: id)
         } catch NetworkError.unauthorized {
@@ -134,7 +150,7 @@ final class ClientsViewModel {
             let updated = try await APIClient.shared.updateClientTotalPaid(id: client.id, totalPaid: amount)
             if let idx = clients.firstIndex(where: { $0.id == client.id }) {
                 clients[idx] = updated
-                SharedDataService.shared.cachedClients = clients
+                SharedDataService.shared.persistClients(clients)
             }
         } catch NetworkError.unauthorized {
             await SharedDataService.shared.handleSessionExpired()

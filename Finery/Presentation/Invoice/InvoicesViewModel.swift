@@ -38,9 +38,11 @@ final class InvoicesViewModel {
     func load() async {
         isLoading = true
         defer { isLoading = false }
-        async let inv = (try? APIClient.shared.getInvoices()) ?? []
-        async let cl  = (try? APIClient.shared.getClients()) ?? []
-        (invoices, clients) = await (inv, cl)
+        async let invTask = APIClient.shared.getInvoices()
+        async let clTask  = APIClient.shared.getClients()
+        if let inv = try? await invTask { invoices = inv }
+        if let cl  = try? await clTask  { clients  = cl }
+        if clients.isEmpty { clients = SharedDataService.shared.cachedClients }
     }
 
     func createInvoice() async {
