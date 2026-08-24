@@ -48,7 +48,7 @@ async def list_transactions(
     to_date: datetime | None = Query(None),
     direction: str | None = Query(None),
     page: int = Query(1, ge=1),
-    per_page: int = Query(50, ge=1, le=100),
+    per_page: int = Query(50, ge=1, le=500),
     user: User = Depends(current_user),
     db: AsyncSession = Depends(get_db),
 ):
