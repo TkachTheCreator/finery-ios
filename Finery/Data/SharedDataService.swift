@@ -16,7 +16,7 @@ final class SharedDataService {
     private(set) var pnl:            PnL?
     private(set) var taxStatus:      TaxStatus?
     private(set) var currentUser:    User?
-    var cachedClients: [Client] = []  // populated by ClientsViewModel.load()
+    private(set) var cachedClients: [Client] = []
 
     private(set) var isLoading          = false
     private(set) var isOffline          = false
@@ -48,6 +48,7 @@ final class SharedDataService {
         static let income       = "cached_income"
         static let expense      = "cached_expense"
         static let tax          = "cached_tax"
+        static let clients      = "cached_clients"
     }
 
     // MARK: - Load cached data (called at startup)
@@ -58,6 +59,10 @@ final class SharedDataService {
            let txs = try? JSONDecoder().decode([Transaction].self, from: data) {
             transactions = txs
             TransactionStore.shared.syncFromService(txs)
+        }
+        if let data = defaults.data(forKey: CacheKey.clients),
+           let cls = try? JSONDecoder().decode([Client].self, from: data) {
+            cachedClients = cls
         }
         let income  = Decimal(defaults.double(forKey: CacheKey.income))
         let expense = Decimal(defaults.double(forKey: CacheKey.expense))
@@ -78,6 +83,11 @@ final class SharedDataService {
         defaults.set(NSDecimalNumber(decimal: totalIncome ).doubleValue, forKey: CacheKey.income)
         defaults.set(NSDecimalNumber(decimal: totalExpense).doubleValue, forKey: CacheKey.expense)
         defaults.set(NSDecimalNumber(decimal: taxAmount   ).doubleValue, forKey: CacheKey.tax)
+    }
+
+    func persistClients(_ clients: [Client]) {
+        cachedClients = clients
+        UserDefaults.standard.set(try? JSONEncoder().encode(clients), forKey: CacheKey.clients)
     }
 
     // MARK: - Load from network

@@ -144,6 +144,7 @@ struct AuthFlowView: View {
             isValid: isStepValid,
             isLoading: viewModel.isLoading,
             error: localError,
+            hint: viewModel.isSlowNetwork ? "Сервер просыпается, подождите немного…" : nil,
             continueLabel: isRegistering ? "Продолжить" : "Войти",
             onContinue: handleContinue
         ) {
@@ -190,6 +191,7 @@ struct AuthFlowView: View {
             isValid: true,
             isLoading: viewModel.isLoading,
             error: localError,
+            hint: viewModel.isSlowNetwork ? "Сервер просыпается, подождите немного…" : nil,
             continueLabel: "Зарегистрироваться",
             onContinue: handleContinue
         ) {
@@ -280,6 +282,7 @@ private struct StepLayout<Content: View>: View {
     let isValid: Bool
     let isLoading: Bool
     let error: String?
+    var hint: String? = nil
     var continueLabel: String = "Продолжить"
     let onContinue: () -> Void
     @ViewBuilder let content: () -> Content
@@ -312,6 +315,17 @@ private struct StepLayout<Content: View>: View {
             }
             .padding(.horizontal, 24)
             .padding(.top, 32)
+
+            if let hint {
+                Text(hint)
+                    .font(.system(.caption, design: .rounded))
+                    .foregroundStyle(FC.muted)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 24)
+                    .padding(.top, 16)
+                    .transition(.opacity)
+                    .animation(.easeIn(duration: 0.3), value: hint)
+            }
 
             Spacer()
 
