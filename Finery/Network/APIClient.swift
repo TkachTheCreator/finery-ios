@@ -407,8 +407,10 @@ actor APIClient {
 
     #if targetEnvironment(simulator)
     private let baseURL = URL(string: "http://127.0.0.1:8000/api/v1")!
+    static let baseURLString = "http://127.0.0.1:8000/api/v1"
     #else
     private let baseURL = URL(string: "https://api.finery.pro/api/v1")!
+    static let baseURLString = "https://api.finery.pro/api/v1"
     #endif
     private let session: URLSession
 
@@ -468,6 +470,28 @@ actor APIClient {
         let body = ForgotPasswordRequest(email: email)
         let response: ForgotPasswordResponse = try await post("auth/forgot-password", body: body)
         return response.message
+    }
+
+    /// Raw health check — returns full error string for debug UI.
+    func healthCheckRaw() async -> (ok: Bool, detail: String, ms: Int) {
+        guard let url = URL(string: APIClient.baseURLString.replacingOccurrences(of: "/api/v1", with: "/health")) else {
+            return (false, "Bad URL", 0)
+        }
+        let req = URLRequest(url: url, timeoutInterval: 10)
+        let start = Date()
+        do {
+            let (data, resp) = try await session.data(for: req)
+            let ms = Int(Date().timeIntervalSince(start) * 1000)
+            let code = (resp as? HTTPURLResponse)?.statusCode ?? 0
+            let body = String(data: data, encoding: .utf8) ?? "(no body)"
+            return (code == 200, "HTTP \(code) — \(body)", ms)
+        } catch let e as URLError {
+            let ms = Int(Date().timeIntervalSince(start) * 1000)
+            return (false, "URLError \(e.code.rawValue): \(e.localizedDescription)", ms)
+        } catch {
+            let ms = Int(Date().timeIntervalSince(start) * 1000)
+            return (false, "Error: \(error.localizedDescription)", ms)
+        }
     }
 
     func getCurrentUser() async throws -> User {
@@ -754,8 +778,15 @@ actor APIClient {
         do {
             (data, response) = try await session.data(for: request)
         } catch let urlError as URLError {
+            print("[ERROR DETAIL] URL: \(url)")
+            print("[ERROR DETAIL] URLError code: \(urlError.code.rawValue) (\(urlError.code))")
+            print("[ERROR DETAIL] localizedDescription: \(urlError.localizedDescription)")
+            print("[ERROR DETAIL] Error: \(urlError)")
+            if let reason = urlError.failureURLString { print("[ERROR DETAIL] failureURL: \(reason)") }
+
             // One retry with 0.5 s back-off on transient errors only.
             if Self.retryableCodes.contains(urlError.code), attempt < 1 {
+                print("[API] Retrying \(url) after transient error…")
                 try await Task.sleep(nanoseconds: 500_000_000)
                 return try await execute(request, attempt: attempt + 1)
             }
@@ -766,6 +797,9 @@ actor APIClient {
                 throw NetworkError.serverUnavailable
             }
         } catch {
+            print("[ERROR DETAIL] URL: \(url)")
+            print("[ERROR DETAIL] Non-URLError: \(error)")
+            print("[ERROR DETAIL] localizedDescription: \(error.localizedDescription)")
             throw NetworkError.serverUnavailable
         }
         guard let http = response as? HTTPURLResponse else {

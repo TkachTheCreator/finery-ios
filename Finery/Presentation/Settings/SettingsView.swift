@@ -425,6 +425,22 @@ struct SettingsView: View {
                 .background(FC.background)
             }
             .buttonStyle(.plain)
+            hairline
+            NavigationLink(destination: NetworkDebugView()) {
+                HStack {
+                    Text("Диагностика сети")
+                        .font(.system(.body))
+                        .foregroundStyle(FC.muted)
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.system(.caption))
+                        .foregroundStyle(FC.border)
+                }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 14)
+                .background(FC.background)
+            }
+            .buttonStyle(.plain)
         }
     }
 
