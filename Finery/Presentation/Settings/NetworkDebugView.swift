@@ -2,140 +2,149 @@ import SwiftUI
 
 struct NetworkDebugView: View {
     @State private var isRunning = false
-    @State private var result: DebugResult?
+    @State private var lines: [TimingLine] = []
     @State private var timestamp = ""
 
-    struct DebugResult {
-        let baseURL: String
-        let healthOK: Bool
-        let healthDetail: String
-        let healthMs: Int
-        let tokenPreview: String
-        let lastUpdated: String
+    struct TimingLine: Identifiable {
+        let id = UUID()
+        let label: String
+        let detail: String
+        let isError: Bool
     }
 
     var body: some View {
         ZStack {
             FC.background.ignoresSafeArea()
             ScrollView(showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 16) {
+                VStack(alignment: .leading, spacing: 12) {
                     Text("ДИАГНОСТИКА СЕТИ")
                         .fLabel()
                         .padding(.top, 8)
 
-                    if isRunning {
-                        HStack(spacing: 10) {
-                            ProgressView().tint(FC.cobalt)
-                            Text("Проверяем…")
-                                .font(.system(.subheadline, design: .rounded))
-                                .foregroundStyle(FC.muted)
-                        }
-                        .padding(16)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(FC.surface)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
-                    }
-
-                    if let r = result {
-                        resultCard(r)
-                    }
+                    Text("URLSession.shared — изолировано от APIClient")
+                        .font(.system(.caption, design: .rounded))
+                        .foregroundStyle(FC.muted)
 
                     Button {
-                        Task { await runDiag() }
+                        Task { await runTiming() }
                     } label: {
-                        Text(isRunning ? "Проверяем…" : "Запустить диагностику")
-                            .font(.system(.body, design: .rounded, weight: .semibold))
-                            .foregroundStyle(.white)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 14)
-                            .background(isRunning ? FC.muted : FC.cobalt)
-                            .clipShape(RoundedRectangle(cornerRadius: 14))
+                        HStack(spacing: 8) {
+                            if isRunning { ProgressView().tint(.white).scaleEffect(0.85) }
+                            Text(isRunning ? "Тестируем…" : "Запустить тест")
+                                .font(.system(.body, design: .rounded, weight: .semibold))
+                                .foregroundStyle(.white)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background(isRunning ? FC.muted : FC.cobalt)
+                        .clipShape(RoundedRectangle(cornerRadius: 14))
                     }
                     .disabled(isRunning)
+
+                    if !lines.isEmpty {
+                        VStack(alignment: .leading, spacing: 0) {
+                            ForEach(Array(lines.enumerated()), id: \.element.id) { i, line in
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(line.label)
+                                        .font(.system(.caption2, design: .monospaced, weight: .semibold))
+                                        .foregroundStyle(line.isError ? FC.danger : FC.cobalt)
+                                    Text(line.detail)
+                                        .font(.system(.caption, design: .monospaced))
+                                        .foregroundStyle(line.isError ? FC.danger : FC.ink)
+                                        .fixedSize(horizontal: false, vertical: true)
+                                }
+                                .padding(.horizontal, 14)
+                                .padding(.vertical, 8)
+                                if i < lines.count - 1 {
+                                    Rectangle().fill(FC.border).frame(height: 0.5).padding(.leading, 14)
+                                }
+                            }
+                        }
+                        .background(FC.surface)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .overlay(RoundedRectangle(cornerRadius: 12).stroke(FC.border, lineWidth: 0.5))
+                    }
                 }
                 .padding(20)
             }
         }
         .navigationTitle("Debug")
         .navigationBarTitleDisplayMode(.inline)
-        .task { await runDiag() }
-    }
-
-    private func resultCard(_ r: DebugResult) -> some View {
-        VStack(alignment: .leading, spacing: 0) {
-            row(label: "Base URL", value: r.baseURL, mono: true)
-            divider
-            row(label: "Health", value: "\(r.healthOK ? "✓" : "✗") \(r.healthDetail) (\(r.healthMs) ms)",
-                color: r.healthOK ? FC.success : FC.danger)
-            divider
-            row(label: "JWT Token", value: r.tokenPreview, mono: true)
-            divider
-            row(label: "Last load", value: r.lastUpdated)
-            divider
-            row(label: "Tested at", value: timestamp)
-        }
-        .background(FC.surface)
-        .clipShape(RoundedRectangle(cornerRadius: 12))
-        .overlay(RoundedRectangle(cornerRadius: 12).stroke(FC.border, lineWidth: 0.5))
-    }
-
-    @ViewBuilder
-    private func row(label: String, value: String, mono: Bool = false, color: Color = FC.ink) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(label).fLabel()
-            Text(value)
-                .font(mono ? .system(.caption, design: .monospaced) : .system(.caption, design: .rounded))
-                .foregroundStyle(color)
-                .fixedSize(horizontal: false, vertical: true)
-        }
-        .padding(.horizontal, 14)
-        .padding(.vertical, 10)
-    }
-
-    private var divider: some View {
-        Rectangle().fill(FC.border).frame(height: 0.5).padding(.leading, 14)
     }
 
     @MainActor
-    private func runDiag() async {
+    private func runTiming() async {
         isRunning = true
-        defer { isRunning = false }
+        lines = []
 
         let fmt = DateFormatter()
-        fmt.dateFormat = "HH:mm:ss"
+        fmt.dateFormat = "HH:mm:ss.SSS"
         timestamp = fmt.string(from: Date())
 
-        // Health check (raw, full error)
-        let health = await APIClient.shared.healthCheckRaw()
+        // baseURL info
+        add("baseURL", APIClient.baseURLString, false)
+        add("isAuthenticated", "\(APIClient.shared.isAuthenticated)", false)
+        add("lastUpdated", SharedDataService.shared.lastUpdated.map { fmt.string(from: $0) } ?? "nil", false)
 
-        // JWT token preview
-        let tokenPreview: String
-        if let token = UserDefaults.standard.string(forKey: "_dbg_token") {
-            tokenPreview = String(token.prefix(20)) + "…"
-        } else {
-            // Try reading from keychain indirectly via isAuthenticated
-            tokenPreview = APIClient.shared.isAuthenticated ? "(токен есть, <скрыт>)" : "НЕТ ТОКЕНА"
-        }
+        // ── TIMING using URLSession.shared directly ──
+        let targetURL = "https://api.finery.pro/health"
 
-        // Last updated
-        let lastUpdate: String
-        if let t = SharedDataService.shared.lastUpdated {
-            let f2 = DateFormatter()
-            f2.dateFormat = "dd.MM HH:mm:ss"
-            lastUpdate = f2.string(from: t)
-        } else {
-            lastUpdate = "никогда"
-        }
+        let t0 = Date()
+        log("t0", "START", elapsed: 0)
+        add("t0: START", "\(fmt.string(from: t0))", false)
 
-        result = DebugResult(
-            baseURL: APIClient.baseURLString,
-            healthOK: health.ok,
-            healthDetail: health.detail,
-            healthMs: health.ms,
-            tokenPreview: tokenPreview,
-            lastUpdated: lastUpdate
-        )
+        let url = URL(string: targetURL)!
+        let t1 = Date()
+        let d1 = t1.timeIntervalSince(t0)
+        log("t1", "URL created", elapsed: d1)
+        add("t1: URL created", "+\(ms(d1))ms", false)
+
+        var request = URLRequest(url: url, timeoutInterval: 15)
+        request.httpMethod = "GET"
+        let t2 = Date()
+        let d2 = t2.timeIntervalSince(t0)
+        log("t2", "URLRequest created", elapsed: d2)
+        add("t2: URLRequest created", "+\(ms(d2))ms", false)
+
+        // Hop off MainActor before the await so we can see if main thread is blocked
+        let result: (String, Bool) = await Task.detached(priority: .userInitiated) {
+            let t2b = Date()
+            print("[TIMING] t2b (detached task started): +\(Int(t2b.timeIntervalSince(t0)*1000))ms")
+
+            do {
+                let (data, response) = try await URLSession.shared.data(for: request)
+                let t3 = Date()
+                let d3 = t3.timeIntervalSince(t0)
+                let code = (response as? HTTPURLResponse)?.statusCode ?? 0
+                let body = String(data: data, encoding: .utf8) ?? "(empty)"
+                print("[TIMING] t3 (response): +\(Int(d3*1000))ms  HTTP \(code)  body: \(body)")
+                return ("t3: HTTP \(code) — \(body) | +\(Int(d3*1000))ms total", false)
+            } catch {
+                let t3 = Date()
+                let d3 = t3.timeIntervalSince(t0)
+                print("[TIMING] t3 (ERROR): +\(Int(d3*1000))ms  \(error)")
+                if let ue = error as? URLError {
+                    print("[TIMING] URLError code: \(ue.code.rawValue)  desc: \(ue.localizedDescription)")
+                }
+                return ("t3: ERROR +\(Int(d3*1000))ms — \(error.localizedDescription)", true)
+            }
+        }.value
+
+        let (resultText, isError) = result
+        add(isError ? "t3: ОШИБКА" : "t3: УСПЕХ", resultText, isError)
+
+        isRunning = false
     }
+
+    private func add(_ label: String, _ detail: String, _ isError: Bool) {
+        lines.append(TimingLine(label: label, detail: detail, isError: isError))
+    }
+
+    private func log(_ tag: String, _ msg: String, elapsed: TimeInterval) {
+        print("[TIMING] \(tag): \(msg)  elapsed=+\(ms(elapsed))ms")
+    }
+
+    private func ms(_ t: TimeInterval) -> Int { Int(t * 1000) }
 }
 
 #Preview {
