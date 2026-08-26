@@ -1,8 +1,9 @@
+import asyncio
 from datetime import datetime, timedelta, timezone
 
+import bcrypt as _bcrypt
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from jose import jwt
-from passlib.context import CryptContext
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -13,15 +14,22 @@ from app.models.user import User
 from app.schemas.user import ForgotPasswordIn, ForgotPasswordOut, TokenOut, UserLogin, UserOut, UserRegister, UserUpdate
 
 router = APIRouter(prefix="/auth", tags=["auth"])
-pwd = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 def _hash(password: str) -> str:
-    return pwd.hash(password)
+    return _bcrypt.hashpw(password.encode(), _bcrypt.gensalt(rounds=12)).decode()
 
 
 def _verify(plain: str, hashed: str) -> bool:
-    return pwd.verify(plain, hashed)
+    return _bcrypt.checkpw(plain.encode(), hashed.encode())
+
+
+async def _hash_async(password: str) -> str:
+    return await asyncio.to_thread(_hash, password)
+
+
+async def _verify_async(plain: str, hashed: str) -> bool:
+    return await asyncio.to_thread(_verify, plain, hashed)
 
 
 def _create_token(user_id: str) -> str:
@@ -64,7 +72,7 @@ async def register(request: Request, body: UserRegister, db: AsyncSession = Depe
 
     user = User(
         email=body.email,
-        hashed_password=_hash(body.password),
+        hashed_password=await _hash_async(body.password),
         name=body.name,
         tax_mode=body.tax_mode,
         user_type=body.user_type,
@@ -85,7 +93,7 @@ async def login(request: Request, body: UserLogin, db: AsyncSession = Depends(ge
     result = await db.execute(select(User).where(User.email == body.email))
     user = result.scalar_one_or_none()
     # Unified message prevents user enumeration via different error codes
-    if not user or not _verify(body.password, user.hashed_password):
+    if not user or not await _verify_async(body.password, user.hashed_password):
         raise HTTPException(status_code=401, detail="Неверный email или пароль")
 
     return TokenOut(

@@ -6,6 +6,7 @@ struct DashboardView: View {
     @State var viewModel: DashboardViewModel
     @State private var appeared    = false
     @State private var barProgress: Double = 0
+    @State private var showCashFlow = false
 
     init(viewModel: DashboardViewModel) {
         _viewModel = State(wrappedValue: viewModel)
@@ -57,6 +58,9 @@ struct DashboardView: View {
         }
         .animation(.spring(response: 0.4, dampingFraction: 0.8), value: viewModel.isOffline)
         .animation(.spring(response: 0.4, dampingFraction: 0.8), value: SharedDataService.shared.isSlowConnection)
+        .sheet(isPresented: $showCashFlow) {
+            CashFlowDetailView()
+        }
     }
 
     // MARK: - Banners
@@ -127,7 +131,7 @@ struct DashboardView: View {
     @ViewBuilder
     private var cardStack: some View {
         incomeHeroCard
-            .fineryTap()
+            .fineryTap(action: { showCashFlow = true })
             .offset(y: appeared ? 0 : 40)
             .opacity(appeared ? 1 : 0)
             .animation(.spring(response: 0.55, dampingFraction: 0.8).delay(0.05), value: appeared)

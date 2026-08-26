@@ -117,12 +117,12 @@ final class SharedDataService {
         let startOfMonth = cal.date(from: cal.dateComponents([.year, .month], from: referenceDate))!
         let endOfMonth   = cal.date(byAdding: .second, value: -1,
                                     to: cal.date(byAdding: .month, value: 1, to: startOfMonth)!)!
-        let fromTwoYears = cal.date(from: DateComponents(year: year - 1, month: 1, day: 1))!
+        let startOfYear  = cal.date(from: DateComponents(year: year, month: 1, day: 1))!
         let resolvedMode = currentUser?.taxMode ?? .npd
 
         // All 4 requests run in parallel
         async let userTask = APIClient.shared.getCurrentUser()
-        async let txTask   = APIClient.shared.getTransactions(from: fromTwoYears, perPage: 500)
+        async let txTask   = APIClient.shared.getTransactions(from: startOfYear, perPage: 500)
         async let pnlTask  = APIClient.shared.getPnL(from: startOfMonth, to: endOfMonth)
         async let taxTask  = APIClient.shared.getTaxStatus(year: year, taxMode: resolvedMode)
 

@@ -27,6 +27,7 @@ struct AddTransactionView: View {
 
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 0) {
+
                     header
                     hairline
                     amountSection
@@ -52,10 +53,10 @@ struct AddTransactionView: View {
                     Spacer(minLength: 36)
                 }
             }
+            .scrollDismissesKeyboard(.interactively)
         }
         .onAppear { amountFocused = true }
         .onDisappear { viewModel.voice.stop() }
-        .keyboardDoneButton()
         .confirmationDialog("Удалить транзакцию?", isPresented: $showDeleteConfirm, titleVisibility: .visible) {
             Button("Удалить", role: .destructive) { Task { await viewModel.deleteExisting() } }
             Button("Отмена", role: .cancel) {}

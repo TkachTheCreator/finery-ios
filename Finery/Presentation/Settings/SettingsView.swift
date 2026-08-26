@@ -230,9 +230,9 @@ struct SettingsView: View {
                         Color.clear.frame(height: 40)
                     }
                 }
+                .scrollDismissesKeyboard(.interactively)
             }
             .task { await viewModel.load() }
-            .keyboardDoneButton()
             .overlay(savedToast, alignment: .bottom)
             .alert("Ошибка сохранения", isPresented: Binding(
                 get: { viewModel.errorMessage != nil },

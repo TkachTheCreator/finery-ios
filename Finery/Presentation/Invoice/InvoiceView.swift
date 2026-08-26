@@ -275,6 +275,7 @@ struct InvoiceView: View {
                     }
                     .padding(16)
                 }
+                .scrollDismissesKeyboard(.interactively)
             }
             .navigationTitle("Новый счёт")
             .navigationBarTitleDisplayMode(.inline)
