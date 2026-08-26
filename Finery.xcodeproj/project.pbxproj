@@ -27,7 +27,6 @@
 		2CF9F77B9304F82B9C29D876 /* AIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB8D7D57EA3C0EC851F0F031 /* AIService.swift */; };
 		30B51A1F80AB530F64ADB1A0 /* StoreBackedTransactionRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 186B0AECC2A01E3E467153CD /* StoreBackedTransactionRepository.swift */; };
 		35F4639E9AECB81581CA7E76 /* SharedDataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D3C9EFD3FC5B539D890FE46 /* SharedDataService.swift */; };
-		BB2FCB84E56C447F91702BD1 /* CategoryPickerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7665E9E017994E1E9339BA0F /* CategoryPickerSheet.swift */; };
 		366AC8A43E427CB937DCB1F1 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B594F31B53AA1F9EDB46E9 /* Constants.swift */; };
 		38E4A622E0DB6FF0B1DA2219 /* ClassifyTransactionUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = B84589DEF693D5737501347D /* ClassifyTransactionUseCase.swift */; };
 		3A02770F74D88D2B7E6969E7 /* AnalyticsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4A3D50A4B2CBBE238524D0D /* AnalyticsViewModel.swift */; };
@@ -41,6 +40,7 @@
 		4DA6EEBAB8E662AE8B083851 /* PnL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B38440EFFA21F1F82715A28 /* PnL.swift */; };
 		53249838281A74655483AFB7 /* VoiceInputManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62B4BED05BA08985B221A10E /* VoiceInputManager.swift */; };
 		532DD8E6ECC926BCC1FD1509 /* TaxViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC923A07AB37977277909C3D /* TaxViewModel.swift */; };
+		534ECAFF107E837DD93B8F8B /* CashFlowDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC01C5EC8EE86264958FA807 /* CashFlowDetailView.swift */; };
 		536F84E5A6B17503306735DC /* Insight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E1A9031C01D7ABAC3322EC7 /* Insight.swift */; };
 		53832F634D193A1E432C69C9 /* UserEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BF5014B27266B9CEA6DC11C /* UserEntity.swift */; };
 		5455763DEB51751F2BD30444 /* MonthlyData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F93123DFD18F0824E532091 /* MonthlyData.swift */; };
@@ -77,6 +77,7 @@
 		CFC26F9E8EE72DC53CA13631 /* MockRepositories.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A4C68A92997653ED71CE4E /* MockRepositories.swift */; };
 		D01F67461C845B0820DAB27D /* Shimmer in Frameworks */ = {isa = PBXBuildFile; productRef = B3B07C11F2BB4F4E4D734903 /* Shimmer */; };
 		D1E17F9EB7662E4DDC587927 /* TransactionEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBFB152A8697C84E2E8ECF71 /* TransactionEntity.swift */; };
+		D3BCE7803F11A3783E09BE42 /* CategoryPickerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61476A1B0B47403B4E2673FB /* CategoryPickerSheet.swift */; };
 		D5B323A2400D0070F2213C0D /* Transaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF7D02C675F33D63441B89E /* Transaction.swift */; };
 		D7182FC815B11F3DD24A2F60 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA49D022D88246DAE9865205 /* SplashView.swift */; };
 		D789751EE9F1C41C9E192FDF /* FineryWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = E139FBE98B7DA646DE25EFD3 /* FineryWidget.swift */; };
@@ -121,7 +122,6 @@
 		21AE10AC2F9610FBD58E82A5 /* CalculateTaxUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculateTaxUseCase.swift; sourceTree = "<group>"; };
 		2BF5014B27266B9CEA6DC11C /* UserEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserEntity.swift; sourceTree = "<group>"; };
 		2D3C9EFD3FC5B539D890FE46 /* SharedDataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedDataService.swift; sourceTree = "<group>"; };
-		7665E9E017994E1E9339BA0F /* CategoryPickerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryPickerSheet.swift; sourceTree = "<group>"; };
 		33A4C68A92997653ED71CE4E /* MockRepositories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockRepositories.swift; sourceTree = "<group>"; };
 		37EC1D8CBB961AC2E1444958 /* ForgotPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordView.swift; sourceTree = "<group>"; };
 		3811D27CA7EECCC81FAAA3DB /* ClientsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientsViewModel.swift; sourceTree = "<group>"; };
@@ -143,6 +143,7 @@
 		5B9757BE2B397BAF4F9FA65C /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
 		5E139A4F9AFC176D183F3632 /* TransactionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionsView.swift; sourceTree = "<group>"; };
 		5F2C94236A147B2275A4C7B4 /* TransactionsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionsViewModel.swift; sourceTree = "<group>"; };
+		61476A1B0B47403B4E2673FB /* CategoryPickerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryPickerSheet.swift; sourceTree = "<group>"; };
 		62B4BED05BA08985B221A10E /* VoiceInputManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceInputManager.swift; sourceTree = "<group>"; };
 		64B6E0D5E7B5285B6516722D /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		7B61AE2C60CB6C56EADB79A8 /* NpdForecast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NpdForecast.swift; sourceTree = "<group>"; };
@@ -185,6 +186,7 @@
 		D6594DF992676C1A5BDA9E7F /* IncomeCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IncomeCategory.swift; sourceTree = "<group>"; };
 		D6F747A35F6E89CF3EFE0629 /* UserLocalRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLocalRepository.swift; sourceTree = "<group>"; };
 		DBA3BDDB6EC21859BC0FAF0A /* TransactionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionStore.swift; sourceTree = "<group>"; };
+		DC01C5EC8EE86264958FA807 /* CashFlowDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CashFlowDetailView.swift; sourceTree = "<group>"; };
 		DCE055888C0EC773FBED99DC /* success.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = success.json; sourceTree = "<group>"; };
 		DFD3FEDDD06A99D9BC586E2C /* DashboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewModel.swift; sourceTree = "<group>"; };
 		DFE781407181245CE7FA36D7 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
@@ -337,8 +339,8 @@
 			children = (
 				0C00BB60C8DA88F1771E5540 /* AddTransactionView.swift */,
 				EC1DD97467BB97D3809D9D2F /* AddTransactionViewModel.swift */,
+				61476A1B0B47403B4E2673FB /* CategoryPickerSheet.swift */,
 				62B4BED05BA08985B221A10E /* VoiceInputManager.swift */,
-				7665E9E017994E1E9339BA0F /* CategoryPickerSheet.swift */,
 			);
 			path = AddTransaction;
 			sourceTree = "<group>";
@@ -369,6 +371,7 @@
 		38FD56CDB74897A40E2AD040 /* Dashboard */ = {
 			isa = PBXGroup;
 			children = (
+				DC01C5EC8EE86264958FA807 /* CashFlowDetailView.swift */,
 				F9FDB18528D5474099877283 /* DashboardView.swift */,
 				DFD3FEDDD06A99D9BC586E2C /* DashboardViewModel.swift */,
 			);
@@ -705,11 +708,11 @@
 						TestTargetID = 2515D379705AE448BB7D130D;
 					};
 					DF31E32ADCC64C831609F20B = {
-						DevelopmentTeam = "";
+						DevelopmentTeam = HU22U632B9;
 						ProvisioningStyle = Automatic;
 					};
 					FB3BF94C50472C3384D73E03 = {
-						DevelopmentTeam = "";
+						DevelopmentTeam = HU22U632B9;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -798,14 +801,15 @@
 				46A5C4A951725A7ACCCEC222 /* APIClient.swift in Sources */,
 				15B3D13568DF23D8F47D1892 /* AddTransactionView.swift in Sources */,
 				73A07650822DCFC310BAAA24 /* AddTransactionViewModel.swift in Sources */,
-				BB2FCB84E56C447F91702BD1 /* CategoryPickerSheet.swift in Sources */,
 				F1AE7C2A94B173851217D863 /* AnalyticsView.swift in Sources */,
 				3A02770F74D88D2B7E6969E7 /* AnalyticsViewModel.swift in Sources */,
 				B183A2A671407F2C3CFB56B2 /* AppContainer.swift in Sources */,
 				C2E7BB8D40E2E138E609556A /* AuthFlowView.swift in Sources */,
 				BBE61F28FF7F44CA4B840E0A /* AuthViewModel.swift in Sources */,
 				977403F6A9A4693D5687BDD9 /* CalculateTaxUseCase.swift in Sources */,
+				534ECAFF107E837DD93B8F8B /* CashFlowDetailView.swift in Sources */,
 				ADE05D6F2C7A8BB1596F7047 /* CashFlowForecast.swift in Sources */,
+				D3BCE7803F11A3783E09BE42 /* CategoryPickerSheet.swift in Sources */,
 				1A63E180E5B27593A2EB369A /* ChatView.swift in Sources */,
 				38E4A622E0DB6FF0B1DA2219 /* ClassifyTransactionUseCase.swift in Sources */,
 				F03FCD35C229BA94095A1AB6 /* Client.swift in Sources */,
@@ -932,7 +936,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = HU22U632B9;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_FILE = FineryWidget/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -1016,7 +1020,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = HU22U632B9;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_FILE = FineryShare/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -1044,7 +1048,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = HU22U632B9;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_FILE = FineryWidget/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -1071,7 +1075,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = HU22U632B9;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_FILE = FineryShare/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -1095,7 +1099,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Finery/Finery.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -1204,7 +1208,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Finery/Finery.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";

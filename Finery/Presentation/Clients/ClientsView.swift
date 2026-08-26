@@ -273,10 +273,10 @@ struct ClientsView: View {
                     }
                 }
                 .scrollContentBackground(.hidden)
+                .scrollDismissesKeyboard(.interactively)
             }
             .navigationTitle("Новый клиент")
             .navigationBarTitleDisplayMode(.inline)
-            .keyboardDoneButton()
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Отмена") { viewModel.showAddClient = false }
@@ -595,10 +595,10 @@ struct ClientEditSheet: View {
                     }
                 }
                 .scrollContentBackground(.hidden)
+                .scrollDismissesKeyboard(.interactively)
             }
             .navigationTitle("Редактировать")
             .navigationBarTitleDisplayMode(.inline)
-            .keyboardDoneButton()
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button("Отмена") { dismiss() } }
                 ToolbarItem(placement: .confirmationAction) {

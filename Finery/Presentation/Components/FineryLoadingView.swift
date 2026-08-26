@@ -165,20 +165,5 @@ extension View {
                 to: nil, from: nil, for: nil)
         }
     }
-
-    func keyboardDoneButton() -> some View {
-        self.toolbar {
-            ToolbarItemGroup(placement: .keyboard) {
-                Spacer()
-                Button("Готово") {
-                    UIApplication.shared.sendAction(
-                        #selector(UIResponder.resignFirstResponder),
-                        to: nil, from: nil, for: nil)
-                }
-                .fontWeight(.semibold)
-                .foregroundStyle(FC.cobalt)
-            }
-        }
-    }
 }
 

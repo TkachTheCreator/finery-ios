@@ -65,6 +65,19 @@ final class TransactionsViewModel {
         allTransactions.filter { $0.direction == .expense }.reduce(0) { $0 + $1.amount }
     }
 
+    /// For the month period with no direction filter, prefer server-side PnL totals
+    /// so the summary always matches the dashboard, even if transaction list is paginated.
+    var summaryIncome: Decimal {
+        if period == .month, directionFilter == nil,
+           let pnl = SharedDataService.shared.pnl { return pnl.totalIncome }
+        return totalIncome
+    }
+    var summaryExpenses: Decimal {
+        if period == .month, directionFilter == nil,
+           let pnl = SharedDataService.shared.pnl { return pnl.totalExpenses }
+        return totalExpenses
+    }
+
     // MARK: Actions
 
     func load() async {
