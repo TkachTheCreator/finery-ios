@@ -39,10 +39,11 @@ private enum KeychainStore {
         guard let data = token.data(using: .utf8) else { return }
         delete()
         let query: [String: Any] = [
-            kSecClass as String:       kSecClassGenericPassword,
-            kSecAttrService as String: service,
-            kSecAttrAccount as String: account,
-            kSecValueData as String:   data,
+            kSecClass as String:            kSecClassGenericPassword,
+            kSecAttrService as String:      service,
+            kSecAttrAccount as String:      account,
+            kSecValueData as String:        data,
+            kSecAttrAccessible as String:   kSecAttrAccessibleAfterFirstUnlock,
         ]
         SecItemAdd(query as CFDictionary, nil)
     }
@@ -413,6 +414,9 @@ actor APIClient {
     static let baseURLString = "https://api.finery.pro/api/v1"
     #endif
     private let session: URLSession
+    /// In-memory token cache — loaded once at init, updated on login/logout.
+    /// Eliminates repeated synchronous Keychain reads on every request.
+    private var cachedToken: String?
 
     nonisolated var isAuthenticated: Bool {
         KeychainStore.load() != nil
@@ -423,7 +427,11 @@ actor APIClient {
         config.timeoutIntervalForRequest  = 30
         config.timeoutIntervalForResource = 60
         session = URLSession(configuration: config)
+        // Single Keychain read at startup; all subsequent reads use cachedToken.
+        cachedToken = KeychainStore.load()
     }
+
+    private func _clearCache() { cachedToken = nil }
 
     // MARK: Auth
 
@@ -441,6 +449,7 @@ actor APIClient {
         do {
             let dto: TokenDTO = try await post("auth/register", body: body)
             KeychainStore.save(dto.accessToken)
+            cachedToken = dto.accessToken
             return (dto.accessToken, dto.user.toDomain())
         } catch NetworkError.emailTaken {
             throw NetworkError.emailTaken
@@ -454,6 +463,7 @@ actor APIClient {
         do {
             let dto: TokenDTO = try await post("auth/login", body: body)
             KeychainStore.save(dto.accessToken)
+            cachedToken = dto.accessToken
             return (dto.accessToken, dto.user.toDomain())
         } catch NetworkError.userNotFound {
             throw NetworkError.userNotFound
@@ -464,6 +474,7 @@ actor APIClient {
 
     nonisolated func logout() {
         KeychainStore.delete()
+        Task { await self._clearCache() }
     }
 
     func forgotPassword(email: String) async throws -> String {
@@ -689,7 +700,7 @@ actor APIClient {
     func deleteRequest(_ path: String) async throws {
         var req = URLRequest(url: baseURL.appendingPathComponent(path))
         req.httpMethod = "DELETE"
-        if let token = KeychainStore.load() { req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization") }
+        if let token = cachedToken { req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization") }
         let (_, response): (Data, URLResponse)
         do { (_, response) = try await session.data(for: req) }
         catch { throw NetworkError.noConnection }
@@ -706,7 +717,7 @@ actor APIClient {
         var req = URLRequest(url: baseURL.appendingPathComponent(path))
         req.httpMethod = "PUT"
         req.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        if authorized, let token = KeychainStore.load() {
+        if authorized, let token = cachedToken {
             req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
         req.httpBody = try makeEncoder().encode(body)
@@ -721,7 +732,7 @@ actor APIClient {
         var req = URLRequest(url: baseURL.appendingPathComponent(path))
         req.httpMethod = "PATCH"
         req.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        if authorized, let token = KeychainStore.load() {
+        if authorized, let token = cachedToken {
             req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
         req.httpBody = try makeEncoder().encode(body)
@@ -736,7 +747,7 @@ actor APIClient {
         var req = URLRequest(url: baseURL.appendingPathComponent(path))
         req.httpMethod = "POST"
         req.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        if authorized, let token = KeychainStore.load() {
+        if authorized, let token = cachedToken {
             req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
         req.httpBody = try makeEncoder().encode(body)
@@ -757,7 +768,7 @@ actor APIClient {
         }
         var req = URLRequest(url: components.url!)
         req.httpMethod = "GET"
-        if authorized, let token = KeychainStore.load() {
+        if authorized, let token = cachedToken {
             req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
         return try await execute(req)
