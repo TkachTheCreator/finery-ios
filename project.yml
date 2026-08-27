@@ -42,8 +42,6 @@ targets:
           UIApplicationSupportsMultipleScenes: false
         UISupportedInterfaceOrientations~iphone:
           - UIInterfaceOrientationPortrait
-        NSAppTransportSecurity:
-          NSAllowsArbitraryLoads: true
         ANTHROPIC_API_KEY: ""
         CFBundleURLTypes:
           - CFBundleURLSchemes:
