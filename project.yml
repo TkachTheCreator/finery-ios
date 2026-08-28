@@ -37,12 +37,15 @@ targets:
         NSMicrophoneUsageDescription: "Finery использует микрофон для голосового ввода транзакций"
         NSSpeechRecognitionUsageDescription: "Finery распознаёт речь чтобы автоматически заполнять поля транзакции"
         NSUserNotificationsUsageDescription: "Finery отправляет напоминания о налоговых дедлайнах"
+        NSFaceIDUsageDescription: "Finery использует Face ID для защиты ваших финансовых данных"
         UILaunchScreen: {}
         UIApplicationSceneManifest:
           UIApplicationSupportsMultipleScenes: false
         UISupportedInterfaceOrientations~iphone:
           - UIInterfaceOrientationPortrait
         ANTHROPIC_API_KEY: ""
+        LSApplicationQueriesSchemes:
+          - mynalog
         CFBundleURLTypes:
           - CFBundleURLSchemes:
               - finery

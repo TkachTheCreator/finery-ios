@@ -67,6 +67,23 @@ final class AddTransactionViewModel {
         return a > 0
     }
 
+    // Tax set-aside for current income (nil for expenses or unknown mode)
+    var taxSetAside: (amount: Decimal, rate: Decimal)? {
+        guard direction == .income, let a = amount, a > 0 else { return nil }
+        let mode = SharedDataService.shared.taxMode
+        switch mode {
+        case .npd:
+            let rate = clientType.npdRate       // 4% физлица, 6% юрлица
+            return (a * rate, rate)
+        case .usn6:
+            return (a * Decimal(string: "0.06")!, Decimal(string: "0.06")!)
+        case .usn15:
+            return nil                          // 15% считается с прибыли, не с дохода — не показываем
+        }
+    }
+
+    var isNpdMode: Bool { SharedDataService.shared.taxMode == .npd }
+
     var activeCategory: String {
         if let custom = customCategoryName { return custom }
         return direction == .income ? incomeCategory.displayName : expenseCategory.displayName

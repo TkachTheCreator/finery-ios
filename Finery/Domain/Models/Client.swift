@@ -5,7 +5,7 @@ struct Client: Identifiable, Codable, Sendable {
     var name: String
     var email: String?
     var phone: String?
-    var totalPaid: Decimal
+    var totalPaid: Decimal   // kept in sync locally via SharedDataService.updateCachedClientTotal
     var lastPayment: Date?
     var status: ClientStatus
     var notes: String?

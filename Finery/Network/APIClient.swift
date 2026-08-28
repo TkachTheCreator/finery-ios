@@ -556,6 +556,29 @@ actor APIClient {
         return paginated.items.map { $0.toDomain() }
     }
 
+    /// Fetches ALL transactions for the given period by iterating through every page.
+    /// Replaces the single per_page:500 call that silently truncated large datasets.
+    func getAllTransactions(from: Date? = nil, to: Date? = nil, pageSize: Int = 200) async throws -> [Transaction] {
+        let fmt = ISO8601DateFormatter()
+        fmt.formatOptions = [.withInternetDateTime]
+
+        var result: [Transaction] = []
+        var page = 1
+
+        while true {
+            var query: [String: String] = ["page": "\(page)", "per_page": "\(pageSize)"]
+            if let from { query["from_date"] = fmt.string(from: from) }
+            if let to   { query["to_date"]   = fmt.string(from: to) }
+
+            let batch: PaginatedTransactionsDTO = try await get("transactions", query: query, authorized: true)
+            result.append(contentsOf: batch.items.map { $0.toDomain() })
+
+            if page >= batch.pages || batch.items.isEmpty { break }
+            page += 1
+        }
+        return result
+    }
+
     func deleteTransaction(id: UUID) async throws {
         try await deleteRequest("transactions/\(id.uuidString)")
     }

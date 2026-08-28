@@ -9,6 +9,8 @@ private enum AnalyticsMode: String, CaseIterable {
 struct AnalyticsView: View {
     @State var viewModel: AnalyticsViewModel
     @State private var mode: AnalyticsMode = .dynamics
+    @State private var csvShareData: Data? = nil
+    @State private var showCSVShare = false
 
     init(viewModel: AnalyticsViewModel) {
         _viewModel = State(wrappedValue: viewModel)
@@ -58,6 +60,18 @@ struct AnalyticsView: View {
                             accentColor: FC.muted
                         )
                     }
+                    // 7.1 — Top clients
+                    if !viewModel.clientIncomeBreakdown.isEmpty {
+                        hairline
+                        topClientsSection
+                    }
+
+                    // 7.2 — Forecast
+                    if let forecast = viewModel.nextMonthForecast {
+                        hairline
+                        forecastSection(forecast)
+                    }
+
                     } // end else (dynamics mode)
                     Color.clear.frame(height: 40)
                 }
@@ -78,6 +92,12 @@ struct AnalyticsView: View {
                     .ignoresSafeArea()
             }
         }
+        .sheet(isPresented: $showCSVShare) {
+            if let data = csvShareData {
+                ShareSheet(data: data, filename: "finery-transactions.csv")
+                    .ignoresSafeArea()
+            }
+        }
     }
 
     // MARK: Header
@@ -93,8 +113,13 @@ struct AnalyticsView: View {
                     .foregroundStyle(FC.muted)
             }
             Spacer()
-            Button {
-                viewModel.generatePDF()
+            Menu {
+                Button { viewModel.generatePDF() } label: {
+                    Label("PDF-отчёт", systemImage: "doc.richtext")
+                }
+                Button { exportCSV() } label: {
+                    Label("CSV (Excel)", systemImage: "tablecells")
+                }
             } label: {
                 HStack(spacing: 6) {
                     Image(systemName: "square.and.arrow.up")
@@ -484,6 +509,77 @@ private struct ShareSheet: UIViewControllerRepresentable {
     }
 
     func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
+}
+
+// MARK: - 7.1 Top clients
+
+extension AnalyticsView {
+    var topClientsSection: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Text("ТОП КЛИЕНТОВ").fLabel()
+                .padding(.horizontal, 20)
+                .padding(.top, 16)
+                .padding(.bottom, 10)
+            ForEach(Array(viewModel.clientIncomeBreakdown.enumerated()), id: \.offset) { idx, row in
+                HStack(spacing: 12) {
+                    Text("\(idx + 1)")
+                        .font(.system(.caption, design: .rounded, weight: .semibold))
+                        .foregroundStyle(FC.muted)
+                        .frame(width: 18)
+                    Text(row.clientName)
+                        .font(.system(.body, design: .rounded))
+                        .foregroundStyle(FC.ink)
+                        .lineLimit(1)
+                    Spacer()
+                    VStack(alignment: .trailing, spacing: 2) {
+                        Text(row.amount.rub())
+                            .font(.system(.subheadline, design: .rounded, weight: .semibold))
+                            .foregroundStyle(FC.ink)
+                        Text(String(format: "%.0f%%", row.percent))
+                            .font(.system(.caption2, design: .rounded))
+                            .foregroundStyle(FC.muted)
+                    }
+                }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 10)
+                if idx < viewModel.clientIncomeBreakdown.count - 1 {
+                    Rectangle().fill(FC.border).frame(height: 0.5).padding(.leading, 50)
+                }
+            }
+            Color.clear.frame(height: 8)
+        }
+    }
+}
+
+// MARK: - 7.2 Forecast + 7.3 CSV export
+
+extension AnalyticsView {
+    func forecastSection(_ forecast: Decimal) -> some View {
+        HStack(spacing: 16) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text("ПРОГНОЗ НА СЛ. МЕСЯЦ").fLabel()
+                Text(forecast.rub())
+                    .font(.system(.title3, design: .rounded, weight: .semibold))
+                    .foregroundStyle(FC.ink)
+                Text("Среднее за последние 3 месяца")
+                    .font(.system(.caption, design: .rounded))
+                    .foregroundStyle(FC.muted)
+            }
+            Spacer()
+            Image(systemName: "chart.line.uptrend.xyaxis")
+                .font(.system(size: 28, weight: .light))
+                .foregroundStyle(FC.cobalt.opacity(0.5))
+        }
+        .padding(20)
+    }
+
+    func exportCSV() {
+        let csv = viewModel.generateCSV()
+        if let data = csv.data(using: .utf8) {
+            csvShareData = data
+            showCSVShare = true
+        }
+    }
 }
 
 #Preview {

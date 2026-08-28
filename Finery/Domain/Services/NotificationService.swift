@@ -33,6 +33,57 @@ final class NotificationService: @unchecked Sendable {
         center.add(UNNotificationRequest(identifier: "finery.tax.reminder", content: content, trigger: trigger))
     }
 
+    // Schedules a reminder for the 28th of the current month to pay the set-aside tax amount
+    func scheduleMonthlyTaxReminder(amount: Decimal) {
+        let center = UNUserNotificationCenter.current()
+        let id = "finery.setaside.reminder"
+        center.removePendingNotificationRequests(withIdentifiers: [id])
+
+        let content = UNMutableNotificationContent()
+        content.title = "Время платить налог"
+        let amountInt = NSDecimalNumber(decimal: amount).intValue
+        content.body  = "Отложено \(amountInt) ₽ — сегодня крайний срок уплаты"
+        content.sound = .default
+
+        var comps = DateComponents()
+        comps.day = 28; comps.hour = 9; comps.minute = 0
+        let trigger = UNCalendarNotificationTrigger(dateMatching: comps, repeats: false)
+        center.add(UNNotificationRequest(identifier: id, content: content, trigger: trigger))
+    }
+
+    func cancel(identifier: String) {
+        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [identifier])
+    }
+
+    func fireImmediate(title: String, body: String) {
+        let content = UNMutableNotificationContent()
+        content.title = title
+        content.body  = body
+        content.sound = .default
+        let req = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
+        UNUserNotificationCenter.current().add(req)
+    }
+
+    func scheduleRecurring(id: String, title: String, body: String,
+                           period: RecurringPeriod, dayOfWeek: Int?, dayOfMonth: Int?) {
+        let center = UNUserNotificationCenter.current()
+        center.removePendingNotificationRequests(withIdentifiers: [id])
+
+        let content = UNMutableNotificationContent()
+        content.title = title
+        content.body  = body
+        content.sound = .default
+
+        var comps = DateComponents()
+        comps.hour = 9; comps.minute = 0
+        switch period {
+        case .weekly:  comps.weekday  = dayOfWeek  ?? 2
+        case .monthly: comps.day      = dayOfMonth ?? 1
+        }
+        let trigger = UNCalendarNotificationTrigger(dateMatching: comps, repeats: true)
+        center.add(UNNotificationRequest(identifier: id, content: content, trigger: trigger))
+    }
+
     func scheduleNpdLimitWarning(usedPercent: Double) {
         guard usedPercent >= 80 else { return }
         let center = UNUserNotificationCenter.current()
