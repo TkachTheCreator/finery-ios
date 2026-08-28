@@ -49,8 +49,8 @@ final class AIService {
         let history = messages.dropLast().map { ["role": $0.role, "content": $0.content] }
 
         let body: [String: Any] = [
-            "model": "claude-haiku-4-5-20251001",
-            "max_tokens": 500,
+            "model": "claude-sonnet-4-6",
+            "max_tokens": 1024,
             "system": systemPrompt,
             "messages": history + [["role": "user", "content": text]]
         ]
@@ -69,14 +69,25 @@ final class AIService {
         req.httpBody = try? JSONSerialization.data(withJSONObject: body)
 
         do {
-            let (data, _) = try await URLSession.shared.data(for: req)
-            if let json    = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-               let content = json["content"] as? [[String: Any]],
-               let reply   = content.first?["text"] as? String {
-                messages.append(AIMessage(role: "assistant", content: reply))
-            } else {
+            let (data, response) = try await URLSession.shared.data(for: req)
+            let status = (response as? HTTPURLResponse)?.statusCode ?? 0
+            switch status {
+            case 200:
+                if let json    = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                   let content = json["content"] as? [[String: Any]],
+                   let reply   = content.first?["text"] as? String {
+                    messages.append(AIMessage(role: "assistant", content: reply))
+                } else {
+                    let raw = String(data: data, encoding: .utf8) ?? "—"
+                    messages.append(AIMessage(role: "assistant", content: "Неожиданный ответ API: \(raw.prefix(200))"))
+                }
+            case 401:
+                messages.append(AIMessage(role: "assistant", content: "Неверный API-ключ. Проверьте ключ в настройках сборки (ANTHROPIC_API_KEY)."))
+            case 429:
+                messages.append(AIMessage(role: "assistant", content: "Слишком много запросов. Подождите немного и повторите."))
+            default:
                 let raw = String(data: data, encoding: .utf8) ?? "—"
-                messages.append(AIMessage(role: "assistant", content: "Ошибка API: \(raw.prefix(200))"))
+                messages.append(AIMessage(role: "assistant", content: "Ошибка сервера (\(status)): \(raw.prefix(150))"))
             }
         } catch {
             messages.append(AIMessage(

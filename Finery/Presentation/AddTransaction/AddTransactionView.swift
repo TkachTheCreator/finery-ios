@@ -5,19 +5,25 @@ import Speech
 struct AddTransactionView: View {
     @State var viewModel: AddTransactionViewModel
     var onSave: (() -> Void)?
+    var autoStartVoice: Bool = false
 
     @Environment(\.dismiss) private var dismiss
     @FocusState private var amountFocused: Bool
     @State private var showOverlay: OverlayState = .none
     @State private var showCategoryPicker = false
     @State private var showError = false
+    @State private var showVoiceError = false
     @State private var showDeleteConfirm = false
+    @State private var showReceiptPicker = false
+    @State private var isOCRLoading = false
+    @State private var showRecurringPicker = false
 
     private enum OverlayState { case none, loading, success }
 
-    init(viewModel: AddTransactionViewModel, onSave: (() -> Void)? = nil) {
+    init(viewModel: AddTransactionViewModel, onSave: (() -> Void)? = nil, autoStartVoice: Bool = false) {
         _viewModel = State(wrappedValue: viewModel)
         self.onSave = onSave
+        self.autoStartVoice = autoStartVoice
     }
 
     var body: some View {
@@ -31,6 +37,10 @@ struct AddTransactionView: View {
                     header
                     hairline
                     amountSection
+                    if viewModel.taxSetAside != nil || (viewModel.isNpdMode && viewModel.direction == .income && viewModel.canSave) {
+                        hairline
+                        taxHintRow
+                    }
                     hairline
                     directionToggle
                     hairline
@@ -55,7 +65,13 @@ struct AddTransactionView: View {
             }
             .scrollDismissesKeyboard(.interactively)
         }
-        .onAppear { amountFocused = true }
+        .onAppear {
+            if autoStartVoice {
+                viewModel.voice.start()
+            } else {
+                amountFocused = true
+            }
+        }
         .onDisappear { viewModel.voice.stop() }
         .confirmationDialog("Удалить транзакцию?", isPresented: $showDeleteConfirm, titleVisibility: .visible) {
             Button("Удалить", role: .destructive) { Task { await viewModel.deleteExisting() } }
@@ -73,10 +89,18 @@ struct AddTransactionView: View {
         .onChange(of: viewModel.errorMessage) { _, msg in
             if msg != nil { showError = true }
         }
+        .onChange(of: viewModel.voice.voiceError) { _, msg in
+            if msg != nil { showVoiceError = true }
+        }
         .alert("Ошибка сохранения", isPresented: $showError) {
             Button("OK") { viewModel.errorMessage = nil }
         } message: {
             Text(viewModel.errorMessage ?? "")
+        }
+        .alert("Голосовой ввод", isPresented: $showVoiceError) {
+            Button("OK") { viewModel.voice.state = .idle }
+        } message: {
+            Text(viewModel.voice.voiceError ?? "")
         }
         .sheet(isPresented: $showCategoryPicker) {
             CategoryPickerSheet(
@@ -153,6 +177,72 @@ struct AddTransactionView: View {
         .padding(.vertical, 20)
     }
 
+    // MARK: Tax Hint (6.1 + 6.3)
+
+    private var taxHintRow: some View {
+        VStack(spacing: 0) {
+            // 6.1 — Set-aside hint
+            if let hint = viewModel.taxSetAside {
+                let pct = NSDecimalNumber(decimal: hint.rate * 100).intValue
+                HStack(spacing: 8) {
+                    Image(systemName: "piggybank")
+                        .font(.system(size: 13))
+                        .foregroundStyle(FC.cobalt)
+                    Text("Отложи \(hint.amount.rub()) — это \(pct)% налог")
+                        .font(.system(.subheadline, design: .rounded))
+                        .foregroundStyle(FC.ink)
+                    Spacer()
+                    Button {
+                        NotificationService.shared.scheduleMonthlyTaxReminder(amount: hint.amount)
+                    } label: {
+                        Text("До 28-го")
+                            .font(.system(.caption2, design: .rounded, weight: .semibold))
+                            .foregroundStyle(FC.cobalt)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 5)
+                            .background(FC.cobalt.opacity(0.1))
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                    }
+                }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 12)
+                .background(FC.cobalt.opacity(0.04))
+            }
+
+            // 6.3 — Мой налог deep link (only for НПД income)
+            if viewModel.isNpdMode && viewModel.canSave {
+                if viewModel.taxSetAside != nil {
+                    Rectangle().fill(FC.border).frame(height: 0.5).padding(.leading, 20)
+                }
+                Button {
+                    let urlStr = "mynalog://"
+                    if let url = URL(string: urlStr), UIApplication.shared.canOpenURL(url) {
+                        UIApplication.shared.open(url)
+                    } else if let fallback = URL(string: "https://lknpd.nalog.ru/") {
+                        UIApplication.shared.open(fallback)
+                    }
+                } label: {
+                    HStack(spacing: 8) {
+                        Image(systemName: "doc.text")
+                            .font(.system(size: 13))
+                            .foregroundStyle(FC.success)
+                        Text("Сформировать чек в Мой налог")
+                            .font(.system(.subheadline, design: .rounded))
+                            .foregroundStyle(FC.success)
+                        Spacer()
+                        Image(systemName: "arrow.up.right.square")
+                            .font(.system(.caption))
+                            .foregroundStyle(FC.success.opacity(0.6))
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 12)
+                    .background(Color(h: "1A7A4A").opacity(0.05))
+                }
+                .buttonStyle(.plain)
+            }
+        }
+    }
+
     // MARK: Direction Toggle
 
     private var directionToggle: some View {
@@ -174,6 +264,48 @@ struct AddTransactionView: View {
                 .foregroundStyle(selected ? .white : FC.muted)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .background(selected ? color : FC.surface)
+        }
+    }
+
+    // MARK: Receipt OCR Button
+
+    private var receiptButton: some View {
+        Button {
+            showReceiptPicker = true
+        } label: {
+            ZStack {
+                Circle()
+                    .fill(isOCRLoading ? FC.muted.opacity(0.12) : FC.cobalt.opacity(0.10))
+                    .frame(width: 36, height: 36)
+                    .overlay(Circle().stroke(FC.cobalt.opacity(0.25), lineWidth: 1))
+                if isOCRLoading {
+                    ProgressView().scaleEffect(0.7).tint(FC.cobalt)
+                } else {
+                    Image(systemName: "doc.viewfinder")
+                        .font(.system(size: 15, weight: .medium))
+                        .foregroundStyle(FC.cobalt)
+                }
+            }
+        }
+        .disabled(isOCRLoading)
+        .sheet(isPresented: $showReceiptPicker) {
+            ReceiptPickerSheet { image in
+                showReceiptPicker = false
+                guard let image else { return }
+                isOCRLoading = true
+                Task {
+                    defer { isOCRLoading = false }
+                    guard let result = try? await ReceiptOCRService.scan(image) else { return }
+                    if viewModel.amountText.isEmpty {
+                        let n = NSDecimalNumber(decimal: result.amount)
+                        viewModel.amountText = n.decimalValue == Decimal(n.intValue) ? "\(n.intValue)" : n.stringValue
+                    }
+                    if !viewModel.userSelectedCategory {
+                        viewModel.expenseCategory = result.suggestedCategory
+                        viewModel.setDirection(.expense)
+                    }
+                }
+            }
         }
     }
 
@@ -218,6 +350,7 @@ struct AddTransactionView: View {
                         .font(.system(.body))
                         .foregroundStyle(FC.ink)
                         .onChange(of: viewModel.description) { _, _ in viewModel.onDescriptionChanged() }
+                    receiptButton
                     micButton
                 }
             }
@@ -300,6 +433,37 @@ struct AddTransactionView: View {
                 TextField("Опционально", text: $viewModel.notes)
                     .font(.system(.body))
                     .foregroundStyle(FC.ink)
+            }
+            hairline
+            fieldRow(label: "ПОВТОРЯТЬ") {
+                Button {
+                    guard viewModel.canSave else { return }
+                    showRecurringPicker = true
+                } label: {
+                    HStack(spacing: 4) {
+                        Text("Настроить")
+                            .font(.system(.body))
+                            .foregroundStyle(viewModel.canSave ? FC.cobalt : FC.muted)
+                        Image(systemName: "arrow.clockwise")
+                            .font(.system(.caption2))
+                            .foregroundStyle(viewModel.canSave ? FC.cobalt : FC.muted)
+                    }
+                }
+                .disabled(!viewModel.canSave)
+            }
+            .sheet(isPresented: $showRecurringPicker) {
+                RecurringPickerSheet(
+                    amount: viewModel.amount ?? 0,
+                    direction: viewModel.direction,
+                    description: viewModel.description,
+                    incomeCategory: viewModel.incomeCategory,
+                    expenseCategory: viewModel.expenseCategory,
+                    onSave: { rec in
+                        RecurringTransactionService.shared.add(rec)
+                        showRecurringPicker = false
+                    },
+                    onCancel: { showRecurringPicker = false }
+                )
             }
         }
     }

@@ -17,6 +17,12 @@ final class AnalyticsViewModel {
     var showingPDFShare = false
     var seasonalAnalysis: SeasonalAnalysis? = nil
 
+    // 7.1 — client revenue
+    var clientIncomeBreakdown: [(clientName: String, amount: Decimal, percent: Double)] = []
+
+    // 7.2 — forecast
+    var nextMonthForecast: Decimal? = nil
+
     var incomeChange: Double {
         guard previousMonthIncome > 0 else { return 0 }
         return NSDecimalNumber(
@@ -65,6 +71,8 @@ final class AnalyticsViewModel {
         }
 
         seasonalAnalysis = computeSeasonalAnalysis()
+        clientIncomeBreakdown = computeClientIncome(from: allTxns)
+        nextMonthForecast = computeForecast()
     }
 
     // MARK: - Seasonal Analysis
@@ -145,6 +153,68 @@ final class AnalyticsViewModel {
             incomeBreakdown: incomeRows, monthlyData: monthlyRows
         ))
         showingPDFShare = exportedPDFData != nil
+    }
+
+    // MARK: - Client income (7.1)
+
+    private func computeClientIncome(from transactions: [Transaction]) -> [(clientName: String, amount: Decimal, percent: Double)] {
+        let income = transactions.filter { $0.direction == .income && $0.clientId != nil }
+        let total  = income.reduce(Decimal(0)) { $0 + $1.amount }
+        guard total > 0 else { return [] }
+
+        let clients = SharedDataService.shared.cachedClients
+        let grouped = Dictionary(grouping: income, by: { $0.clientId! })
+        return grouped.map { cid, txns in
+            let name   = clients.first(where: { $0.id == cid })?.name ?? txns.first?.description ?? "Клиент"
+            let amount = txns.reduce(Decimal(0)) { $0 + $1.amount }
+            return (clientName: name, amount: amount,
+                    percent: NSDecimalNumber(decimal: amount / total * 100).doubleValue)
+        }
+        .sorted { $0.amount > $1.amount }
+        .prefix(5)
+        .map { $0 }
+    }
+
+    // MARK: - Forecast (7.2) — average of last 3 completed months
+
+    private func computeForecast() -> Decimal? {
+        let cal = Calendar.current
+        let today = Date()
+        var monthlyTotals: [Decimal] = []
+
+        for offset in 1...3 {
+            guard let start = cal.date(byAdding: .month, value: -offset, to: cal.date(from: cal.dateComponents([.year, .month], from: today))!),
+                  let end   = cal.date(byAdding: .second, value: -1, to: cal.date(byAdding: .month, value: 1, to: start)!)
+            else { continue }
+
+            let total = SharedDataService.shared.transactions
+                .filter { $0.direction == .income && $0.date >= start && $0.date <= end }
+                .reduce(Decimal(0)) { $0 + $1.amount }
+            monthlyTotals.append(total)
+        }
+
+        guard !monthlyTotals.isEmpty else { return nil }
+        return monthlyTotals.reduce(0, +) / Decimal(monthlyTotals.count)
+    }
+
+    // MARK: - CSV Export (7.3)
+
+    func generateCSV() -> String {
+        var rows = ["Дата,Тип,Категория,Описание,Сумма,Клиент"]
+        let fmt = DateFormatter()
+        fmt.dateFormat = "yyyy-MM-dd"
+        for tx in SharedDataService.shared.transactions.sorted(by: { $0.date > $1.date }) {
+            let date     = fmt.string(from: tx.date)
+            let type_    = tx.direction == .income ? "Доход" : "Расход"
+            let category = tx.direction == .income
+                ? (tx.incomeCategory?.displayName  ?? "")
+                : (tx.expenseCategory?.displayName ?? "")
+            let desc     = tx.description.replacingOccurrences(of: ",", with: ";")
+            let amount   = NSDecimalNumber(decimal: tx.amount).stringValue
+            let client   = SharedDataService.shared.cachedClients.first(where: { $0.id == tx.clientId })?.name ?? ""
+            rows.append("\(date),\(type_),\(category),\(desc),\(amount),\(client)")
+        }
+        return rows.joined(separator: "\n")
     }
 
     // MARK: - Breakdown helpers

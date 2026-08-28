@@ -224,6 +224,8 @@ struct SettingsView: View {
                         sectionGap
                         notificationsSection
                         sectionGap
+                        securitySection
+                        sectionGap
                         categoriesSection
                         sectionGap
                         infoSection
@@ -375,6 +377,43 @@ struct SettingsView: View {
                         menuLabel("За \(viewModel.user.taxReminderDaysBefore) дней")
                     }
                 }
+            }
+        }
+    }
+
+    // MARK: Security
+
+    @MainActor
+    private var securitySection: some View {
+        let lock = AppLockManager.shared
+        return VStack(alignment: .leading, spacing: 0) {
+            sectionHeader("БЕЗОПАСНОСТЬ")
+            if lock.isBiometricAvailable {
+                HStack {
+                    Text(lock.biometricLabel)
+                        .font(.system(.body))
+                        .foregroundStyle(FC.ink)
+                    Spacer()
+                    Toggle("", isOn: Binding(
+                        get: { lock.isEnabled },
+                        set: { lock.isEnabled = $0 }
+                    ))
+                    .tint(FC.cobalt)
+                    .labelsHidden()
+                }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 14)
+                .background(FC.background)
+            } else {
+                HStack {
+                    Text("Биометрия недоступна")
+                        .font(.system(.body))
+                        .foregroundStyle(FC.muted)
+                    Spacer()
+                }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 14)
+                .background(FC.background)
             }
         }
     }

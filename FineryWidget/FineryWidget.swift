@@ -198,6 +198,47 @@ struct MediumWidgetView: View {
     }
 }
 
+// MARK: - Виджет быстрой записи
+
+struct QuickRecordWidgetView: View {
+    var body: some View {
+        ZStack {
+            Color(hex: "#F5EFE0")
+            VStack(spacing: 8) {
+                ZStack {
+                    Circle()
+                        .fill(Color(hex: "#0047AB").opacity(0.12))
+                        .frame(width: 44, height: 44)
+                    Image(systemName: "mic.fill")
+                        .font(.system(size: 20, weight: .medium))
+                        .foregroundColor(Color(hex: "#0047AB"))
+                }
+                Text("Запись")
+                    .font(.caption2)
+                    .fontWeight(.semibold)
+                    .foregroundColor(Color(hex: "#1A1A18"))
+                Text("Finery")
+                    .font(.system(size: 9))
+                    .foregroundColor(Color(hex: "#8B7D5A"))
+            }
+        }
+        .widgetURL(URL(string: "finery://voice")!)
+    }
+}
+
+struct FineryQuickRecordWidget: Widget {
+    let kind = "FineryQuickRecord"
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: kind, provider: FineryProvider()) { _ in
+            QuickRecordWidgetView()
+                .containerBackground(Color(hex: "#F5EFE0"), for: .widget)
+        }
+        .configurationDisplayName("Finery — Быстрая запись")
+        .description("Открывает голосовой ввод транзакции одним тапом")
+        .supportedFamilies([.systemSmall])
+    }
+}
+
 // MARK: - Widget bundle (entry point)
 
 @main
@@ -205,6 +246,7 @@ struct FineryWidgetBundle: WidgetBundle {
     var body: some Widget {
         FineryWidgetSmall()
         FineryWidgetMedium()
+        FineryQuickRecordWidget()
     }
 }
 

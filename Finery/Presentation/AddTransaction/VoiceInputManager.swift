@@ -24,6 +24,11 @@ final class VoiceInputManager: NSObject {
         return false
     }
 
+    var voiceError: String? {
+        if case .error(let msg) = state { return msg }
+        return nil
+    }
+
     private var recognizer: SFSpeechRecognizer?
     private var audioEngine: AVAudioEngine?
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
@@ -37,8 +42,9 @@ final class VoiceInputManager: NSObject {
 
     func toggle() {
         switch state {
-        case .recording: stop()
-        default:         start()
+        case .recording:  stop()
+        case .requesting: return
+        default:          start()
         }
     }
 
@@ -126,8 +132,10 @@ final class VoiceInputManager: NSObject {
                     self.recognizedText = result.bestTranscription.formattedString
                     self.parsedAmount   = Self.parseAmount(from: self.recognizedText)
                 }
-                if result?.isFinal == true || error != nil {
+                if result?.isFinal == true {
                     self.stop()
+                } else if let error {
+                    self.stopWithError(error.localizedDescription)
                 }
             }
         }
@@ -136,9 +144,15 @@ final class VoiceInputManager: NSObject {
     }
 
     func stop() {
-        guard audioEngine != nil else { return } // защита от двойного вызова
+        guard audioEngine != nil else { return }
         cleanupAudio()
         state = .idle
+    }
+
+    private func stopWithError(_ message: String) {
+        guard audioEngine != nil else { return }
+        cleanupAudio()
+        state = .error(message)
     }
 
     private func cleanupAudio() {
@@ -167,7 +181,7 @@ final class VoiceInputManager: NSObject {
 
     // MARK: - Amount Parser
 
-    static func parseAmount(from text: String) -> Decimal? {
+    nonisolated static func parseAmount(from text: String) -> Decimal? {
         let cleaned = text.lowercased()
         let digitPattern = /(\d[\d\s,.]*)/
         if let match = cleaned.firstMatch(of: digitPattern) {
@@ -181,7 +195,7 @@ final class VoiceInputManager: NSObject {
         return nil
     }
 
-    private static func applyWordMultiplier(to value: Decimal, text: String) -> Decimal {
+    private nonisolated static func applyWordMultiplier(to value: Decimal, text: String) -> Decimal {
         if text.contains("миллион") || text.contains("млн") { return value * 1_000_000 }
         if text.contains("тысяч")  || text.contains("тыс")  { return value * 1_000 }
         return value

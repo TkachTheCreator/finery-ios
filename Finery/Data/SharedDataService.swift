@@ -120,9 +120,13 @@ final class SharedDataService {
         let startOfYear  = cal.date(from: DateComponents(year: year, month: 1, day: 1))!
         let resolvedMode = currentUser?.taxMode ?? .npd
 
-        // All 4 requests run in parallel
+        // All 4 requests run in parallel.
+        // NOTE: pnlTask intentionally uses the CURRENT CALENDAR MONTH — this is what Dashboard
+        // displays as a fixed "this month" summary, independent of any period picker in other tabs.
+        // TransactionsView computes its own totals from the transactions array for its selected period.
+        // These are two deliberately different metrics, not a bug.
         async let userTask = APIClient.shared.getCurrentUser()
-        async let txTask   = APIClient.shared.getTransactions(from: startOfYear, perPage: 500)
+        async let txTask   = APIClient.shared.getAllTransactions(from: startOfYear)
         async let pnlTask  = APIClient.shared.getPnL(from: startOfMonth, to: endOfMonth)
         async let taxTask  = APIClient.shared.getTaxStatus(year: year, taxMode: resolvedMode)
 
@@ -185,22 +189,63 @@ final class SharedDataService {
         }
     }
 
+    /// Locally-computed income total for a client — always up-to-date after any transaction change.
+    /// Use this in UI instead of Client.totalPaid (which is a server-side field refreshed only on
+    /// explicit PUT or when the Clients tab re-opens).
+    func localIncome(for clientId: UUID) -> Decimal {
+        transactions
+            .filter { $0.clientId == clientId && $0.direction == .income }
+            .reduce(Decimal(0)) { $0 + $1.amount }
+    }
+
     /// Force the next loadAll() to fetch fresh data regardless of the 30-second window.
     func invalidate() { lastUpdated = nil }
 
-    /// Immediately prepend or update a transaction in the in-memory list.
+    /// Immediately prepend or update a transaction, then refresh pnl and the affected client.
     func appendTransaction(_ tx: Transaction) {
         transactions.removeAll { $0.id == tx.id }
         transactions.insert(tx, at: 0)
         TransactionStore.shared.append(tx)
         invalidate()
+        Task { await refreshPnL() }
+        if let cid = tx.clientId { updateCachedClientTotal(id: cid) }
     }
 
-    /// Immediately remove a deleted transaction from the in-memory list.
+    /// Immediately remove a transaction, then refresh pnl and the affected client.
     func removeTransaction(id: UUID) {
+        let removed = transactions.first { $0.id == id }
         transactions.removeAll { $0.id == id }
         TransactionStore.shared.remove(id: id)
         invalidate()
+        Task { await refreshPnL() }
+        if let cid = removed?.clientId { updateCachedClientTotal(id: cid) }
+    }
+
+    // MARK: - Incremental refresh helpers
+
+    /// Re-fetches PnL for the current month without a full loadAll().
+    private func refreshPnL() async {
+        guard APIClient.shared.isAuthenticated else { return }
+        let cal = Calendar.current
+        let start = cal.date(from: cal.dateComponents([.year, .month], from: Date()))!
+        let end   = cal.date(byAdding: .second, value: -1,
+                             to: cal.date(byAdding: .month, value: 1, to: start)!)!
+        if let fresh = try? await APIClient.shared.getPnL(from: start, to: end) {
+            pnl = fresh
+            saveToCache()
+            saveToWidget()
+        }
+    }
+
+    /// Recomputes a client's income total locally from the in-memory transactions array.
+    /// Called immediately after any transaction change — no extra network request needed.
+    private func updateCachedClientTotal(id: UUID) {
+        guard let idx = cachedClients.firstIndex(where: { $0.id == id }) else { return }
+        let total = transactions
+            .filter { $0.clientId == id && $0.direction == .income }
+            .reduce(Decimal(0)) { $0 + $1.amount }
+        cachedClients[idx].totalPaid = total
+        UserDefaults.standard.set(try? JSONEncoder().encode(cachedClients), forKey: CacheKey.clients)
     }
 
     // MARK: - Process transactions queued by Share Extension
@@ -264,9 +309,12 @@ final class SharedDataService {
     }
 
     func deleteTransaction(id: UUID) async {
+        let removed = transactions.first { $0.id == id }
         transactions.removeAll { $0.id == id }
         TransactionStore.shared.remove(id: id)
         try? await APIClient.shared.deleteTransaction(id: id)
+        await refreshPnL()
+        if let cid = removed?.clientId { updateCachedClientTotal(id: cid) }
     }
 
     func reset() {

@@ -178,7 +178,7 @@ struct ClientsView: View {
             Spacer()
 
             VStack(alignment: .trailing, spacing: 3) {
-                Text(client.totalPaid.rub())
+                Text(SharedDataService.shared.localIncome(for: client.id).rub())
                     .font(.system(.subheadline, design: .rounded, weight: .semibold))
                     .monospacedDigit()
                     .foregroundStyle(FC.ink)
@@ -370,7 +370,7 @@ struct ClientDetailView: View {
                                             Text("₽").foregroundStyle(FC.muted).font(.system(.caption))
                                         }
                                     } else {
-                                        Text(client.totalPaid.rub())
+                                        Text(SharedDataService.shared.localIncome(for: client.id).rub())
                                             .font(.system(.subheadline, design: .rounded, weight: .semibold))
                                             .foregroundStyle(FC.ink)
                                     }

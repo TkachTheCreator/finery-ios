@@ -4,13 +4,21 @@ import SwiftData
 @MainActor
 struct RootView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.scenePhase) private var scenePhase
 
+    @State private var appLock = AppLockManager.shared
     @State private var container: AppContainer?
     @State private var phase: Phase = .splash
     @State private var showReAuth = false
     @State private var showSessionExpiredAlert = false
     @State private var showChat            = false
     @State private var showAddTransaction  = false
+    @State private var showVoiceInput      = false
+    @State private var clipboardResult: BankSMSResult? = nil
+    @State private var showClipboardBanner = false
+    @State private var clipboardChangeCount = -1
+    @State private var pendingClipboardVM: AddTransactionViewModel? = nil
+    @State private var showClipboardAdd = false
     @State private var selectedTab: FineryTab = .dashboard
     @State private var goingRight = true
 
@@ -104,6 +112,43 @@ struct RootView: View {
                     .zIndex(1)
             }
         }
+        .overlay(alignment: .top) {
+            if showClipboardBanner, let result = clipboardResult, phase == .main {
+                ClipboardTransactionBanner(
+                    result: result,
+                    onAdd: {
+                        guard let c = container else { return }
+                        let vm = AddTransactionViewModel(transactionRepository: c.transactionRepository)
+                        let n = NSDecimalNumber(decimal: result.amount)
+                        vm.amountText = n.decimalValue == Decimal(n.intValue) ? "\(n.intValue)" : n.stringValue
+                        vm.setDirection(result.direction)
+                        vm.description = result.description
+                        pendingClipboardVM = vm
+                        showClipboardBanner = false
+                        showClipboardAdd = true
+                    },
+                    onDismiss: { showClipboardBanner = false }
+                )
+                .padding(.top, 12)
+                .transition(.move(edge: .top).combined(with: .opacity))
+                .zIndex(50)
+            }
+        }
+        .overlay {
+            if appLock.isLocked {
+                LockScreenView()
+                    .transition(.opacity)
+                    .zIndex(100)
+            }
+        }
+        .animation(.easeInOut(duration: 0.2), value: appLock.isLocked)
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .background {
+                appLock.lockIfNeeded()
+            } else if phase == .active {
+                checkClipboard()
+            }
+        }
         .animation(.fineryPage, value: phase)
         .fontDesign(.rounded)
         .onChange(of: SharedDataService.shared.isLoggedOut) { _, loggedOut in
@@ -120,9 +165,11 @@ struct RootView: View {
             Text(SharedDataService.shared.sessionExpiredMessage ?? "")
         }
         .onOpenURL { url in
-            guard url.scheme == "finery" else { return }
-            if url.host == "add-transaction", phase == .main {
-                showAddTransaction = true
+            guard url.scheme == "finery", phase == .main else { return }
+            switch url.host {
+            case "add-transaction": showAddTransaction = true
+            case "voice":           showVoiceInput     = true
+            default: break
             }
         }
         .sheet(isPresented: $showAddTransaction) {
@@ -132,6 +179,23 @@ struct RootView: View {
                         transactionRepository: c.transactionRepository
                     )
                 )
+            }
+        }
+        .sheet(isPresented: $showVoiceInput) {
+            if let c = container {
+                AddTransactionView(
+                    viewModel: AddTransactionViewModel(
+                        transactionRepository: c.transactionRepository
+                    ),
+                    autoStartVoice: true
+                )
+            }
+        }
+        .sheet(isPresented: $showClipboardAdd) {
+            if let vm = pendingClipboardVM {
+                AddTransactionView(viewModel: vm) {
+                    pendingClipboardVM = nil
+                }
             }
         }
     }
@@ -245,6 +309,26 @@ struct RootView: View {
         content()
     }
 
+    // MARK: Clipboard bank SMS check
+
+    private func checkClipboard() {
+        guard phase == .main else { return }
+        let count = UIPasteboard.general.changeCount
+        guard count != clipboardChangeCount else { return }
+        clipboardChangeCount = count
+        guard let text = UIPasteboard.general.string,
+              let result = BankSMSParser.parse(text) else { return }
+        clipboardResult = result
+        withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+            showClipboardBanner = true
+        }
+        // Auto-hide after 8 seconds
+        Task {
+            try? await Task.sleep(for: .seconds(8))
+            withAnimation { showClipboardBanner = false }
+        }
+    }
+
     // MARK: Boot
 
     private func boot() {
@@ -261,6 +345,7 @@ struct RootView: View {
         if APIClient.shared.isAuthenticated {
             phase = .main
             Task { await c.dashboard.load() }
+            Task { await RecurringTransactionService.shared.processIfNeeded(repository: c.transactionRepository) }
         } else if welcomeSeen {
             phase = .login
         } else {
