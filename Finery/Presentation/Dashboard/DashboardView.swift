@@ -59,7 +59,7 @@ struct DashboardView: View {
         .animation(.spring(response: 0.4, dampingFraction: 0.8), value: viewModel.isOffline)
         .animation(.spring(response: 0.4, dampingFraction: 0.8), value: SharedDataService.shared.isSlowConnection)
         .sheet(isPresented: $showCashFlow) {
-            CashFlowDetailView()
+            CashFlowDetailView(dashboardViewModel: viewModel)
         }
     }
 

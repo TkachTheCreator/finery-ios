@@ -48,6 +48,9 @@ final class AddTransactionViewModel {
             expenseCategory = tx.expenseCategory ?? .other
             clientType      = tx.clientType      ?? .individual
             selectedClientId   = tx.clientId
+            selectedClientName = tx.clientId.flatMap { cid in
+                SharedDataService.shared.cachedClients.first(where: { $0.id == cid })?.name
+            }
             notes           = tx.notes ?? ""
             userSelectedCategory = tx.incomeCategory != nil || tx.expenseCategory != nil
         }
@@ -189,7 +192,7 @@ final class AddTransactionViewModel {
             incomeCategory:  direction == .income  ? incomeCategory  : nil,
             expenseCategory: direction == .expense ? expenseCategory : nil,
             clientType:      direction == .income  ? clientType      : nil,
-            clientId:        direction == .income  ? selectedClientId : nil,
+            clientId:        selectedClientId,
             notes: notes.trimmingCharacters(in: .whitespaces).isEmpty ? nil : notes
         )
 
@@ -222,6 +225,7 @@ final class AddTransactionViewModel {
         defer { isSaving = false; print("[DEBUG] AddTransactionViewModel.update() — DONE") }
 
         let trimmedDesc = description.trimmingCharacters(in: .whitespaces).isEmpty ? activeCategory : description.trimmingCharacters(in: .whitespaces)
+        let oldClientId = SharedDataService.shared.transactions.first(where: { $0.id == id })?.clientId
 
         do {
             guard APIClient.shared.isAuthenticated else {
@@ -236,9 +240,14 @@ final class AddTransactionViewModel {
                 incomeCategory: direction == .income ? incomeCategory : nil,
                 expenseCategory: direction == .expense ? expenseCategory : nil,
                 clientType: direction == .income ? clientType : nil,
+                clientId: selectedClientId,
                 notes: notes.isEmpty ? nil : notes
             )
             SharedDataService.shared.appendTransaction(updated)
+            // Refresh old client balance if client was changed or detached
+            if let oldCid = oldClientId, oldCid != selectedClientId {
+                SharedDataService.shared.refreshClientBalance(id: oldCid)
+            }
             didSave = true
         } catch NetworkError.unauthorized {
             await SharedDataService.shared.handleSessionExpired()

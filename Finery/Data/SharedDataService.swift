@@ -237,6 +237,11 @@ final class SharedDataService {
         }
     }
 
+    /// Public entry point to refresh a client's locally-cached total after a link/unlink.
+    func refreshClientBalance(id: UUID) {
+        updateCachedClientTotal(id: id)
+    }
+
     /// Recomputes a client's income total locally from the in-memory transactions array.
     /// Called immediately after any transaction change — no extra network request needed.
     private func updateCachedClientTotal(id: UUID) {
