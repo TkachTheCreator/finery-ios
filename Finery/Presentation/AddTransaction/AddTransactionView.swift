@@ -402,32 +402,32 @@ struct AddTransactionView: View {
                     }
                 }
                 hairline
+            }
 
-                fieldRow(label: "КЛИЕНТ") {
-                    Menu {
-                        Button("Без клиента") {
-                            viewModel.selectedClientId   = nil
-                            viewModel.selectedClientName = nil
-                        }
-                        ForEach(SharedDataService.shared.cachedClients) { client in
-                            Button(client.name) {
-                                viewModel.selectedClientId   = client.id
-                                viewModel.selectedClientName = client.name
-                            }
-                        }
-                    } label: {
-                        HStack(spacing: 4) {
-                            Text(viewModel.selectedClientName ?? "Не выбран")
-                                .font(.system(.body))
-                                .foregroundStyle(viewModel.selectedClientName != nil ? FC.ink : FC.muted)
-                            Image(systemName: "chevron.up.chevron.down")
-                                .font(.system(.caption2))
-                                .foregroundStyle(FC.muted)
+            fieldRow(label: "КЛИЕНТ") {
+                Menu {
+                    Button("Без клиента") {
+                        viewModel.selectedClientId   = nil
+                        viewModel.selectedClientName = nil
+                    }
+                    ForEach(SharedDataService.shared.cachedClients) { client in
+                        Button(client.name) {
+                            viewModel.selectedClientId   = client.id
+                            viewModel.selectedClientName = client.name
                         }
                     }
+                } label: {
+                    HStack(spacing: 4) {
+                        Text(viewModel.selectedClientName ?? "Не выбран")
+                            .font(.system(.body))
+                            .foregroundStyle(viewModel.selectedClientName != nil ? FC.ink : FC.muted)
+                        Image(systemName: "chevron.up.chevron.down")
+                            .font(.system(.caption2))
+                            .foregroundStyle(FC.muted)
+                    }
                 }
-                hairline
             }
+            hairline
 
             fieldRow(label: "ЗАМЕТКИ") {
                 TextField("Опционально", text: $viewModel.notes)

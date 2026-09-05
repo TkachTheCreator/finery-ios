@@ -5,18 +5,32 @@ import Observation
 @MainActor
 final class DashboardViewModel {
 
-    // MARK: Published state (read by DashboardView)
+    // MARK: Reactive state — read directly from SharedDataService so they update
+    // immediately after appendTransaction/refreshPnL without waiting for a full load().
 
-    var pnl:        PnL?
-    var taxStatus:  TaxStatus?
-    var topSources: [IncomeSource] = []
+    var pnl:        PnL?      { SharedDataService.shared.pnl }
+    var taxStatus:  TaxStatus? {
+        SharedDataService.shared.userType == .other ? nil : SharedDataService.shared.taxStatus
+    }
+    var userName:   String    { SharedDataService.shared.userName }
+    var userType:   UserType  { SharedDataService.shared.userType }
+    var isOffline:  Bool      { SharedDataService.shared.isOffline }
+
+    var topSources: [IncomeSource] {
+        let cal   = Calendar.current
+        let start = cal.date(from: cal.dateComponents([.year, .month], from: Date()))!
+        let end   = cal.date(byAdding: .second, value: -1,
+                             to: cal.date(byAdding: .month, value: 1, to: start)!)!
+        let txns  = SharedDataService.shared.transactions.filter { $0.date >= start && $0.date <= end }
+        return topIncomeSources(from: txns)
+    }
+
+    // MARK: Stored state (async-computed or view-only)
+
     var insights:   [Insight] = []
-    var userName:   String = ""
-    var userType:   UserType = .freelancer
     var isLoading   = false
     var errorMessage: String?
     var needsAuth   = false
-    var isOffline   = false
 
     // MARK: Dependencies
 
@@ -45,21 +59,6 @@ final class DashboardViewModel {
         // One call populates everything for all screens
         await SharedDataService.shared.loadAll(referenceDate: referenceDate)
 
-        let svc = SharedDataService.shared
-        isOffline  = svc.isOffline
-        pnl        = svc.pnl
-        userType   = svc.userType
-        userName   = svc.userName
-        taxStatus  = svc.userType == .other ? nil : svc.taxStatus
-
-        // Top income sources for current month (local computation)
-        let cal = Calendar.current
-        let start = cal.date(from: cal.dateComponents([.year, .month], from: referenceDate))!
-        let end   = cal.date(byAdding: .second, value: -1,
-                             to: cal.date(byAdding: .month, value: 1, to: start)!)!
-        let monthTxns = svc.transactions.filter { $0.date >= start && $0.date <= end }
-        topSources = topIncomeSources(from: monthTxns)
-
         // Insights (use-case reads from TransactionStore, which is synced by SharedDataService)
         if let i = try? await getInsights.execute(referenceDate: referenceDate) {
             insights = i
@@ -70,6 +69,10 @@ final class DashboardViewModel {
 
     func makeAddTransactionViewModel() -> AddTransactionViewModel {
         AddTransactionViewModel(transactionRepository: transactionRepository)
+    }
+
+    func makeEditTransactionViewModel(_ tx: Transaction) -> AddTransactionViewModel {
+        AddTransactionViewModel(transactionRepository: transactionRepository, existing: tx)
     }
 
     // MARK: Helpers

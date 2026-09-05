@@ -592,6 +592,7 @@ actor APIClient {
         incomeCategory: IncomeCategory?,
         expenseCategory: ExpenseCategory?,
         clientType: ClientType?,
+        clientId: UUID?,
         notes: String?
     ) async throws -> Transaction {
         struct Body: Encodable {
@@ -602,6 +603,7 @@ actor APIClient {
             let incomeCategory: String?
             let expenseCategory: String?
             let clientType: String?
+            let clientId: UUID?
             let notes: String?
         }
         let body = Body(
@@ -612,6 +614,7 @@ actor APIClient {
             incomeCategory: incomeCategory?.apiValue,
             expenseCategory: expenseCategory?.apiValue,
             clientType: clientType?.apiValue,
+            clientId: clientId,
             notes: notes
         )
         let dto: TransactionDTO = try await patch("transactions/\(id.uuidString)", body: body, authorized: true)
