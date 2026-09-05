@@ -35,6 +35,7 @@ class TransactionUpdate(BaseModel):
     income_category: str | None = None
     expense_category: str | None = None
     client_type: str | None = None
+    client_id: uuid.UUID | None = None
     notes: str | None = None
 
 

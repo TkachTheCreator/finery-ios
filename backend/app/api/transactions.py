@@ -96,7 +96,15 @@ async def update(
     db: AsyncSession = Depends(get_db),
 ):
     tx = await _get_or_404(tx_id, user.id, db)
-    for field, value in body.model_dump(exclude_none=True).items():
+
+    if "client_id" in body.model_fields_set and body.client_id is not None:
+        client_result = await db.execute(
+            select(Client).where(and_(Client.id == body.client_id, Client.user_id == user.id))
+        )
+        if not client_result.scalar_one_or_none():
+            raise HTTPException(status_code=404, detail="Client not found")
+
+    for field, value in body.model_dump(exclude_unset=True).items():
         setattr(tx, field, value)
     await db.flush()
     await db.refresh(tx)
