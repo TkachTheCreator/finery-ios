@@ -17,6 +17,9 @@ struct AddTransactionView: View {
     @State private var showReceiptPicker = false
     @State private var isOCRLoading = false
     @State private var showRecurringPicker = false
+    @State private var showCreateClient = false
+    @State private var newClientName = ""
+    @State private var isCreatingClient = false
 
     private enum OverlayState { case none, loading, success }
 
@@ -107,6 +110,9 @@ struct AddTransactionView: View {
                 direction: viewModel.direction,
                 onSelect: { viewModel.selectCategory($0) }
             )
+        }
+        .sheet(isPresented: $showCreateClient) {
+            createClientSheet
         }
         .overlay {
             switch showOverlay {
@@ -410,10 +416,20 @@ struct AddTransactionView: View {
                         viewModel.selectedClientId   = nil
                         viewModel.selectedClientName = nil
                     }
-                    ForEach(SharedDataService.shared.cachedClients) { client in
-                        Button(client.name) {
-                            viewModel.selectedClientId   = client.id
-                            viewModel.selectedClientName = client.name
+                    Divider()
+                    Button {
+                        newClientName = ""
+                        showCreateClient = true
+                    } label: {
+                        Label("Создать клиента", systemImage: "person.badge.plus")
+                    }
+                    if !SharedDataService.shared.cachedClients.isEmpty {
+                        Divider()
+                        ForEach(SharedDataService.shared.cachedClients) { client in
+                            Button(client.name) {
+                                viewModel.selectedClientId   = client.id
+                                viewModel.selectedClientName = client.name
+                            }
                         }
                     }
                 } label: {
@@ -505,6 +521,78 @@ struct AddTransactionView: View {
 
     private var hairline: some View {
         Rectangle().fill(FC.border).frame(height: 0.5)
+    }
+
+    // MARK: - Create Client Sheet
+
+    private var createClientSheet: some View {
+        NavigationView {
+            ZStack {
+                FC.background.ignoresSafeArea()
+                VStack(alignment: .leading, spacing: 20) {
+                    Text("Имя клиента")
+                        .fLabel()
+                        .padding(.horizontal, 20)
+                        .padding(.top, 24)
+
+                    TextField("Например: ООО «Пример»", text: $newClientName)
+                        .font(.system(.body, design: .rounded))
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 14)
+                        .background(FC.surface)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .overlay(RoundedRectangle(cornerRadius: 12).stroke(FC.border, lineWidth: 0.5))
+                        .padding(.horizontal, 20)
+
+                    Spacer()
+                }
+            }
+            .navigationTitle("Новый клиент")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Отмена") {
+                        showCreateClient = false
+                    }
+                    .foregroundStyle(FC.muted)
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    if isCreatingClient {
+                        ProgressView()
+                    } else {
+                        Button("Создать") {
+                            Task { await createAndSelectClient() }
+                        }
+                        .fontWeight(.semibold)
+                        .foregroundStyle(FC.cobalt)
+                        .disabled(newClientName.trimmingCharacters(in: .whitespaces).isEmpty)
+                    }
+                }
+            }
+        }
+    }
+
+    private func createAndSelectClient() async {
+        let name = newClientName.trimmingCharacters(in: .whitespaces)
+        guard !name.isEmpty else { return }
+        isCreatingClient = true
+        defer { isCreatingClient = false }
+        do {
+            guard APIClient.shared.isAuthenticated else { return }
+            let client = try await APIClient.shared.createClient(
+                name: name, email: nil, phone: nil, status: "active", notes: nil
+            )
+            var updated = SharedDataService.shared.cachedClients
+            updated.append(client)
+            SharedDataService.shared.persistClients(updated)
+            viewModel.selectedClientId   = client.id
+            viewModel.selectedClientName = client.name
+            newClientName = ""
+            showCreateClient = false
+        } catch {
+            // сеть недоступна — просто закрываем, клиент не создан
+            showCreateClient = false
+        }
     }
 }
 

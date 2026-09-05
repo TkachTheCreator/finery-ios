@@ -367,9 +367,13 @@ struct CashFlowDetailView: View {
                     .padding(.vertical, 20)
             } else {
                 ForEach(transactions) { tx in
-                    TransactionRow(transaction: tx)
-                        .contentShape(Rectangle())
-                        .onTapGesture { editingTransaction = tx }
+                    Button {
+                        HapticManager.light()
+                        editingTransaction = tx
+                    } label: {
+                        TransactionRow(transaction: tx)
+                    }
+                    .buttonStyle(ScaleButtonStyle())
                 }
             }
         }
