@@ -161,19 +161,23 @@ struct TransactionsView: View {
 
                 Section {
                     ForEach(group.items) { tx in
-                        TransactionRow(transaction: tx)
-                            .listRowBackground(Color.clear)
-                            .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
-                            .listRowSeparator(.hidden)
-                            .contentShape(Rectangle())
-                            .onTapGesture { editingTransaction = tx }
-                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                                Button(role: .destructive) {
-                                    Task { await viewModel.delete(id: tx.id) }
-                                } label: {
-                                    Label("Удалить", systemImage: "trash")
-                                }
+                        Button {
+                            HapticManager.light()
+                            editingTransaction = tx
+                        } label: {
+                            TransactionRow(transaction: tx)
+                        }
+                        .buttonStyle(ScaleButtonStyle())
+                        .listRowBackground(Color.clear)
+                        .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                        .listRowSeparator(.hidden)
+                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                            Button(role: .destructive) {
+                                Task { await viewModel.delete(id: tx.id) }
+                            } label: {
+                                Label("Удалить", systemImage: "trash")
                             }
+                        }
                     }
                 } header: {
                     Text(dayLabel(group.date))
@@ -290,7 +294,6 @@ struct TransactionsView: View {
 
 struct TransactionRow: View {
     let transaction: Transaction
-    @State private var pressed = false
 
     var body: some View {
         HStack(spacing: 12) {
@@ -339,10 +342,6 @@ struct TransactionRow: View {
         .padding(.vertical, 10)
         .padding(.horizontal, 14)
         .glassCardSmall()
-        .scaleEffect(pressed ? 0.97 : 1)
-        .onLongPressGesture(minimumDuration: 0, pressing: { isPressing in
-            withAnimation(.spring(response: 0.25, dampingFraction: 0.7)) { pressed = isPressing }
-        }, perform: {})
     }
 
     private var iconName: String {
