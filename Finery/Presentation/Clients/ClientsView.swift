@@ -360,7 +360,7 @@ struct ClientDetailView: View {
                         VStack(spacing: 0) {
                             HStack(spacing: 0) {
                                 VStack(alignment: .leading, spacing: 4) {
-                                    Text("ОПЛАЧЕНО").font(.system(.caption2, design: .rounded, weight: .semibold)).foregroundStyle(FC.muted)
+                                    Text("Оплачено").fLabel()
                                     if editingAmount {
                                         HStack(spacing: 4) {
                                             TextField("0", text: $amountText)
@@ -381,7 +381,7 @@ struct ClientDetailView: View {
                                 Rectangle().fill(FC.border).frame(width: 1)
 
                                 VStack(alignment: .leading, spacing: 4) {
-                                    Text("СТАТУС").font(.system(.caption2, design: .rounded, weight: .semibold)).foregroundStyle(FC.muted)
+                                    Text("Статус").fLabel()
                                     Text(client.status.displayName)
                                         .font(.system(.subheadline, design: .rounded, weight: .semibold))
                                         .foregroundStyle(FC.ink)
@@ -427,7 +427,7 @@ struct ClientDetailView: View {
                         // Linked transactions
                         VStack(alignment: .leading, spacing: 10) {
                             HStack {
-                                Text("ТРАНЗАКЦИИ").font(.system(.caption2, design: .rounded, weight: .semibold)).foregroundStyle(FC.muted)
+                                Text("Транзакции").fLabel()
                                 Spacer()
                                 if isLoadingTx {
                                     ProgressView().scaleEffect(0.7)

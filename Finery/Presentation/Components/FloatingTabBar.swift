@@ -41,7 +41,7 @@ struct FloatingTabBar: View {
 
     var body: some View {
         HStack(spacing: 0) {
-            ForEach(FineryTab.allCases, id: \.rawValue) { tab in
+            ForEach(FineryTab.allCases.filter { $0 != .settings }, id: \.rawValue) { tab in
                 tabButton(tab)
             }
         }

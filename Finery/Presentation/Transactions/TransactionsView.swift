@@ -131,11 +131,11 @@ struct TransactionsView: View {
 
     private var summaryCard: some View {
         HStack {
-            summaryItem(label: "ДОХОДЫ",  amount: viewModel.summaryIncome,   color: FC.cobalt)
+            summaryItem(label: "Доходы",  amount: viewModel.summaryIncome,   color: FC.cobalt)
             Spacer()
             Rectangle().fill(FC.border).frame(width: 1, height: 32)
             Spacer()
-            summaryItem(label: "РАСХОДЫ", amount: viewModel.summaryExpenses, color: FC.muted)
+            summaryItem(label: "Расходы", amount: viewModel.summaryExpenses, color: FC.muted)
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 14)

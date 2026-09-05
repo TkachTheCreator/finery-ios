@@ -11,6 +11,7 @@ struct AnalyticsView: View {
     @State private var mode: AnalyticsMode = .dynamics
     @State private var csvShareData: Data? = nil
     @State private var showCSVShare = false
+    @State private var appeared = false
 
     init(viewModel: AnalyticsViewModel) {
         _viewModel = State(wrappedValue: viewModel)
@@ -23,8 +24,11 @@ struct AnalyticsView: View {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 0) {
                     pageHeader
+                        .opacity(appeared ? 1 : 0)
+                        .offset(y: appeared ? 0 : -10)
                     hairline
                     modePicker
+                        .opacity(appeared ? 1 : 0)
                     hairline
                     if mode == .seasonal {
                         seasonalSection
@@ -36,26 +40,26 @@ struct AnalyticsView: View {
                     if !viewModel.incomeBreakdown.isEmpty {
                         hairline
                         pieSection(
-                            title: "ДОХОДЫ ПО КАТЕГОРИЯМ",
+                            title: "Доходы по категориям",
                             slices: viewModel.incomeBreakdown.map { ($0.category.displayName, $0.amount, $0.percent) },
                             accentColor: FC.cobalt
                         )
                         hairline
                         breakdownSection(
-                            title: "СТРУКТУРА ДОХОДОВ",
+                            title: "Структура доходов",
                             rows: viewModel.incomeBreakdown.map { ($0.category.displayName, $0.category.iconName, $0.amount, $0.percent) }
                         )
                         hairline
                     }
                     if !viewModel.expenseBreakdown.isEmpty {
                         pieSection(
-                            title: "РАСХОДЫ ПО КАТЕГОРИЯМ",
+                            title: "Расходы по категориям",
                             slices: viewModel.expenseBreakdown.map { ($0.category.displayName, $0.amount, $0.percent) },
                             accentColor: FC.danger
                         )
                         hairline
                         breakdownSection(
-                            title: "СТРУКТУРА РАСХОДОВ",
+                            title: "Структура расходов",
                             rows: viewModel.expenseBreakdown.map { ($0.category.displayName, $0.category.iconName, $0.amount, $0.percent) },
                             accentColor: FC.muted
                         )
@@ -77,7 +81,10 @@ struct AnalyticsView: View {
                 }
             }
         }
-        .task { await viewModel.load() }
+        .task {
+            await viewModel.load()
+            withAnimation(.spring(response: 0.5, dampingFraction: 0.88)) { appeared = true }
+        }
         .alert("Ошибка загрузки", isPresented: Binding(
             get: { viewModel.errorMessage != nil },
             set: { if !$0 { viewModel.errorMessage = nil } }
@@ -145,13 +152,13 @@ struct AnalyticsView: View {
     private var comparisonSection: some View {
         HStack(spacing: 0) {
             comparisonCard(
-                label: "ЭТОТ МЕСЯЦ",
+                label: "Этот месяц",
                 amount: viewModel.currentMonthIncome,
                 color: FC.cobalt
             )
             Rectangle().fill(FC.border).frame(width: 0.5)
             comparisonCard(
-                label: "ПРОШЛЫЙ МЕСЯЦ",
+                label: "Прошлый месяц",
                 amount: viewModel.previousMonthIncome,
                 color: FC.muted
             )
@@ -176,7 +183,7 @@ struct AnalyticsView: View {
 
     private var changeCard: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text("ИЗМЕНЕНИЕ").fLabel()
+            Text("Изменение").fLabel()
             HStack(spacing: 4) {
                 Image(systemName: viewModel.incomeChange >= 0 ? "arrow.up.right" : "arrow.down.right")
                     .fontWeight(.semibold)
@@ -196,7 +203,7 @@ struct AnalyticsView: View {
 
     private var barChartSection: some View {
         VStack(alignment: .leading, spacing: 14) {
-            Text("ДИНАМИКА ЗА 6 МЕСЯЦЕВ").fLabel()
+            Text("Динамика за 6 месяцев").fLabel()
 
             if viewModel.monthlyData.isEmpty {
                 Rectangle()
@@ -387,7 +394,7 @@ struct AnalyticsView: View {
             VStack(alignment: .leading, spacing: 0) {
                 // Insight card
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("СЕЗОННЫЙ АНАЛИЗ").fLabel()
+                    Text("Сезонный анализ").fLabel()
                     Text(data.currentMonthInsight)
                         .font(.system(.subheadline, design: .default, weight: .medium))
                         .foregroundStyle(FC.ink)
@@ -417,7 +424,7 @@ struct AnalyticsView: View {
 
                 // Bar chart
                 VStack(alignment: .leading, spacing: 12) {
-                    Text("ДОХОД ПО МЕСЯЦАМ").fLabel()
+                    Text("Доход по месяцам").fLabel()
                     Chart {
                         ForEach(data.monthlyAverages) { avg in
                             BarMark(
@@ -516,7 +523,7 @@ private struct ShareSheet: UIViewControllerRepresentable {
 extension AnalyticsView {
     var topClientsSection: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text("ТОП КЛИЕНТОВ").fLabel()
+            Text("Топ клиентов").fLabel()
                 .padding(.horizontal, 20)
                 .padding(.top, 16)
                 .padding(.bottom, 10)
@@ -557,7 +564,7 @@ extension AnalyticsView {
     func forecastSection(_ forecast: Decimal) -> some View {
         HStack(spacing: 16) {
             VStack(alignment: .leading, spacing: 4) {
-                Text("ПРОГНОЗ НА СЛ. МЕСЯЦ").fLabel()
+                Text("Прогноз на сл. месяц").fLabel()
                 Text(forecast.rub())
                     .font(.system(.title3, design: .rounded, weight: .semibold))
                     .foregroundStyle(FC.ink)

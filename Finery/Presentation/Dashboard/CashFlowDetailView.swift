@@ -154,9 +154,9 @@ struct CashFlowDetailView: View {
 
     private var pageSelector: some View {
         HStack(spacing: 0) {
-            selectorTab(label: "ДОХОДЫ",  index: 0, color: FC.cobalt, amount: displayedIncome)
+            selectorTab(label: "Доходы",  index: 0, color: FC.cobalt, amount: displayedIncome)
             Rectangle().fill(FC.border).frame(width: 0.5)
-            selectorTab(label: "РАСХОДЫ", index: 1, color: FC.muted,  amount: displayedExpenses)
+            selectorTab(label: "Расходы", index: 1, color: FC.muted,  amount: displayedExpenses)
         }
         .frame(height: 62)
     }
@@ -168,8 +168,7 @@ struct CashFlowDetailView: View {
         } label: {
             VStack(alignment: .leading, spacing: 3) {
                 Text(label)
-                    .font(.system(.caption2, design: .rounded, weight: .semibold))
-                    .tracking(1.4)
+                    .font(.system(.caption, design: .rounded, weight: .medium))
                     .foregroundStyle(selected ? color : FC.muted)
                 Text(amount.rub())
                     .font(.system(.subheadline, design: .rounded, weight: .bold))
@@ -197,7 +196,7 @@ struct CashFlowDetailView: View {
         let slices = categorySlices(for: direction)
         let txns = monthTransactions.filter { $0.direction == direction }.sorted { $0.date > $1.date }
         let emptyLabel = direction == .income ? "Нет доходов" : "Нет расходов"
-        let sectionTitle = direction == .income ? "ВСЕ ДОХОДЫ" : "ВСЕ РАСХОДЫ"
+        let sectionTitle = direction == .income ? "Все доходы" : "Все расходы"
 
         ScrollView(showsIndicators: false) {
             VStack(spacing: 16) {
@@ -230,8 +229,8 @@ struct CashFlowDetailView: View {
         direction: TransactionDirection
     ) -> some View {
         let periodLabel = direction == .income
-            ? "ДОХОД · \(monthLabel.uppercased())"
-            : "РАСХОДЫ · \(monthLabel.uppercased())"
+            ? "Доход · \(monthLabel)"
+            : "Расходы · \(monthLabel)"
 
         return VStack(alignment: .leading, spacing: 12) {
             // Header row: month nav + amount

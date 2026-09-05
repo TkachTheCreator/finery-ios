@@ -21,6 +21,7 @@ struct RootView: View {
     @State private var showClipboardAdd = false
     @State private var selectedTab: FineryTab = .dashboard
     @State private var goingRight = true
+    @State private var showSettings = false
 
     private enum Phase: Equatable {
         case splash, welcome, register, login, main
@@ -206,7 +207,7 @@ struct RootView: View {
         ZStack(alignment: .bottom) {
             // Content
             ZStack {
-                tabSlide { DashboardView(viewModel: c.dashboard) }
+                tabSlide { DashboardView(viewModel: c.dashboard, onShowSettings: { showSettings = true }) }
                     .opacity(selectedTab == .dashboard ? 1 : 0)
 
                 if selectedTab == .transactions {
@@ -223,10 +224,6 @@ struct RootView: View {
                 }
                 if selectedTab == .tax {
                     TaxView(viewModel: c.tax)
-                        .transition(slideTransition)
-                }
-                if selectedTab == .settings {
-                    SettingsView(viewModel: c.settings)
                         .transition(slideTransition)
                 }
             }
@@ -276,12 +273,11 @@ struct RootView: View {
         .onChange(of: c.dashboard.needsAuth) { _, needed in
             if needed { showReAuth = true }
         }
-        .onChange(of: selectedTab) { previous, current in
-            // Reload Dashboard only when returning from Settings (tax mode may have changed)
-            if current == .dashboard && previous == .settings {
-                SharedDataService.shared.invalidate()
-                Task { await c.dashboard.load() }
-            }
+        .sheet(isPresented: $showSettings, onDismiss: {
+            SharedDataService.shared.invalidate()
+            Task { await c.dashboard.load() }
+        }) {
+            SettingsView(viewModel: c.settings)
         }
         .sheet(isPresented: $showChat) {
             AIAdvisorView()
