@@ -62,14 +62,19 @@ extension Decimal {
     }
 }
 
+// MARK: - Typography scale
+//
+// L1  Screen title   .title2  semibold  FC.ink
+// L2  Hero number    46pt     bold      FC.cobalt / FC.ink
+// L3  Body / value   .subheadline / .body  regular / medium  FC.ink
+// L4  Label caption  .caption  medium   FC.muted  ← fLabel()
+
 // MARK: - View modifiers
 
 extension View {
     func fLabel() -> some View {
         self
-            .font(.system(.caption2, design: .rounded, weight: .semibold))
-            .tracking(1.4)
-            .textCase(.uppercase)
+            .font(.system(.caption, design: .rounded, weight: .medium))
             .foregroundStyle(FC.muted)
     }
 

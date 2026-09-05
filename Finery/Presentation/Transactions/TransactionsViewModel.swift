@@ -29,15 +29,10 @@ enum TimePeriod: String, CaseIterable, Sendable {
 @MainActor
 final class TransactionsViewModel {
 
-    var allTransactions: [Transaction] = []
-    var period: TimePeriod = .month {
-        didSet { filterFromService() }
-    }
-    var directionFilter: TransactionDirection? = nil {
-        didSet { filterFromService() }
-    }
+    var period: TimePeriod = .month
+    var directionFilter: TransactionDirection? = nil
     var isLoading = false
-    var isOffline = false
+    var isOffline: Bool { SharedDataService.shared.isOffline }
     var errorMessage: String?
 
     private let transactionRepository: any TransactionRepository
@@ -46,7 +41,15 @@ final class TransactionsViewModel {
         self.transactionRepository = transactionRepository
     }
 
-    // MARK: Computed
+    // MARK: Computed — read directly from SharedDataService so they update immediately
+
+    var allTransactions: [Transaction] {
+        let interval = period.interval
+        var txns = SharedDataService.shared.transactions
+            .filter { $0.date >= interval.start && $0.date <= interval.end }
+        if let dir = directionFilter { txns = txns.filter { $0.direction == dir } }
+        return txns
+    }
 
     var filtered: [Transaction] { allTransactions }
 
@@ -58,12 +61,8 @@ final class TransactionsViewModel {
             .map { (date: $0.key, items: $0.value.sorted { $0.date > $1.date }) }
     }
 
-    var totalIncome: Decimal {
-        allTransactions.filter { $0.direction == .income  }.reduce(0) { $0 + $1.amount }
-    }
-    var totalExpenses: Decimal {
-        allTransactions.filter { $0.direction == .expense }.reduce(0) { $0 + $1.amount }
-    }
+    var totalIncome:   Decimal { allTransactions.filter { $0.direction == .income  }.reduce(0) { $0 + $1.amount } }
+    var totalExpenses: Decimal { allTransactions.filter { $0.direction == .expense }.reduce(0) { $0 + $1.amount } }
 
     /// For the month period with no direction filter, prefer server-side PnL totals
     /// so the summary always matches the dashboard, even if transaction list is paginated.
@@ -82,17 +81,11 @@ final class TransactionsViewModel {
 
     func load() async {
         isLoading = true
-        isOffline = false
         defer { isLoading = false }
-
         await SharedDataService.shared.loadAll()
-
-        isOffline = SharedDataService.shared.isOffline
-        filterFromService()
     }
 
     func delete(id: UUID) async {
-        allTransactions.removeAll { $0.id == id }
         await SharedDataService.shared.deleteTransaction(id: id)
     }
 
@@ -104,17 +97,6 @@ final class TransactionsViewModel {
         AddTransactionViewModel(transactionRepository: transactionRepository, existing: tx)
     }
 
-    // MARK: Private
-
-    private func filterFromService() {
-        let interval = period.interval
-        var txns = SharedDataService.shared.transactions
-            .filter { $0.date >= interval.start && $0.date <= interval.end }
-        if let dir = directionFilter {
-            txns = txns.filter { $0.direction == dir }
-        }
-        allTransactions = txns
-    }
 }
 
 extension TransactionsViewModel {

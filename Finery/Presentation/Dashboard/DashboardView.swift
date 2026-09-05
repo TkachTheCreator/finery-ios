@@ -4,12 +4,14 @@ import Pow
 
 struct DashboardView: View {
     @State var viewModel: DashboardViewModel
+    var onShowSettings: (() -> Void)?
     @State private var appeared    = false
     @State private var barProgress: Double = 0
     @State private var showCashFlow = false
 
-    init(viewModel: DashboardViewModel) {
+    init(viewModel: DashboardViewModel, onShowSettings: (() -> Void)? = nil) {
         _viewModel = State(wrappedValue: viewModel)
+        self.onShowSettings = onShowSettings
     }
 
     var body: some View {
@@ -38,13 +40,15 @@ struct DashboardView: View {
         .task {
             appeared = false
             barProgress = 0
-            await viewModel.load()
-            withAnimation(.spring(response: 0.6, dampingFraction: 0.78)) {
+            // Карточки появляются сразу (stagger) — с нулями
+            withAnimation(.spring(response: 0.55, dampingFraction: 0.82)) {
                 appeared = true
             }
+            // Данные загружаются — числа считаются через contentTransition
+            await viewModel.load()
             if let status = viewModel.taxStatus {
                 let target = min(status.limitUsedPercent / 100.0, 1.0)
-                withAnimation(.spring(response: 1.2, dampingFraction: 0.8).delay(0.4)) {
+                withAnimation(.spring(response: 1.2, dampingFraction: 0.8).delay(0.2)) {
                     barProgress = target
                 }
             }
@@ -118,6 +122,14 @@ struct DashboardView: View {
                     .font(.system(.subheadline, design: .rounded, weight: .regular))
                     .foregroundStyle(FC.muted)
             }
+            Spacer()
+            Button { onShowSettings?() } label: {
+                Image(systemName: "gearshape")
+                    .font(.system(size: 18, weight: .light))
+                    .foregroundStyle(FC.muted)
+                    .frame(width: 36, height: 36)
+                    .contentShape(Rectangle())
+            }
         }
         .padding(.top, 16)
         .padding(.bottom, 4)
@@ -131,28 +143,24 @@ struct DashboardView: View {
     @ViewBuilder
     private var cardStack: some View {
         incomeHeroCard
-            .fineryTap(action: { showCashFlow = true })
             .offset(y: appeared ? 0 : 40)
             .opacity(appeared ? 1 : 0)
             .animation(.spring(response: 0.55, dampingFraction: 0.8).delay(0.05), value: appeared)
 
         if viewModel.userType != .other {
             taxCard
-                .fineryTap()
                 .offset(y: appeared ? 0 : 40)
                 .opacity(appeared ? 1 : 0)
                 .animation(.spring(response: 0.55, dampingFraction: 0.8).delay(0.15), value: appeared)
         }
 
         topSourcesCard
-            .fineryTap()
             .offset(y: appeared ? 0 : 40)
             .opacity(appeared ? 1 : 0)
             .animation(.spring(response: 0.55, dampingFraction: 0.8).delay(0.25), value: appeared)
 
         if !viewModel.insights.isEmpty {
             insightsCard
-                .fineryTap()
                 .offset(y: appeared ? 0 : 40)
                 .opacity(appeared ? 1 : 0)
                 .animation(.spring(response: 0.55, dampingFraction: 0.8).delay(0.35), value: appeared)
@@ -162,63 +170,49 @@ struct DashboardView: View {
     // MARK: - Income Hero Card
 
     private var incomeHeroCard: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("ДОХОД ЗА \(currentMonthShortUpper)")
-                .font(.system(.caption2, design: .rounded, weight: .semibold))
-                .tracking(1.4)
-                .textCase(.uppercase)
-                .foregroundStyle(.white.opacity(0.65))
-
-            Group {
-                if viewModel.isLoading {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(.white.opacity(0.2))
-                        .frame(width: 200, height: 52)
-                } else {
-                    Text(viewModel.pnl?.totalIncome.rub() ?? "0\u{202F}₽")
-                        .font(.system(size: 46, weight: .bold, design: .rounded))
-                        .monospacedDigit()
-                        .foregroundStyle(.white)
-                        .contentTransition(.numericText(countsDown: false))
-                        .animation(.fineryNumber, value: viewModel.pnl?.totalIncome)
-                }
+        VStack(alignment: .leading, spacing: 14) {
+            HStack {
+                Text("Доход за \(currentMonthShort)").fLabel()
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.system(.caption2, weight: .semibold))
+                    .foregroundStyle(FC.border)
             }
+
+            Text(viewModel.pnl?.totalIncome.rub() ?? "0\u{202F}₽")
+                .font(.system(size: 46, weight: .bold, design: .rounded))
+                .monospacedDigit()
+                .foregroundStyle(FC.cobalt.opacity(viewModel.isLoading ? 0.22 : 1))
+                .contentTransition(.numericText(countsDown: false))
+                .animation(.fineryNumber, value: viewModel.pnl?.totalIncome)
+                .animation(.spring(response: 0.4, dampingFraction: 0.8), value: viewModel.isLoading)
 
             HStack(alignment: .top, spacing: 0) {
-                miniMetric(label: "РАСХОДЫ", value: viewModel.pnl?.totalExpenses, align: .leading,  valueColor: .white.opacity(0.7))
+                miniMetric(label: "Расходы", value: viewModel.pnl?.totalExpenses, align: .leading,  valueColor: FC.ink)
                 Spacer()
                 if viewModel.userType != .other {
-                    miniMetric(label: "НАЛОГ", value: viewModel.pnl?.taxAmount, align: .center, valueColor: .white.opacity(0.7))
+                    miniMetric(label: "Налог", value: viewModel.pnl?.taxAmount, align: .center, valueColor: FC.muted)
                     Spacer()
                 }
-                miniMetric(label: "ЧИСТАЯ",  value: viewModel.pnl?.netProfit,     align: .trailing, valueColor: .white)
+                miniMetric(label: "Чистая",  value: viewModel.pnl?.netProfit, align: .trailing, valueColor: FC.cobalt)
             }
         }
-        .padding(20)
-        .background(FC.cobalt)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .padding(.vertical, 8)
+        .contentShape(Rectangle())
+        .onTapGesture { showCashFlow = true }
     }
 
     @ViewBuilder
-    private func miniMetric(label: String, value: Decimal?, align: HorizontalAlignment, valueColor: Color = .white) -> some View {
+    private func miniMetric(label: String, value: Decimal?, align: HorizontalAlignment, valueColor: Color = FC.ink) -> some View {
         VStack(alignment: align, spacing: 4) {
-            Text(label)
-                .font(.system(.caption2, design: .rounded, weight: .semibold))
-                .tracking(1.4)
-                .textCase(.uppercase)
-                .foregroundStyle(.white.opacity(0.55))
-            if viewModel.isLoading {
-                RoundedRectangle(cornerRadius: 4)
-                    .fill(.white.opacity(0.2))
-                    .frame(width: 60, height: 12)
-            } else {
-                Text(value?.rub() ?? "—")
-                    .font(.system(.footnote, design: .rounded, weight: .semibold))
-                    .monospacedDigit()
-                    .foregroundStyle(valueColor)
-                    .contentTransition(.numericText())
-                    .animation(.fineryNumber, value: value)
-            }
+            Text(label).fLabel()
+            Text(value?.rub() ?? "—")
+                .font(.system(.footnote, design: .rounded, weight: .semibold))
+                .monospacedDigit()
+                .foregroundStyle((viewModel.isLoading ? FC.muted : valueColor).opacity(viewModel.isLoading ? 0.35 : 1))
+                .contentTransition(.numericText())
+                .animation(.fineryNumber, value: value)
+                .animation(.spring(response: 0.4, dampingFraction: 0.8), value: viewModel.isLoading)
         }
     }
 
@@ -237,7 +231,7 @@ struct DashboardView: View {
     private var npdLimitCard: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Text("ЛИМИТ НПД").fLabel()
+                Text("Лимит НПД").fLabel()
                 Spacer()
                 Text(limitPercentText)
                     .font(.system(.caption, design: .rounded, weight: .semibold))
@@ -277,7 +271,7 @@ struct DashboardView: View {
     private func usnQuarterlyCard(_ status: TaxStatus) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Text("НАЛОГ ЗА КВАРТАЛ").fLabel()
+                Text("Налог за квартал").fLabel()
                 Spacer()
                 Text(status.effectiveRate)
                     .font(.system(.caption, design: .rounded, weight: .semibold))
@@ -286,7 +280,7 @@ struct DashboardView: View {
 
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("К УПЛАТЕ").fLabel()
+                    Text("К уплате").fLabel()
                     Text(status.taxDue.rub())
                         .font(.system(.title3, design: .rounded, weight: .bold))
                         .monospacedDigit()
@@ -294,7 +288,7 @@ struct DashboardView: View {
                 }
                 Spacer()
                 VStack(alignment: .trailing, spacing: 2) {
-                    Text("ДЕДЛАЙН").fLabel()
+                    Text("Дедлайн").fLabel()
                     Text(formattedDeadline(status.nextDeadline))
                         .font(.system(.subheadline, design: .rounded, weight: .semibold))
                         .foregroundStyle(status.daysUntilDeadline <= 7 ? FC.danger : FC.ink)
@@ -345,7 +339,7 @@ struct DashboardView: View {
 
     private var topSourcesCard: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("ТОП ИСТОЧНИКОВ").fLabel()
+            Text("Топ источников").fLabel()
 
             if viewModel.isLoading {
                 ForEach(0..<3, id: \.self) { _ in skeletonRow }
@@ -369,10 +363,7 @@ struct DashboardView: View {
                 }
             }
         }
-        .padding(20)
-        .background(FC.surface)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
-        .overlay(RoundedRectangle(cornerRadius: 16).stroke(FC.border, lineWidth: 0.5))
+        .padding(.vertical, 4)
     }
 
     @ViewBuilder
@@ -404,17 +395,14 @@ struct DashboardView: View {
 
     private var insightsCard: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("ИНСАЙТЫ").fLabel()
+            Text("Инсайты").fLabel()
             VStack(spacing: 6) {
                 ForEach(viewModel.insights) { insight in
                     InsightRow(insight: insight)
                 }
             }
         }
-        .padding(20)
-        .background(FC.surface)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
-        .overlay(RoundedRectangle(cornerRadius: 16).stroke(FC.border, lineWidth: 0.5))
+        .padding(.vertical, 4)
     }
 
     // MARK: - Skeleton
@@ -449,7 +437,7 @@ struct DashboardView: View {
     }
 
     private var currentMonthFull: String { formatted(Date(), "LLLL yyyy") }
-    private var currentMonthShortUpper: String { formatted(Date(), "LLLL").uppercased() }
+    private var currentMonthShort: String { formatted(Date(), "LLLL") }
     private var nextMonthGenitive: String {
         formatted(Calendar.current.date(byAdding: .month, value: 1, to: Date())!, "LLLL")
     }

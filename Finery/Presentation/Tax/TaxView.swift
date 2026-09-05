@@ -90,7 +90,7 @@ struct TaxView: View {
     private func taxModeCard(_ status: TaxStatus) -> some View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
-                Text("РЕЖИМ").fLabel()
+                Text("Режим").fLabel()
                 Text(status.taxMode.displayName)
                     .font(.system(.title3, design: .rounded, weight: .semibold))
                     .foregroundStyle(FC.ink)
@@ -99,17 +99,12 @@ struct TaxView: View {
                     .foregroundStyle(FC.muted)
             }
             Spacer()
-            ZStack {
-                Circle()
-                    .fill(FC.cobalt.opacity(0.14))
-                    .frame(width: 52, height: 52)
-                Text("%")
-                    .font(.system(size: 28, weight: .light))
-                    .foregroundStyle(FC.cobalt)
-            }
+            Text("%")
+                .font(.system(size: 44, weight: .thin))
+                .foregroundStyle(FC.cobalt.opacity(0.25))
         }
-        .padding(20)
-        .glassCard()
+        .padding(.horizontal, 4)
+        .padding(.bottom, 4)
     }
 
     // MARK: - NPD Limit Card (only for НПД)
@@ -117,7 +112,7 @@ struct TaxView: View {
     private func npdLimitCard(_ status: TaxStatus) -> some View {
         VStack(alignment: .leading, spacing: 14) {
             HStack {
-                Text("ЛИМИТ НПД").fLabel()
+                Text("Лимит НПД").fLabel()
                 Spacer()
                 if status.isNearLimit {
                     HStack(spacing: 4) {
@@ -170,7 +165,7 @@ struct TaxView: View {
 
     private func npdForecastCard(_ forecast: NpdForecast) -> some View {
         VStack(alignment: .leading, spacing: 14) {
-            Text("ПРОГНОЗ ЛИМИТА НПД").fLabel()
+            Text("Прогноз лимита НПД").fLabel()
 
             // Progress bar
             GeometryReader { geo in
@@ -186,7 +181,7 @@ struct TaxView: View {
             // Used / Remaining
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("ИСПОЛЬЗОВАНО").fLabel()
+                    Text("Использовано").fLabel()
                     Text(forecast.ytdIncome.rub())
                         .font(.system(.subheadline, design: .rounded, weight: .semibold))
                         .monospacedDigit()
@@ -194,7 +189,7 @@ struct TaxView: View {
                 }
                 Spacer()
                 VStack(alignment: .trailing, spacing: 2) {
-                    Text("ОСТАЛОСЬ").fLabel()
+                    Text("Осталось").fLabel()
                     Text(forecast.remaining.rub())
                         .font(.system(.subheadline, design: .rounded, weight: .semibold))
                         .monospacedDigit()
@@ -247,7 +242,7 @@ struct TaxView: View {
     private func usnTaxCard(_ status: TaxStatus) -> some View {
         VStack(alignment: .leading, spacing: 14) {
             HStack {
-                Text(status.taxMode == .usn15 ? "НАЛОГ С ПРИБЫЛИ" : "НАЛОГ ЗА КВАРТАЛ").fLabel()
+                Text(status.taxMode == .usn15 ? "Налог с прибыли" : "Налог за квартал").fLabel()
                 Spacer()
                 Text(status.effectiveRate)
                     .font(.system(.caption, design: .rounded, weight: .semibold))
@@ -257,23 +252,23 @@ struct TaxView: View {
             if status.taxMode == .usn15 {
                 // Show income – expenses = profit × 15%
                 HStack(spacing: 0) {
-                    statBlock(label: "ДОХОД", value: status.quarterlyIncome.rub(),
+                    statBlock(label: "Доход", value: status.quarterlyIncome.rub(),
                               color: FC.cobalt, align: .leading)
                     Rectangle().fill(FC.border).frame(width: 1, height: 44)
-                    statBlock(label: "РАСХОДЫ", value: status.quarterlyExpenses.rub(),
+                    statBlock(label: "Расходы", value: status.quarterlyExpenses.rub(),
                               color: FC.muted, align: .center)
                     Rectangle().fill(FC.border).frame(width: 1, height: 44)
-                    statBlock(label: "ПРИБЫЛЬ", value: status.quarterlyProfit.rub(),
+                    statBlock(label: "Прибыль", value: status.quarterlyProfit.rub(),
                               color: FC.ink, align: .trailing)
                 }
                 .frame(maxWidth: .infinity)
             } else {
                 // USN 6%: just show quarterly income
                 HStack {
-                    statBlock(label: "ДОХОД ЗА КВАРТАЛ", value: status.quarterlyIncome.rub(),
+                    statBlock(label: "Доход за квартал", value: status.quarterlyIncome.rub(),
                               color: FC.cobalt, align: .leading)
                     Spacer()
-                    statBlock(label: "СТАВКА", value: "6%",
+                    statBlock(label: "Ставка", value: "6%",
                               color: FC.ink, align: .trailing)
                 }
             }
@@ -281,7 +276,7 @@ struct TaxView: View {
             HStack {
                 Spacer()
                 VStack(alignment: .trailing, spacing: 2) {
-                    Text("К УПЛАТЕ").fLabel()
+                    Text("К уплате").fLabel()
                     Text(status.taxDue.rub())
                         .font(.system(.title3, design: .rounded, weight: .bold))
                         .monospacedDigit()
@@ -305,13 +300,13 @@ struct TaxView: View {
 
     private func deadlineCard(_ status: TaxStatus) -> some View {
         HStack(spacing: 0) {
-            deadlineCell(label: "К УПЛАТЕ",       value: status.taxDue.rub(),
+            deadlineCell(label: "К уплате",       value: status.taxDue.rub(),
                          color: status.taxDue > 0 ? FC.cobalt : FC.muted)
             Rectangle().fill(FC.border).frame(width: 1)
-            deadlineCell(label: "ДНЕЙ ОСТАЛОСЬ",  value: "\(status.daysUntilDeadline)",
+            deadlineCell(label: "Дней осталось",  value: "\(status.daysUntilDeadline)",
                          color: status.daysUntilDeadline <= 5 ? FC.danger : FC.ink)
             Rectangle().fill(FC.border).frame(width: 1)
-            deadlineCell(label: "ДЕДЛАЙН",        value: formattedDeadline(status.nextDeadline),
+            deadlineCell(label: "Дедлайн",        value: formattedDeadline(status.nextDeadline),
                          color: FC.ink)
         }
         .glassCard()
@@ -335,7 +330,7 @@ struct TaxView: View {
     private func cashFlowCard(_ forecast: CashFlowForecast) -> some View {
         VStack(alignment: .leading, spacing: 14) {
             HStack {
-                Text("ПРОГНОЗ КАССОВОГО РАЗРЫВА").fLabel()
+                Text("Прогноз кассового разрыва").fLabel()
                 Spacer()
                 if forecast.willGoNegativeIn30Days {
                     HStack(spacing: 4) {
@@ -347,15 +342,15 @@ struct TaxView: View {
             }
 
             HStack(spacing: 0) {
-                forecastCell(label: "ТЕКУЩИЙ БАЛАНС",
+                forecastCell(label: "Текущий баланс",
                              value: forecast.currentBalance.rub(),
                              color: forecast.currentBalance >= 0 ? FC.cobalt : FC.muted)
                 Rectangle().fill(FC.border).frame(width: 1)
-                forecastCell(label: "ХВАТИТ НА",
+                forecastCell(label: "Хватит на",
                              value: forecast.daysUntilNegative.map { "\($0) дн." } ?? "∞",
                              color: forecastDaysColor(forecast))
                 Rectangle().fill(FC.border).frame(width: 1)
-                forecastCell(label: "РАСХОДЫ/МЕС",
+                forecastCell(label: "Расходы/мес",
                              value: forecast.avgMonthlyExpenses.rub(),
                              color: FC.muted)
             }
@@ -399,33 +394,34 @@ struct TaxView: View {
     // MARK: - Year Summary
 
     private var yearSummaryCard: some View {
-        HStack(spacing: 0) {
-            yearCell(label: "ДОХОД ЗА ГОД", amount: viewModel.totalIncomeYear, color: FC.cobalt)
-            Rectangle().fill(FC.border).frame(width: 1)
-            yearCell(label: "НАЛОГ ЗА ГОД",  amount: viewModel.totalTaxYear,   color: FC.muted)
+        HStack(alignment: .top) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Доход за год").fLabel()
+                Text(viewModel.totalIncomeYear.rub())
+                    .font(.system(.subheadline, design: .rounded, weight: .semibold))
+                    .monospacedDigit()
+                    .foregroundStyle(FC.cobalt)
+                    .contentTransition(.numericText())
+            }
+            Spacer()
+            VStack(alignment: .trailing, spacing: 4) {
+                Text("Налог за год").fLabel()
+                Text(viewModel.totalTaxYear.rub())
+                    .font(.system(.subheadline, design: .rounded, weight: .semibold))
+                    .monospacedDigit()
+                    .foregroundStyle(FC.muted)
+                    .contentTransition(.numericText())
+            }
         }
-        .glassCard()
-    }
-
-    private func yearCell(label: String, amount: Decimal, color: Color) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(label).fLabel()
-            Text(amount.rub())
-                .font(.system(.subheadline, design: .rounded, weight: .semibold))
-                .monospacedDigit()
-                .foregroundStyle(color)
-                .contentTransition(.numericText())
-        }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 18)
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 4)
+        .padding(.vertical, 4)
     }
 
     // MARK: - History
 
     private var historyCard: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("ИСТОРИЯ ПО МЕСЯЦАМ").fLabel()
+            Text("История по месяцам").fLabel()
             ForEach(viewModel.monthlyHistory.reversed()) { item in
                 HStack {
                     Text(item.monthLabel)
@@ -450,8 +446,7 @@ struct TaxView: View {
                 }
             }
         }
-        .padding(20)
-        .glassCard()
+        .padding(.horizontal, 4)
     }
 
     // MARK: - No Data Stub

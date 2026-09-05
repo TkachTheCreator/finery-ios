@@ -158,7 +158,7 @@ struct AddTransactionView: View {
 
     private var amountSection: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("СУММА").fLabel()
+            Text("Сумма").fLabel()
 
             HStack(alignment: .firstTextBaseline, spacing: 4) {
                 TextField("0", text: $viewModel.amountText)
@@ -344,7 +344,7 @@ struct AddTransactionView: View {
 
     private var formFields: some View {
         VStack(spacing: 0) {
-            fieldRow(label: "ОПИСАНИЕ") {
+            fieldRow(label: "Описание") {
                 HStack(spacing: 10) {
                     TextField("За что оплата", text: $viewModel.description)
                         .font(.system(.body))
@@ -356,7 +356,7 @@ struct AddTransactionView: View {
             }
             hairline
 
-            fieldRow(label: "ДАТА") {
+            fieldRow(label: "Дата") {
                 DatePicker("", selection: $viewModel.date, displayedComponents: .date)
                     .datePickerStyle(.compact)
                     .labelsHidden()
@@ -365,7 +365,7 @@ struct AddTransactionView: View {
             }
             hairline
 
-            fieldRow(label: "КАТЕГОРИЯ") {
+            fieldRow(label: "Категория") {
                 Button {
                     showCategoryPicker = true
                 } label: {
@@ -383,7 +383,7 @@ struct AddTransactionView: View {
             hairline
 
             if viewModel.direction == .income {
-                fieldRow(label: "ТИП КЛИЕНТА") {
+                fieldRow(label: "Тип клиента") {
                     Menu {
                         ForEach(ClientType.allCases, id: \.self) { type in
                             Button("\(type.displayName) — \(NSDecimalNumber(decimal: type.npdRate * 100).intValue)%") {
@@ -404,7 +404,7 @@ struct AddTransactionView: View {
                 hairline
             }
 
-            fieldRow(label: "КЛИЕНТ") {
+            fieldRow(label: "Клиент") {
                 Menu {
                     Button("Без клиента") {
                         viewModel.selectedClientId   = nil
@@ -429,13 +429,13 @@ struct AddTransactionView: View {
             }
             hairline
 
-            fieldRow(label: "ЗАМЕТКИ") {
+            fieldRow(label: "Заметки") {
                 TextField("Опционально", text: $viewModel.notes)
                     .font(.system(.body))
                     .foregroundStyle(FC.ink)
             }
             hairline
-            fieldRow(label: "ПОВТОРЯТЬ") {
+            fieldRow(label: "Повторять") {
                 Button {
                     guard viewModel.canSave else { return }
                     showRecurringPicker = true
