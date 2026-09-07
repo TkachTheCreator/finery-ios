@@ -847,7 +847,7 @@ struct AnalyticsCategoriesView: View {
                 .padding(.horizontal, 16).padding(.vertical, 8)
                 .background(selected ? FC.cobalt : FC.surface)
                 .clipShape(Capsule())
-                .shadow(color: selected ? FC.cobaltGlow : .clear, radius: 8)
+                .overlay(Capsule().stroke(selected ? Color.clear : FC.border, lineWidth: 1))
         }
         .buttonStyle(.plain)
         .animation(.spring(response: 0.3, dampingFraction: 0.8), value: selected)

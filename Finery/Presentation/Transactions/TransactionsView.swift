@@ -90,17 +90,9 @@ struct TransactionsView: View {
         .foregroundStyle(selected ? .white : FC.muted)
         .padding(.horizontal, 14)
         .padding(.vertical, 7)
-        .background(
-            Capsule()
-                .fill(selected ? FC.cobalt : FC.surface)
-                .shadow(color: selected ? FC.cobaltGlow : .clear, radius: 8)
-        )
-        .overlay(
-            Capsule().stroke(
-                selected ? Color.clear : FC.border,
-                lineWidth: 1
-            )
-        )
+        .background(selected ? FC.cobalt : FC.surface)
+        .clipShape(Capsule())
+        .overlay(Capsule().stroke(selected ? Color.clear : FC.border, lineWidth: 1))
     }
 
     private func directionChip(_ dir: TransactionDirection?, label: String) -> some View {
@@ -113,17 +105,9 @@ struct TransactionsView: View {
         .foregroundStyle(selected ? .white : FC.muted)
         .padding(.horizontal, 14)
         .padding(.vertical, 7)
-        .background(
-            Capsule()
-                .fill(selected ? activeColor : FC.surface)
-                .shadow(color: selected ? activeColor.opacity(0.4) : .clear, radius: 8)
-        )
-        .overlay(
-            Capsule().stroke(
-                selected ? Color.clear : FC.border,
-                lineWidth: 1
-            )
-        )
+        .background(selected ? activeColor : FC.surface)
+        .clipShape(Capsule())
+        .overlay(Capsule().stroke(selected ? Color.clear : FC.border, lineWidth: 1))
     }
 
     // MARK: Summary Strip (без карточки — просто текст на фоне экрана)
@@ -271,7 +255,7 @@ struct TransactionsView: View {
                 .background(
                     Circle()
                         .fill(FC.cobalt)
-                        .shadow(color: FC.cobaltGlow, radius: 14, x: 0, y: 6)
+                        .overlay(Circle().stroke(FC.border.opacity(0.3), lineWidth: 1))
                 )
         }
         .padding(.trailing, 20)

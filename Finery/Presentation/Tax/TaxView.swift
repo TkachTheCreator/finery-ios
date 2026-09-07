@@ -246,7 +246,7 @@ struct TaxView: View {
                 Spacer()
                 Text(status.effectiveRate)
                     .font(.system(.caption, design: .rounded, weight: .semibold))
-                    .foregroundStyle(FC.cobalt)
+                    .foregroundStyle(FC.inkSecondary)
             }
 
             if status.taxMode == .usn15 {
@@ -275,7 +275,7 @@ struct TaxView: View {
                 VStack(alignment: .trailing, spacing: 2) {
                     Text("К уплате").fLabel()
                     Text(status.taxDue.rub())
-                        .font(.system(.title3, design: .rounded, weight: .bold))
+                        .font(.system(.title3, design: .rounded, weight: .semibold))
                         .monospacedDigit()
                         .foregroundStyle(FC.cobalt)
                 }

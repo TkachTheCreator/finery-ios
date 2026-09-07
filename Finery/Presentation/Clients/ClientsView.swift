@@ -341,8 +341,8 @@ struct ClientDetailView: View {
                             ZStack {
                                 Circle().fill(FC.cobalt.opacity(0.12)).frame(width: 64, height: 64)
                                 Text(String(client.name.prefix(1)).uppercased())
-                                    .font(.system(.title, design: .rounded, weight: .bold))
-                                    .foregroundStyle(FC.cobalt)
+                                    .font(.system(.title, design: .rounded, weight: .semibold))
+                                    .foregroundStyle(FC.inkSecondary)
                             }
                             Text(client.name)
                                 .font(.system(.title3, design: .rounded, weight: .semibold))
