@@ -7,6 +7,7 @@ final class AddTransactionViewModel {
 
     // Form state
     var amountText   = ""
+    var currency     = Currency.rub
     var direction    = TransactionDirection.income
     var description  = ""
     var date         = Date()
@@ -171,12 +172,15 @@ final class AddTransactionViewModel {
 
     func save() async {
         print("[DEBUG] AddTransactionViewModel.save() — START")
-        guard let amount, canSave else { return }
+        guard let rawAmount = amount, canSave else { return }
         isSaving = true
         defer {
             isSaving = false
             print("[DEBUG] AddTransactionViewModel.save() — DONE, isSaving=false")
         }
+
+        // Convert to RUB before sending — server always stores in RUB
+        let amount = CurrencyService.shared.toRub(rawAmount, currency: currency)
 
         let trimmedDesc: String = {
             let d = description.trimmingCharacters(in: .whitespaces)

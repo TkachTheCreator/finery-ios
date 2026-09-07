@@ -30,7 +30,6 @@ final class CustomCategoryStore {
         else { seedDefaults(); return }
 
         if !alreadyMigrated {
-            // Keep only user-created entries (not from old minimal seed)
             let oldSeedNames: Set<String> = ["Основной доход", "Подработка", "Еда", "Транспорт", "Прочее"]
             let userAdded = saved.filter { !oldSeedNames.contains($0.name) }
             seedDefaults()
@@ -43,7 +42,6 @@ final class CustomCategoryStore {
 
     private func seedDefaults() {
         categories = [
-            // Доходы (совпадают с displayName перечисления IncomeCategory)
             CustomCategory(name: "Boosty/Подписки",  type: .income,  icon: "star"),
             CustomCategory(name: "Донаты",           type: .income,  icon: "heart"),
             CustomCategory(name: "Реклама",          type: .income,  icon: "megaphone"),
@@ -51,7 +49,6 @@ final class CustomCategoryStore {
             CustomCategory(name: "Платформы",        type: .income,  icon: "play.rectangle"),
             CustomCategory(name: "Курсы/Обучение",   type: .income,  icon: "graduationcap"),
             CustomCategory(name: "Другое",           type: .income,  icon: "ellipsis.circle"),
-            // Расходы (совпадают с displayName перечисления ExpenseCategory)
             CustomCategory(name: "Инструменты",      type: .expense, icon: "wrench.and.screwdriver"),
             CustomCategory(name: "Своя реклама",     type: .expense, icon: "megaphone"),
             CustomCategory(name: "Оборудование",     type: .expense, icon: "camera"),
@@ -80,7 +77,7 @@ final class CustomCategoryStore {
     }
 }
 
-// MARK: - Categories Screen
+// MARK: - Categories Screen (unchanged, reachable from Settings)
 
 struct CategoriesView: View {
     private let store = CustomCategoryStore.shared
@@ -146,7 +143,7 @@ struct CategoriesView: View {
                 FC.background.ignoresSafeArea()
                 VStack(alignment: .leading, spacing: 20) {
                     VStack(alignment: .leading, spacing: 6) {
-                        Text("НАЗВАНИЕ").fLabel()
+                        Text("Название").fLabel()
                         TextField("Название категории", text: $newName)
                             .font(.system(.body, design: .rounded))
                             .padding(12)
@@ -155,7 +152,7 @@ struct CategoriesView: View {
                             .overlay(RoundedRectangle(cornerRadius: 10).stroke(FC.border, lineWidth: 0.5))
                     }
                     VStack(alignment: .leading, spacing: 10) {
-                        Text("ИКОНКА").fLabel()
+                        Text("Иконка").fLabel()
                         LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 5), spacing: 12) {
                             ForEach(icons, id: \.self) { icon in
                                 Button { newIcon = icon } label: {
@@ -201,7 +198,7 @@ struct CategoriesView: View {
     }
 }
 
-// MARK: - Settings
+// MARK: - Settings (top-level: 4 navigation tiles)
 
 struct SettingsView: View {
     @State var viewModel: SettingsViewModel
@@ -215,271 +212,307 @@ struct SettingsView: View {
             ZStack {
                 FC.background.ignoresSafeArea()
                 ScrollView(showsIndicators: false) {
-                    VStack(alignment: .leading, spacing: 0) {
-                        pageHeader
-                        hairline
-                        profileSection
-                        sectionGap
-                        taxSection
-                        sectionGap
-                        notificationsSection
-                        sectionGap
-                        securitySection
-                        sectionGap
-                        categoriesSection
-                        sectionGap
-                        infoSection
-                        Color.clear.frame(height: 40)
+                    VStack(alignment: .leading, spacing: 14) {
+                        // Title
+                        HStack {
+                            Text("Настройки")
+                                .font(.system(.title2, design: .rounded, weight: .semibold))
+                                .foregroundStyle(FC.ink)
+                            Spacer()
+                            if viewModel.isSaving {
+                                ProgressView().tint(FC.cobalt).scaleEffect(0.8)
+                            }
+                        }
+                        .padding(.top, 20)
+
+                        // Top-level tiles — tapping each opens a sub-screen
+                        settingsTile(icon: "person.circle", title: "Профиль",
+                                     subtitle: viewModel.user.name.isEmpty ? "Имя, тип учёта" : viewModel.user.name,
+                                     destination: AnyView(ProfileSettingsView(viewModel: viewModel)))
+
+                        settingsTile(icon: "percent", title: "Налог",
+                                     subtitle: viewModel.user.userType == .other ? "Личный трекер" : viewModel.user.taxMode.displayName,
+                                     destination: AnyView(TaxSettingsView(viewModel: viewModel)))
+
+                        settingsTile(icon: "lock.circle", title: "Безопасность",
+                                     subtitle: "Биометрия, уведомления",
+                                     destination: AnyView(SecuritySettingsView(viewModel: viewModel)))
+
+                        settingsTile(icon: "tag.circle", title: "Категории",
+                                     subtitle: "Доходы и расходы",
+                                     destination: AnyView(CategoriesView()))
+
+                        settingsTile(icon: "info.circle", title: "О приложении",
+                                     subtitle: "Версия, выход из аккаунта",
+                                     destination: AnyView(AppInfoSettingsView(viewModel: viewModel)))
+
+                        Color.clear.frame(height: 20)
                     }
+                    .padding(.horizontal, 20)
                 }
-                .scrollDismissesKeyboard(.interactively)
             }
             .task { await viewModel.load() }
-            .overlay(savedToast, alignment: .bottom)
-            .alert("Ошибка сохранения", isPresented: Binding(
-                get: { viewModel.errorMessage != nil },
-                set: { if !$0 { viewModel.errorMessage = nil } }
-            )) {
-                Button("OK", role: .cancel) { viewModel.errorMessage = nil }
-            } message: {
-                Text(viewModel.errorMessage ?? "")
-            }
         }
     }
 
-    // MARK: Header
+    private func settingsTile(icon: String, title: String, subtitle: String, destination: AnyView) -> some View {
+        NavigationLink(destination: destination) {
+            HStack(spacing: 14) {
+                Image(systemName: icon)
+                    .font(.system(size: 22, weight: .light))
+                    .foregroundStyle(FC.cobalt)
+                    .frame(width: 30)
 
-    private var pageHeader: some View {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title)
+                        .font(.system(.body, design: .rounded, weight: .semibold))
+                        .foregroundStyle(FC.ink)
+                    Text(subtitle)
+                        .font(.system(.caption, design: .rounded, weight: .regular))
+                        .foregroundStyle(FC.inkSecondary)
+                        .lineLimit(1)
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(FC.border)
+            }
+            .padding(18)
+            .dataWidget()
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+// MARK: - Profile Sub-screen
+
+struct ProfileSettingsView: View {
+    @State var viewModel: SettingsViewModel
+
+    var body: some View {
+        ZStack {
+            FC.background.ignoresSafeArea()
+            List {
+                Section {
+                    settingsRow(label: "Имя") {
+                        TextField("Как тебя зовут?", text: $viewModel.user.name)
+                            .font(.system(.body))
+                            .foregroundStyle(FC.ink)
+                            .multilineTextAlignment(.trailing)
+                            .onSubmit { Task { await viewModel.save() } }
+                    }
+                    settingsRow(label: "Кто ты") {
+                        Menu {
+                            Button("Самозанятый") {
+                                viewModel.user.userType = .selfEmployed
+                                Task { await viewModel.save() }
+                            }
+                            Button("Личные финансы") {
+                                viewModel.user.userType = .other
+                                Task { await viewModel.save() }
+                            }
+                            Button("ИП / ООО") {
+                                viewModel.user.userType = .freelancer
+                                Task { await viewModel.save() }
+                            }
+                        } label: {
+                            menuLabel(userTypeDisplayName)
+                        }
+                    }
+                }
+            }
+            .listStyle(.insetGrouped)
+            .scrollContentBackground(.hidden)
+        }
+        .navigationTitle("Профиль")
+        .navigationBarTitleDisplayMode(.inline)
+    }
+
+    private var userTypeDisplayName: String {
+        switch viewModel.user.userType {
+        case .selfEmployed: return "Самозанятый"
+        case .other:        return "Личные финансы"
+        case .freelancer:   return "ИП / ООО"
+        case .blogger:      return "Самозанятый"  // legacy mapping
+        }
+    }
+
+    private func settingsRow<C: View>(label: String, @ViewBuilder content: () -> C) -> some View {
         HStack {
-            Text("Настройки")
-                .font(.system(.title2, design: .default, weight: .semibold))
-                .foregroundStyle(FC.ink)
+            Text(label).font(.system(.body)).foregroundStyle(FC.ink)
             Spacer()
-            if viewModel.isSaving {
-                ProgressView().tint(FC.cobalt).scaleEffect(0.8)
-            }
+            content()
         }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 18)
     }
 
-    // MARK: Profile
+    private func menuLabel(_ text: String) -> some View {
+        HStack(spacing: 4) {
+            Text(text).font(.system(.body)).foregroundStyle(FC.ink)
+            Image(systemName: "chevron.up.chevron.down")
+                .font(.system(.caption2)).foregroundStyle(FC.muted)
+        }
+    }
+}
 
-    private var profileSection: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            sectionHeader("ПРОФИЛЬ")
-            fieldRow(label: "Имя") {
-                TextField("Как тебя зовут?", text: $viewModel.user.name)
-                    .font(.system(.body))
-                    .foregroundStyle(FC.ink)
-                    .multilineTextAlignment(.trailing)
-                    .onSubmit { Task { await viewModel.save() } }
+// MARK: - Tax Sub-screen
+
+struct TaxSettingsView: View {
+    @State var viewModel: SettingsViewModel
+
+    var body: some View {
+        ZStack {
+            FC.background.ignoresSafeArea()
+            if viewModel.user.userType == .other {
+                VStack(spacing: 12) {
+                    Image(systemName: "house.circle")
+                        .font(.system(size: 48, weight: .light))
+                        .foregroundStyle(FC.inkSecondary)
+                    Text("Личный трекер")
+                        .font(.system(.title3, design: .rounded, weight: .semibold))
+                        .foregroundStyle(FC.ink)
+                    Text("Налоги не отслеживаются для этого типа учёта.")
+                        .font(.system(.subheadline, design: .rounded))
+                        .foregroundStyle(FC.inkSecondary)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 32)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else {
+                List {
+                    Section {
+                        // Режим
+                        Picker("Режим налогообложения", selection: $viewModel.user.taxMode) {
+                            ForEach(TaxMode.allCases, id: \.self) { mode in
+                                Text(mode.displayName).tag(mode)
+                            }
+                        }
+                        .pickerStyle(.navigationLink)
+                        .font(.system(.body))
+                        .onChange(of: viewModel.user.taxMode) { _, _ in
+                            Task { await viewModel.save() }
+                        }
+                    } footer: {
+                        Text(viewModel.user.taxMode.shortDescription)
+                            .font(.system(.caption))
+                            .foregroundStyle(FC.inkSecondary)
+                    }
+                }
+                .listStyle(.insetGrouped)
+                .scrollContentBackground(.hidden)
             }
-            hairline
-            fieldRow(label: "Кто ты") {
-                Menu {
-                    ForEach(UserType.allCases, id: \.self) { type in
-                        Button(type.displayName) {
-                            viewModel.user.userType = type
+        }
+        .navigationTitle("Налог")
+        .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+// MARK: - Security Sub-screen
+
+struct SecuritySettingsView: View {
+    @State var viewModel: SettingsViewModel
+
+    var body: some View {
+        ZStack {
+            FC.background.ignoresSafeArea()
+            List {
+                Section("Биометрия") {
+                    biometricRow
+                }
+                Section("Уведомления") {
+                    HStack {
+                        Text("Напоминать о налоге")
+                            .font(.system(.body))
+                            .foregroundStyle(FC.ink)
+                        Spacer()
+                        Toggle("", isOn: $viewModel.user.notificationsEnabled)
+                            .tint(FC.cobalt)
+                            .labelsHidden()
+                            .onChange(of: viewModel.user.notificationsEnabled) { _, _ in
+                                Task { await viewModel.save() }
+                            }
+                    }
+                    if viewModel.user.notificationsEnabled {
+                        Picker("За сколько дней", selection: $viewModel.user.taxReminderDaysBefore) {
+                            ForEach([3, 5, 7, 10], id: \.self) { days in
+                                Text("За \(days) дней").tag(days)
+                            }
+                        }
+                        .onChange(of: viewModel.user.taxReminderDaysBefore) { _, _ in
                             Task { await viewModel.save() }
                         }
                     }
-                } label: {
-                    menuLabel(viewModel.user.userType.displayName)
                 }
             }
+            .listStyle(.insetGrouped)
+            .scrollContentBackground(.hidden)
         }
+        .navigationTitle("Безопасность")
+        .navigationBarTitleDisplayMode(.inline)
     }
-
-    // MARK: Tax
-
-    private var taxSection: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            sectionHeader("НАЛОГООБЛОЖЕНИЕ")
-            if viewModel.user.userType == .other {
-                fieldRow(label: "Режим") {
-                    Text("Без налогов")
-                        .font(.system(.body))
-                        .foregroundStyle(FC.muted)
-                }
-                hairline
-                Text("Личный трекер — налоги и лимиты не отслеживаются")
-                    .font(.system(.caption))
-                    .foregroundStyle(FC.muted)
-                    .lineLimit(nil)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 10)
-            } else {
-                fieldRow(label: "Режим") {
-                    Menu {
-                        ForEach(TaxMode.allCases, id: \.self) { mode in
-                            Button {
-                                viewModel.user.taxMode = mode
-                                Task { await viewModel.save() }
-                            } label: {
-                                VStack(alignment: .leading) {
-                                    Text(mode.displayName)
-                                    Text(mode.shortDescription)
-                                        .font(.caption)
-                                        .fixedSize(horizontal: false, vertical: true)
-                                }
-                            }
-                        }
-                    } label: {
-                        menuLabel(viewModel.user.taxMode.displayName)
-                    }
-                }
-                hairline
-                Text(viewModel.user.taxMode.shortDescription)
-                    .font(.system(.caption))
-                    .foregroundStyle(FC.muted)
-                    .lineLimit(nil)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 10)
-            }
-        }
-    }
-
-    // MARK: Notifications
-
-    private var notificationsSection: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            sectionHeader("УВЕДОМЛЕНИЯ")
-            HStack {
-                Text("Напоминать о налоге")
-                    .font(.system(.body))
-                    .foregroundStyle(FC.ink)
-                Spacer()
-                Toggle("", isOn: $viewModel.user.notificationsEnabled)
-                    .tint(FC.cobalt)
-                    .labelsHidden()
-                    .onChange(of: viewModel.user.notificationsEnabled) { _, _ in
-                        Task { await viewModel.save() }
-                    }
-            }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 14)
-            .background(FC.background)
-
-            if viewModel.user.notificationsEnabled {
-                hairline
-                fieldRow(label: "За сколько дней") {
-                    Menu {
-                        ForEach([3, 5, 7, 10], id: \.self) { days in
-                            Button("За \(days) дней") {
-                                viewModel.user.taxReminderDaysBefore = days
-                                Task { await viewModel.save() }
-                            }
-                        }
-                    } label: {
-                        menuLabel("За \(viewModel.user.taxReminderDaysBefore) дней")
-                    }
-                }
-            }
-        }
-    }
-
-    // MARK: Security
 
     @MainActor
-    private var securitySection: some View {
+    private var biometricRow: some View {
         let lock = AppLockManager.shared
-        return VStack(alignment: .leading, spacing: 0) {
-            sectionHeader("БЕЗОПАСНОСТЬ")
+        return Group {
             if lock.isBiometricAvailable {
                 HStack {
                     Text(lock.biometricLabel)
-                        .font(.system(.body))
-                        .foregroundStyle(FC.ink)
+                        .font(.system(.body)).foregroundStyle(FC.ink)
                     Spacer()
-                    Toggle("", isOn: Binding(
-                        get: { lock.isEnabled },
-                        set: { lock.isEnabled = $0 }
-                    ))
-                    .tint(FC.cobalt)
-                    .labelsHidden()
+                    Toggle("", isOn: Binding(get: { lock.isEnabled }, set: { lock.isEnabled = $0 }))
+                        .tint(FC.cobalt).labelsHidden()
                 }
-                .padding(.horizontal, 20)
-                .padding(.vertical, 14)
-                .background(FC.background)
             } else {
-                HStack {
-                    Text("Биометрия недоступна")
-                        .font(.system(.body))
-                        .foregroundStyle(FC.muted)
-                    Spacer()
-                }
-                .padding(.horizontal, 20)
-                .padding(.vertical, 14)
-                .background(FC.background)
+                Text("Биометрия недоступна")
+                    .font(.system(.body)).foregroundStyle(FC.inkSecondary)
             }
         }
     }
+}
 
-    // MARK: Categories
+// MARK: - App Info Sub-screen
 
-    private var categoriesSection: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            sectionHeader("КАТЕГОРИИ")
-            NavigationLink(destination: CategoriesView()) {
-                HStack {
-                    Text("Управление категориями")
-                        .font(.system(.body))
-                        .foregroundStyle(FC.ink)
-                    Spacer()
-                    Image(systemName: "chevron.right")
-                        .font(.system(.caption))
-                        .foregroundStyle(FC.muted)
+struct AppInfoSettingsView: View {
+    @State var viewModel: SettingsViewModel
+
+    var body: some View {
+        ZStack {
+            FC.background.ignoresSafeArea()
+            List {
+                Section {
+                    infoRow(label: "Версия", value: appVersion)
+                    infoRow(label: "Сборка",  value: appBuild)
                 }
-                .padding(.horizontal, 20)
-                .padding(.vertical, 14)
-                .background(FC.background)
+                Section {
+                    NavigationLink(destination: NetworkDebugView()) {
+                        Text("Диагностика сети")
+                            .font(.system(.body)).foregroundStyle(FC.inkSecondary)
+                    }
+                }
+                Section {
+                    Button(role: .destructive) {
+                        viewModel.logout()
+                    } label: {
+                        Text("Выйти из аккаунта")
+                            .font(.system(.body)).foregroundStyle(FC.danger)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                }
             }
-            .buttonStyle(.plain)
+            .listStyle(.insetGrouped)
+            .scrollContentBackground(.hidden)
         }
+        .navigationTitle("О приложении")
+        .navigationBarTitleDisplayMode(.inline)
     }
 
-    // MARK: Info
-
-    private var infoSection: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            sectionHeader("О ПРИЛОЖЕНИИ")
-            infoRow(label: "Версия", value: appVersion)
-            hairline
-            infoRow(label: "Сборка", value: appBuild)
-            hairline
-            Button {
-                viewModel.logout()
-            } label: {
-                HStack {
-                    Text("Выйти из аккаунта")
-                        .font(.system(.body))
-                        .foregroundStyle(FC.danger)
-                    Spacer()
-                }
-                .padding(.horizontal, 20)
-                .padding(.vertical, 14)
-                .background(FC.background)
-            }
-            .buttonStyle(.plain)
-            hairline
-            NavigationLink(destination: NetworkDebugView()) {
-                HStack {
-                    Text("Диагностика сети")
-                        .font(.system(.body))
-                        .foregroundStyle(FC.muted)
-                    Spacer()
-                    Image(systemName: "chevron.right")
-                        .font(.system(.caption))
-                        .foregroundStyle(FC.border)
-                }
-                .padding(.horizontal, 20)
-                .padding(.vertical, 14)
-                .background(FC.background)
-            }
-            .buttonStyle(.plain)
+    private func infoRow(label: String, value: String) -> some View {
+        HStack {
+            Text(label).font(.system(.body)).foregroundStyle(FC.ink)
+            Spacer()
+            Text(value).font(.system(.body)).foregroundStyle(FC.inkSecondary)
         }
     }
 
@@ -489,86 +522,6 @@ struct SettingsView: View {
 
     private var appBuild: String {
         Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "—"
-    }
-
-    // MARK: Toast
-
-    private var savedToast: some View {
-        Group {
-            if viewModel.savedFeedback {
-                HStack(spacing: 8) {
-                    Image(systemName: "checkmark")
-                        .fontWeight(.semibold)
-                        .foregroundStyle(FC.success)
-                    Text("Сохранено")
-                        .font(.system(.subheadline, design: .default, weight: .semibold))
-                        .foregroundStyle(FC.ink)
-                }
-                .padding(.horizontal, 20)
-                .padding(.vertical, 12)
-                .background(FC.surface)
-                .overlay(Rectangle().stroke(FC.border, lineWidth: 0.5))
-                .transition(.move(edge: .bottom).combined(with: .opacity))
-                .padding(.bottom, 110)
-            }
-        }
-        .animation(.spring(duration: 0.3), value: viewModel.savedFeedback)
-    }
-
-    // MARK: Helpers
-
-    @ViewBuilder
-    private func fieldRow<Content: View>(label: String, @ViewBuilder content: () -> Content) -> some View {
-        HStack {
-            Text(label)
-                .font(.system(.body))
-                .foregroundStyle(FC.ink)
-            Spacer()
-            content()
-        }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 14)
-        .background(FC.background)
-    }
-
-    private func infoRow(label: String, value: String) -> some View {
-        HStack {
-            Text(label).font(.system(.body)).foregroundStyle(FC.ink)
-            Spacer()
-            Text(value).font(.system(.body)).foregroundStyle(FC.muted)
-        }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 14)
-        .background(FC.background)
-    }
-
-    private func menuLabel(_ text: String) -> some View {
-        HStack(spacing: 4) {
-            Text(text)
-                .font(.system(.body))
-                .foregroundStyle(FC.ink)
-                .lineLimit(nil)
-                .fixedSize(horizontal: false, vertical: true)
-            Image(systemName: "chevron.up.chevron.down")
-                .font(.system(.caption2))
-                .foregroundStyle(FC.muted)
-        }
-    }
-
-    private func sectionHeader(_ title: String) -> some View {
-        Text(title)
-            .fLabel()
-            .padding(.horizontal, 20)
-            .padding(.top, 16)
-            .padding(.bottom, 8)
-    }
-
-    private var sectionGap: some View {
-        Rectangle().fill(FC.border).frame(height: 0.5)
-    }
-
-    private var hairline: some View {
-        Rectangle().fill(FC.border).frame(height: 0.5).padding(.leading, 20)
     }
 }
 

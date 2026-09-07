@@ -117,19 +117,28 @@ struct AIAdvisorView: View {
                 Spacer(minLength: 48)
             }
 
-            Text(msg.content)
-                .font(.system(.body, design: .rounded))
-                .foregroundStyle(msg.role == "user" ? .white : FC.ink)
-                .padding(.horizontal, 14)
-                .padding(.vertical, 10)
-                .background(
-                    RoundedRectangle(cornerRadius: 18)
-                        .fill(msg.role == "user" ? FC.cobalt : Color.white)
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 18)
-                        .stroke(msg.role == "user" ? Color.clear : FC.border.opacity(0.4), lineWidth: 0.5)
-                )
+            // Задача 5: typewriter for assistant messages, instant for user
+            Group {
+                if msg.role == "assistant" {
+                    TypewriterText(text: msg.content, speed: 0.018)
+                        .font(.system(.body, design: .rounded))
+                        .foregroundStyle(FC.ink)
+                } else {
+                    Text(msg.content)
+                        .font(.system(.body, design: .rounded))
+                        .foregroundStyle(.white)
+                }
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 10)
+            .background(
+                RoundedRectangle(cornerRadius: 18)
+                    .fill(msg.role == "user" ? FC.cobalt : Color.white)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 18)
+                    .stroke(msg.role == "user" ? Color.clear : FC.border.opacity(0.4), lineWidth: 0.5)
+            )
 
             if msg.role == "user" {
                 Spacer(minLength: 0)
@@ -245,4 +254,36 @@ struct AIAdvisorView: View {
 
 #Preview {
     AIAdvisorView()
+}
+
+// MARK: - Typewriter Text (Задача 5)
+
+struct TypewriterText: View {
+    let text: String
+    var speed: Double = 0.018  // seconds per character
+
+    @State private var displayed = ""
+    @State private var timer: Timer?
+
+    var body: some View {
+        Text(displayed.isEmpty ? " " : displayed)  // non-empty to maintain layout height
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .onAppear { startAnimation() }
+            .onChange(of: text) { _, _ in startAnimation() }
+            .onDisappear { timer?.invalidate() }
+    }
+
+    private func startAnimation() {
+        timer?.invalidate()
+        displayed = ""
+        guard !text.isEmpty else { return }
+
+        var index = text.startIndex
+        timer = Timer.scheduledTimer(withTimeInterval: speed, repeats: true) { t in
+            guard index < text.endIndex else { t.invalidate(); return }
+            displayed.append(text[index])
+            index = text.index(after: index)
+        }
+        RunLoop.main.add(timer!, forMode: .common)
+    }
 }

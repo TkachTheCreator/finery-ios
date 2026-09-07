@@ -1,28 +1,44 @@
 import SwiftUI
 
-// MARK: - Colors (Warm Sand palette)
+// MARK: - Color Tokens
 
 enum FC {
-    static let background  = Color(h: "F5EFE0")
-    static let surface     = Color(h: "EDE4CE")
-    static let border      = Color(h: "D4C9A8")
-    static let cobalt      = Color(h: "0047AB")
-    static let cobaltDark  = Color(h: "002F7A")
-    static let ink         = Color(h: "1A1A18")
-    static let muted       = Color(h: "8B7D5A")
-    static let success     = Color(h: "1A6B3C")
-    static let danger      = Color(h: "B03A2E")
-    static let amber       = Color(h: "9B6B00")
+    // Base surfaces
+    static let background    = Color(h: "FAF8F3")   // warm almost-white (was F5EFE0 — lighter, cleaner)
+    static let surface       = Color(h: "FFFFFF")    // pure white cards (was EDE4CE — contrast with bg)
+    static let border        = Color(h: "E8E2D9")   // subtle hairline dividers
+
+    // Text
+    static let ink           = Color(h: "1A1A1A")   // near-black primary text
+    static let inkSecondary  = Color(h: "8A8578")   // warm gray for labels/secondary
+    static let muted         = Color(h: "8A8578")   // alias for inkSecondary (backwards compat)
+
+    // Brand / Interactive — ONLY for interactive elements (buttons, links, active states)
+    // Warm espresso dark — replaces cold blue as primary accent throughout the app
+    static let cobalt        = Color(h: "1A1510")
+    static let cobaltDark    = Color(h: "120F0A")
+
+    // Semantic
+    static let income        = Color(h: "1A1510")   // same as cobalt
+    static let expense       = Color(h: "C04E35")   // warm terracotta for expense amounts
+    static let danger        = Color(h: "B03A2E")   // critical errors / over-limit
+    static let warning       = Color(h: "9B6B00")   // NPD limit approaching (visually distinct from danger)
+    static let amber         = Color(h: "9B6B00")   // alias for warning (backwards compat)
+    static let success       = Color(h: "1A6B3C")
+
+    // Hero widget — warm dark, unified with primary accent
+    static let heroSurface   = Color(h: "1A1510")
+    // Text on dark hero widget — warm ivory, not harsh pure white
+    static let ivory         = Color(h: "EDE8DE")
 
     static let backgroundGradient = LinearGradient(
-        colors: [Color(h: "F5EFE0"), Color(h: "EDE4CE")],
-        startPoint: .top,
-        endPoint: .bottom
+        colors: [Color(h: "FAF8F3"), Color(h: "F0EBE2")],
+        startPoint: .top, endPoint: .bottom
     )
 
-    static let cobaltGlow  = Color(h: "0047AB").opacity(0.22)
-    static let successGlow = Color(h: "1A6B3C").opacity(0.18)
-    static let dangerGlow  = Color(h: "B03A2E").opacity(0.18)
+    static let cobaltGlow  = Color(h: "1A1510").opacity(0.18)
+    static let successGlow = Color(h: "1A6B3C").opacity(0.15)
+    static let dangerGlow  = Color(h: "B03A2E").opacity(0.15)
 }
 
 extension Color {
@@ -62,33 +78,147 @@ extension Decimal {
     }
 }
 
-// MARK: - Typography scale
+// MARK: - Typography Scale
 //
-// L1  Screen title   .title2  semibold  FC.ink
-// L2  Hero number    46pt     bold      FC.cobalt / FC.ink
-// L3  Body / value   .subheadline / .body  regular / medium  FC.ink
-// L4  Label caption  .caption  medium   FC.muted  ← fLabel()
-
-// MARK: - View modifiers
+// Display  60pt  bold      — one hero number per screen, used max once
+// Title    26pt  semibold  — screen title ("Клиенты", "Налоги")
+// Heading  18pt  semibold  — widget sub-headings
+// Body     16pt  regular   — list rows, descriptions
+// Caption  13pt  medium    — labels under values, NO all-caps
 
 extension View {
-    func fLabel() -> some View {
+    func fDisplay() -> some View {
         self
-            .font(.system(.caption, design: .rounded, weight: .medium))
-            .foregroundStyle(FC.muted)
+            .font(.system(size: 60, weight: .bold, design: .rounded))
+            .monospacedDigit()
     }
 
+    func fTitle() -> some View {
+        self.font(.system(size: 26, weight: .semibold, design: .rounded))
+    }
+
+    func fHeading() -> some View {
+        self.font(.system(size: 18, weight: .semibold, design: .rounded))
+    }
+
+    func fBody() -> some View {
+        self.font(.system(.body, design: .rounded, weight: .regular))
+    }
+
+    // Caption label — 13pt medium warm gray. No all-caps.
+    func fLabel() -> some View {
+        self
+            .font(.system(size: 13, weight: .medium, design: .rounded))
+            .foregroundStyle(FC.inkSecondary)
+    }
+}
+
+// MARK: - Widget card modifiers
+
+// DATA WIDGET: white surface + hairline border — Mercury rule: surface contrast, no drop shadow.
+struct DataWidgetModifier: ViewModifier {
+    var cornerRadius: CGFloat = 18
+
+    func body(content: Content) -> some View {
+        content
+            .background(FC.surface)
+            .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
+            .overlay(
+                RoundedRectangle(cornerRadius: cornerRadius)
+                    .stroke(FC.border.opacity(0.7), lineWidth: 0.5)
+            )
+    }
+}
+
+// HERO WIDGET: dark surface, white text. One per screen maximum.
+struct HeroWidgetModifier: ViewModifier {
+    var cornerRadius: CGFloat = 20
+
+    func body(content: Content) -> some View {
+        content
+            .background(FC.heroSurface)
+            .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
+    }
+}
+
+extension View {
+    func dataWidget(cornerRadius: CGFloat = 18) -> some View {
+        modifier(DataWidgetModifier(cornerRadius: cornerRadius))
+    }
+
+    func heroWidget(cornerRadius: CGFloat = 20) -> some View {
+        modifier(HeroWidgetModifier(cornerRadius: cornerRadius))
+    }
+
+    // glassCard → now maps to dataWidget (shadow-based, no border stroke)
     func glassCard(cornerRadius: CGFloat = 18) -> some View {
-        modifier(GlassCardModifier(cornerRadius: cornerRadius))
+        modifier(DataWidgetModifier(cornerRadius: cornerRadius))
     }
 
     func glassCardSmall() -> some View {
-        modifier(GlassCardModifier(cornerRadius: 14))
+        modifier(DataWidgetModifier(cornerRadius: 14))
     }
 
     func glassCardGlow(_ glowColor: Color = FC.cobaltGlow, cornerRadius: CGFloat = 18) -> some View {
         modifier(GlassCardGlowModifier(glowColor: glowColor, cornerRadius: cornerRadius))
     }
+}
+
+// Keep struct names for code that references them directly
+struct GlassCardModifier: ViewModifier {
+    var cornerRadius: CGFloat = 18
+
+    func body(content: Content) -> some View {
+        content
+            .background(FC.surface)
+            .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
+            .overlay(
+                RoundedRectangle(cornerRadius: cornerRadius)
+                    .stroke(FC.border.opacity(0.7), lineWidth: 0.5)
+            )
+    }
+}
+
+struct GlassCardGlowModifier: ViewModifier {
+    var glowColor: Color
+    var cornerRadius: CGFloat
+
+    func body(content: Content) -> some View {
+        content
+            .background(FC.surface)
+            .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
+            .overlay(
+                RoundedRectangle(cornerRadius: cornerRadius)
+                    .stroke(FC.border.opacity(0.7), lineWidth: 0.5)
+            )
+            .shadow(color: glowColor, radius: 12, y: 2)
+    }
+}
+
+// MARK: - Category color palette (shared across analytics screens)
+
+let fineryCategoryColors: [String: Color] = [
+    "Boosty/Подписки":  Color(red: 0.90, green: 0.27, blue: 0.27),
+    "Донаты":           Color(red: 0.97, green: 0.55, blue: 0.14),
+    "Реклама":          Color(red: 0.97, green: 0.78, blue: 0.09),
+    "Фриланс":          Color(red: 0.20, green: 0.65, blue: 0.42),
+    "Платформы":        Color(red: 0.06, green: 0.60, blue: 0.75),
+    "Курсы/Обучение":   Color(red: 0.38, green: 0.35, blue: 0.82),
+    "Инструменты":      Color(red: 0.06, green: 0.60, blue: 0.75),
+    "Своя реклама":     Color(red: 0.97, green: 0.55, blue: 0.14),
+    "Оборудование":     Color(red: 0.20, green: 0.65, blue: 0.42),
+    "Команда":          Color(red: 0.90, green: 0.27, blue: 0.27),
+    "Еда":              Color(red: 0.55, green: 0.76, blue: 0.29),
+    "Транспорт":        Color(red: 0.97, green: 0.78, blue: 0.09),
+    "Связь":            Color(red: 0.38, green: 0.35, blue: 0.82),
+    "Другое":           Color(red: 0.60, green: 0.57, blue: 0.54),
+    "Остальное":        Color(red: 0.75, green: 0.72, blue: 0.68),
+]
+
+func fineryCategoryColor(_ name: String) -> Color {
+    if let c = fineryCategoryColors[name] { return c }
+    let h = Double(abs(name.hashValue) % 360) / 360.0
+    return Color(hue: h, saturation: 0.6, brightness: 0.72)
 }
 
 // MARK: - Pressable
@@ -123,54 +253,20 @@ extension View {
     }
 }
 
-// MARK: - Card modifiers (warm surface style)
-
-struct GlassCardModifier: ViewModifier {
-    var cornerRadius: CGFloat = 18
-
-    func body(content: Content) -> some View {
-        content
-            .background(FC.surface)
-            .overlay(
-                RoundedRectangle(cornerRadius: cornerRadius)
-                    .stroke(FC.border, lineWidth: 1)
-            )
-            .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
-            .shadow(color: Color(h: "8B7D5A").opacity(0.10), radius: 10, y: 3)
-    }
-}
-
-struct GlassCardGlowModifier: ViewModifier {
-    var glowColor: Color
-    var cornerRadius: CGFloat
-
-    func body(content: Content) -> some View {
-        content
-            .background(FC.surface)
-            .overlay(
-                RoundedRectangle(cornerRadius: cornerRadius)
-                    .stroke(FC.border, lineWidth: 1)
-            )
-            .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
-            .shadow(color: Color(h: "8B7D5A").opacity(0.10), radius: 10, y: 3)
-            .shadow(color: glowColor, radius: 18, y: 2)
-    }
-}
-
-// MARK: - Skeleton shimmer (warm sand gradient)
+// MARK: - Skeleton shimmer
 
 struct SkeletonView: View {
     @State private var phase: CGFloat = -1
 
     var body: some View {
-        GeometryReader { geo in
+        GeometryReader { _ in
             LinearGradient(
                 stops: [
-                    .init(color: FC.surface,                  location: 0.0),
-                    .init(color: FC.border,                   location: 0.4),
-                    .init(color: Color(h: "C4B88A"),          location: 0.5),
-                    .init(color: FC.border,                   location: 0.6),
-                    .init(color: FC.surface,                  location: 1.0),
+                    .init(color: FC.surface,              location: 0.0),
+                    .init(color: FC.border,               location: 0.4),
+                    .init(color: Color(h: "E0D8CC"),      location: 0.5),
+                    .init(color: FC.border,               location: 0.6),
+                    .init(color: FC.surface,              location: 1.0),
                 ],
                 startPoint: .init(x: phase, y: 0),
                 endPoint:   .init(x: phase + 1, y: 0)
@@ -267,5 +363,64 @@ private struct FineryTapModifier: ViewModifier {
 extension View {
     func fineryTap(action: @escaping () -> Void = {}) -> some View {
         modifier(FineryTapModifier(action: action))
+    }
+}
+
+// MARK: - Ring Progress (Activity Ring style — Задача 2)
+
+struct RingProgressView: View {
+    let progress: Double   // 0.0 – 1.0
+    let color: Color
+    var size: CGFloat     = 70
+    var lineWidth: CGFloat = 7
+
+    var body: some View {
+        ZStack {
+            // Track
+            Circle()
+                .stroke(color.opacity(0.14), lineWidth: lineWidth)
+            // Fill
+            Circle()
+                .trim(from: 0, to: CGFloat(min(max(progress, 0), 1)))
+                .stroke(color, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
+                .rotationEffect(.degrees(-90))
+                .animation(.spring(response: 1.2, dampingFraction: 0.82), value: progress)
+        }
+        .frame(width: size, height: size)
+    }
+}
+
+// MARK: - Border Trail (Задача 4)
+
+struct BorderTrailModifier: ViewModifier {
+    @State private var progress: CGFloat = 0
+    var cornerRadius: CGFloat = 20
+    var color: Color = FC.ivory.opacity(0.45)
+    var delay: Double = 0.4
+
+    func body(content: Content) -> some View {
+        content.overlay(
+            RoundedRectangle(cornerRadius: cornerRadius)
+                .trim(from: max(0, progress - 0.18), to: progress)
+                .stroke(
+                    LinearGradient(
+                        colors: [.clear, color, .clear],
+                        startPoint: .leading, endPoint: .trailing
+                    ),
+                    style: StrokeStyle(lineWidth: 1.5, lineCap: .round)
+                )
+        )
+        .onAppear {
+            progress = 0
+            withAnimation(.linear(duration: 1.6).delay(delay)) {
+                progress = 1.0
+            }
+        }
+    }
+}
+
+extension View {
+    func borderTrail(cornerRadius: CGFloat = 20, color: Color = FC.ivory.opacity(0.45), delay: Double = 0.4) -> some View {
+        modifier(BorderTrailModifier(cornerRadius: cornerRadius, color: color, delay: delay))
     }
 }

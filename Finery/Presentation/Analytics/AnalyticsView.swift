@@ -61,7 +61,7 @@ struct AnalyticsView: View {
                         breakdownSection(
                             title: "Структура расходов",
                             rows: viewModel.expenseBreakdown.map { ($0.category.displayName, $0.category.iconName, $0.amount, $0.percent) },
-                            accentColor: FC.muted
+                            accentColor: FC.expense
                         )
                     }
                     // 7.1 — Top clients
@@ -227,7 +227,7 @@ struct AnalyticsView: View {
                         x: .value("Месяц", item.monthLabel),
                         y: .value("Расходы", -NSDecimalNumber(decimal: item.expenses).doubleValue)
                     )
-                    .foregroundStyle(FC.muted.opacity(0.55))
+                    .foregroundStyle(FC.expense.opacity(0.65))
                     .cornerRadius(0)
                 }
                 .chartYAxis {
@@ -255,7 +255,7 @@ struct AnalyticsView: View {
                 // Legend
                 HStack(spacing: 16) {
                     legendItem(color: FC.cobalt, label: "Доходы")
-                    legendItem(color: FC.muted.opacity(0.55), label: "Расходы")
+                    legendItem(color: FC.expense.opacity(0.65), label: "Расходы")
                 }
             }
         }
@@ -336,7 +336,7 @@ struct AnalyticsView: View {
                         innerRadius: .ratio(0.52),
                         angularInset: 1.5
                     )
-                    .foregroundStyle(pieColor(idx, base: accentColor))
+                    .foregroundStyle(pieColor(idx, name: item.name))
                     .cornerRadius(3)
                 }
                 .frame(width: 130, height: 130)
@@ -345,7 +345,7 @@ struct AnalyticsView: View {
                     ForEach(Array(slices.prefix(6).enumerated()), id: \.offset) { idx, item in
                         HStack(spacing: 7) {
                             RoundedRectangle(cornerRadius: 2)
-                                .fill(pieColor(idx, base: accentColor))
+                                .fill(pieColor(idx, name: item.name))
                                 .frame(width: 10, height: 10)
                             Text(item.name)
                                 .font(.system(.caption2, design: .default))
@@ -366,9 +366,8 @@ struct AnalyticsView: View {
         .padding(.vertical, 20)
     }
 
-    private func pieColor(_ index: Int, base: Color) -> Color {
-        let opacities: [Double] = [1.0, 0.72, 0.52, 0.38, 0.26, 0.18]
-        return base.opacity(opacities[min(index, opacities.count - 1)])
+    private func pieColor(_ index: Int, name: String) -> Color {
+        fineryCategoryColor(name)
     }
 
     // MARK: Helpers
@@ -445,7 +444,7 @@ struct AnalyticsView: View {
                             .foregroundStyle(
                                 avg.month == data.worstMonth
                                     ? FC.danger
-                                    : FC.muted.opacity(0.4)
+                                    : FC.expense.opacity(0.50)
                             )
                             .cornerRadius(3)
                         }
@@ -469,7 +468,7 @@ struct AnalyticsView: View {
 
                     HStack(spacing: 16) {
                         legendItem(color: FC.cobalt.opacity(0.75), label: "Доходы (ср.)")
-                        legendItem(color: FC.muted.opacity(0.4), label: "Расходы (ср.)")
+                        legendItem(color: FC.expense.opacity(0.50), label: "Расходы (ср.)")
                     }
                 }
                 .padding(.horizontal, 20)
@@ -591,4 +590,370 @@ extension AnalyticsView {
 
 #Preview {
     AnalyticsView(viewModel: .preview())
+}
+
+// MARK: - Analytics Dynamics Screen
+
+struct AnalyticsDynamicsView: View {
+    @State var viewModel: AnalyticsViewModel
+    @State private var appeared = false
+
+    init(viewModel: AnalyticsViewModel) {
+        _viewModel = State(wrappedValue: viewModel)
+    }
+
+    var body: some View {
+        ZStack {
+            FC.background.ignoresSafeArea()
+            if viewModel.isLoading {
+                ProgressView().tint(FC.cobalt)
+            } else {
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: 14) {
+                        // Comparison widget
+                        comparisonWidget
+                            .cardAppear(appeared: appeared, delay: 0.05)
+
+                        // Bar chart widget
+                        barChartWidget
+                            .cardAppear(appeared: appeared, delay: 0.12)
+
+                        // Forecast
+                        if let f = viewModel.nextMonthForecast {
+                            forecastWidget(f)
+                                .cardAppear(appeared: appeared, delay: 0.18)
+                        }
+
+                        Color.clear.frame(height: 40)
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.top, 16)
+                }
+            }
+        }
+        .navigationTitle("Динамика")
+        .task {
+            await viewModel.load()
+            withAnimation(.spring(response: 0.5, dampingFraction: 0.85)) { appeared = true }
+        }
+    }
+
+    // Comparison: this month / last month / change
+    private var comparisonWidget: some View {
+        HStack(spacing: 0) {
+            compCol(label: "Этот месяц", value: viewModel.currentMonthIncome, color: FC.cobalt)
+            Rectangle().fill(FC.border).frame(width: 1)
+            compCol(label: "Прошлый", value: viewModel.previousMonthIncome, color: FC.inkSecondary)
+            Rectangle().fill(FC.border).frame(width: 1)
+            changeCol
+        }
+        .dataWidget()
+    }
+
+    private func compCol(label: String, value: Decimal, color: Color) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(label).fLabel()
+            Text(value.rub())
+                .font(.system(.subheadline, design: .rounded, weight: .semibold))
+                .monospacedDigit()
+                .foregroundStyle(color)
+        }
+        .padding(.horizontal, 14).padding(.vertical, 16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private var changeCol: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text("Изменение").fLabel()
+            HStack(spacing: 4) {
+                Image(systemName: viewModel.incomeChange >= 0 ? "arrow.up.right" : "arrow.down.right")
+                    .fontWeight(.semibold).imageScale(.small)
+                Text(String(format: "%.0f%%", abs(viewModel.incomeChange)))
+                    .font(.system(.subheadline, design: .rounded, weight: .semibold))
+                    .monospacedDigit()
+            }
+            .foregroundStyle(viewModel.incomeChange >= 0 ? FC.cobalt : FC.expense)
+        }
+        .padding(.horizontal, 14).padding(.vertical, 16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    // Bar chart: 6 months income vs expenses
+    private var barChartWidget: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            Text("За 6 месяцев").fLabel()
+
+            if viewModel.monthlyData.isEmpty {
+                Text("Нет данных").font(.system(.caption)).foregroundStyle(FC.inkSecondary)
+                    .frame(maxWidth: .infinity, alignment: .center).padding(.vertical, 40)
+            } else {
+                Chart(viewModel.monthlyData) { item in
+                    BarMark(
+                        x: .value("Месяц", item.monthLabel),
+                        y: .value("Доход", NSDecimalNumber(decimal: item.income).doubleValue)
+                    )
+                    .foregroundStyle(FC.cobalt).cornerRadius(3)
+
+                    BarMark(
+                        x: .value("Месяц", item.monthLabel),
+                        y: .value("Расходы", -NSDecimalNumber(decimal: item.expenses).doubleValue)
+                    )
+                    .foregroundStyle(FC.expense.opacity(0.65)).cornerRadius(3)
+                }
+                .chartYAxis {
+                    AxisMarks { value in
+                        AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5)).foregroundStyle(FC.border)
+                        AxisValueLabel {
+                            if let v = value.as(Double.self) {
+                                Text(Decimal(v).rub())
+                                    .font(.system(.caption2)).foregroundStyle(FC.inkSecondary)
+                            }
+                        }
+                    }
+                }
+                .chartXAxis {
+                    AxisMarks { _ in
+                        AxisValueLabel()
+                            .font(.system(.caption2, design: .rounded, weight: .regular))
+                            .foregroundStyle(FC.inkSecondary)
+                    }
+                }
+                .frame(height: 190)
+
+                HStack(spacing: 16) {
+                    legendDot(color: FC.cobalt, label: "Доходы")
+                    legendDot(color: FC.expense.opacity(0.65), label: "Расходы")
+                }
+            }
+        }
+        .padding(18)
+        .dataWidget()
+    }
+
+    private func legendDot(color: Color, label: String) -> some View {
+        HStack(spacing: 6) {
+            Rectangle().fill(color).frame(width: 10, height: 3)
+            Text(label)
+                .font(.system(.caption2, design: .rounded, weight: .regular))
+                .foregroundStyle(FC.inkSecondary)
+        }
+    }
+
+    private func forecastWidget(_ forecast: Decimal) -> some View {
+        HStack(spacing: 16) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Прогноз на следующий месяц").fLabel()
+                Text(forecast.rub())
+                    .font(.system(.title3, design: .rounded, weight: .semibold))
+                    .foregroundStyle(FC.ink)
+                Text("среднее за 3 месяца")
+                    .font(.system(.caption, design: .rounded))
+                    .foregroundStyle(FC.inkSecondary)
+            }
+            Spacer()
+            Image(systemName: "chart.line.uptrend.xyaxis")
+                .font(.system(size: 26, weight: .light))
+                .foregroundStyle(FC.cobalt.opacity(0.4))
+        }
+        .padding(18)
+        .dataWidget()
+    }
+}
+
+// MARK: - Analytics Categories Screen
+
+struct AnalyticsCategoriesView: View {
+    @State var viewModel: AnalyticsViewModel
+    @State private var showExpenses = false
+    @State private var appeared = false
+
+    init(viewModel: AnalyticsViewModel) {
+        _viewModel = State(wrappedValue: viewModel)
+    }
+
+    var body: some View {
+        ZStack {
+            FC.background.ignoresSafeArea()
+            if viewModel.isLoading {
+                ProgressView().tint(FC.cobalt)
+            } else {
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: 14) {
+                        // Direction picker
+                        directionPicker
+                            .cardAppear(appeared: appeared, delay: 0.03)
+
+                        // Pie + breakdown
+                        if showExpenses {
+                            if viewModel.expenseBreakdown.isEmpty {
+                                emptyWidget(label: "Нет расходов за этот период")
+                            } else {
+                                categoriesWidget(
+                                    slices: viewModel.expenseBreakdown.map {
+                                        ($0.category.displayName, $0.amount, $0.percent)
+                                    },
+                                    rows: viewModel.expenseBreakdown.map {
+                                        ($0.category.displayName, $0.category.iconName, $0.amount, $0.percent)
+                                    },
+                                    accentColor: FC.expense
+                                )
+                                .cardAppear(appeared: appeared, delay: 0.10)
+                            }
+                        } else {
+                            if viewModel.incomeBreakdown.isEmpty {
+                                emptyWidget(label: "Нет доходов за этот период")
+                            } else {
+                                categoriesWidget(
+                                    slices: viewModel.incomeBreakdown.map {
+                                        ($0.category.displayName, $0.amount, $0.percent)
+                                    },
+                                    rows: viewModel.incomeBreakdown.map {
+                                        ($0.category.displayName, $0.category.iconName, $0.amount, $0.percent)
+                                    },
+                                    accentColor: FC.cobalt
+                                )
+                                .cardAppear(appeared: appeared, delay: 0.10)
+                            }
+                        }
+
+                        Color.clear.frame(height: 40)
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.top, 16)
+                }
+            }
+        }
+        .navigationTitle("Категории")
+        .task {
+            await viewModel.load()
+            withAnimation(.spring(response: 0.5, dampingFraction: 0.85)) { appeared = true }
+        }
+    }
+
+    private var directionPicker: some View {
+        HStack(spacing: 8) {
+            pickerChip(label: "Доходы", selected: !showExpenses) { showExpenses = false }
+            pickerChip(label: "Расходы", selected: showExpenses) { showExpenses = true }
+            Spacer()
+        }
+        .padding(.horizontal, 2)
+    }
+
+    private func pickerChip(label: String, selected: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Text(label)
+                .font(.system(.subheadline, design: .rounded, weight: selected ? .semibold : .regular))
+                .foregroundStyle(selected ? .white : FC.inkSecondary)
+                .padding(.horizontal, 16).padding(.vertical, 8)
+                .background(selected ? FC.cobalt : FC.surface)
+                .clipShape(Capsule())
+                .shadow(color: selected ? FC.cobaltGlow : .clear, radius: 8)
+        }
+        .buttonStyle(.plain)
+        .animation(.spring(response: 0.3, dampingFraction: 0.8), value: selected)
+    }
+
+    private func categoriesWidget(
+        slices: [(name: String, amount: Decimal, percent: Double)],
+        rows: [(name: String, icon: String, amount: Decimal, percent: Double)],
+        accentColor: Color
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 20) {
+            // Pie chart
+            HStack(alignment: .top, spacing: 20) {
+                Chart(Array(slices.enumerated()), id: \.offset) { idx, item in
+                    SectorMark(
+                        angle: .value("Сумма", max(item.percent, 1)),
+                        innerRadius: .ratio(0.52),
+                        angularInset: 1.5
+                    )
+                    .foregroundStyle(fineryCategoryColor(item.name))
+                    .cornerRadius(3)
+                }
+                .frame(width: 130, height: 130)
+
+                VStack(alignment: .leading, spacing: 7) {
+                    ForEach(Array(slices.prefix(6).enumerated()), id: \.offset) { idx, item in
+                        HStack(spacing: 7) {
+                            RoundedRectangle(cornerRadius: 2)
+                                .fill(fineryCategoryColor(item.name))
+                                .frame(width: 10, height: 10)
+                            Text(item.name)
+                                .font(.system(.caption2, design: .rounded))
+                                .foregroundStyle(FC.ink).lineLimit(1)
+                            Spacer(minLength: 4)
+                            Text(String(format: "%.0f%%", item.percent))
+                                .font(.system(.caption2, design: .rounded, weight: .semibold))
+                                .monospacedDigit().foregroundStyle(FC.inkSecondary)
+                        }
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+
+            Rectangle().fill(FC.border.opacity(0.5)).frame(height: 0.5)
+
+            // Breakdown rows
+            VStack(alignment: .leading, spacing: 12) {
+                ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
+                    VStack(alignment: .leading, spacing: 5) {
+                        HStack(spacing: 10) {
+                            Image(systemName: row.icon)
+                                .fontWeight(.light).imageScale(.small)
+                                .foregroundStyle(accentColor).frame(width: 16)
+                            Text(row.name)
+                                .font(.system(.subheadline, design: .rounded, weight: .regular))
+                                .foregroundStyle(FC.ink)
+                            Spacer()
+                            Text(row.amount.rub())
+                                .font(.system(.subheadline, design: .rounded, weight: .medium))
+                                .monospacedDigit().foregroundStyle(FC.ink)
+                            Text(String(format: "%.0f%%", row.percent))
+                                .font(.system(.caption, design: .rounded, weight: .regular))
+                                .monospacedDigit().foregroundStyle(FC.inkSecondary)
+                                .frame(width: 34, alignment: .trailing)
+                        }
+                        GeometryReader { geo in
+                            ZStack(alignment: .leading) {
+                                Rectangle().fill(FC.border.opacity(0.4)).frame(height: 2)
+                                Rectangle()
+                                    .fill(accentColor)
+                                    .frame(width: geo.size.width * CGFloat(row.percent / 100), height: 2)
+                            }
+                        }
+                        .frame(height: 2)
+                    }
+                }
+            }
+        }
+        .padding(18)
+        .dataWidget()
+    }
+
+    private func emptyWidget(label: String) -> some View {
+        HStack {
+            Spacer()
+            VStack(spacing: 10) {
+                Image(systemName: "chart.pie")
+                    .font(.system(size: 36, weight: .light))
+                    .foregroundStyle(FC.inkSecondary.opacity(0.4))
+                Text(label)
+                    .font(.system(.subheadline, design: .rounded))
+                    .foregroundStyle(FC.inkSecondary)
+            }
+            Spacer()
+        }
+        .padding(.vertical, 60)
+    }
+}
+
+// MARK: - Shared card appear animation
+
+private extension View {
+    func cardAppear(appeared: Bool, delay: Double) -> some View {
+        self
+            .offset(y: appeared ? 0 : 30)
+            .opacity(appeared ? 1 : 0)
+            .animation(.spring(response: 0.50, dampingFraction: 0.82).delay(delay), value: appeared)
+    }
 }

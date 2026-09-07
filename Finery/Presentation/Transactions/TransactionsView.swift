@@ -22,8 +22,7 @@ struct TransactionsView: View {
                     .opacity(appeared ? 1 : 0)
 
                 summaryCard
-                    .padding(.horizontal, 16)
-                    .padding(.top, 12)
+                    .padding(.top, 4)
                     .offset(y: appeared ? 0 : 30)
                     .opacity(appeared ? 1 : 0)
                     .animation(.spring(response: 0.6, dampingFraction: 0.8).delay(0.1), value: appeared)
@@ -127,19 +126,18 @@ struct TransactionsView: View {
         )
     }
 
-    // MARK: Summary Card
+    // MARK: Summary Strip (без карточки — просто текст на фоне экрана)
 
     private var summaryCard: some View {
-        HStack {
-            summaryItem(label: "Доходы",  amount: viewModel.summaryIncome,   color: FC.cobalt)
-            Spacer()
-            Rectangle().fill(FC.border).frame(width: 1, height: 32)
-            Spacer()
-            summaryItem(label: "Расходы", amount: viewModel.summaryExpenses, color: FC.muted)
+        VStack(spacing: 0) {
+            Rectangle().fill(FC.border).frame(height: 0.5)
+            HStack(spacing: 0) {
+                summaryItem(label: "Доходы",  amount: viewModel.summaryIncome,   color: FC.cobalt)
+                Rectangle().fill(FC.border).frame(width: 0.5, height: 36)
+                summaryItem(label: "Расходы", amount: viewModel.summaryExpenses, color: FC.expense)
+            }
+            Rectangle().fill(FC.border).frame(height: 0.5)
         }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 14)
-        .glassCardSmall()
     }
 
     private func summaryItem(label: String, amount: Decimal, color: Color) -> some View {
@@ -151,6 +149,9 @@ struct TransactionsView: View {
                 .foregroundStyle(color)
                 .contentTransition(.numericText())
         }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 12)
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     // MARK: Transaction List
@@ -301,12 +302,12 @@ struct TransactionRow: View {
                 Circle()
                     .fill(transaction.direction == .income
                           ? FC.cobalt.opacity(0.12)
-                          : FC.muted.opacity(0.12))
+                          : FC.expense.opacity(0.10))
                     .frame(width: 38, height: 38)
                 Image(systemName: iconName)
                     .fontWeight(.light)
                     .imageScale(.small)
-                    .foregroundStyle(transaction.direction == .income ? FC.cobalt : FC.ink)
+                    .foregroundStyle(transaction.direction == .income ? FC.cobalt : FC.expense)
             }
 
             VStack(alignment: .leading, spacing: 2) {
@@ -333,10 +334,10 @@ struct TransactionRow: View {
                 Text((transaction.direction == .income ? "+" : "−") + transaction.amount.rub())
                     .font(.system(.subheadline, design: .default, weight: .medium))
                     .monospacedDigit()
-                    .foregroundStyle(transaction.direction == .income ? FC.cobalt : FC.ink)
+                    .foregroundStyle(transaction.direction == .income ? FC.cobalt : FC.expense)
                 Text(shortTime(transaction.date))
                     .font(.system(.caption2, design: .default, weight: .regular))
-                    .foregroundStyle(FC.muted)
+                    .foregroundStyle(FC.inkSecondary)
             }
         }
         .padding(.vertical, 10)

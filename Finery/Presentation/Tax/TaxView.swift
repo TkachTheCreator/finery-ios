@@ -18,32 +18,44 @@ struct TaxView: View {
                         .opacity(appeared ? 1 : 0)
 
                     if let status = viewModel.taxStatus {
-                        taxModeCard(status)
+                        // WIDGET 1: Tax mode (НПД / УСН) — режим одной строкой
+                        taxModeWidget(status)
                             .cardAppear(appeared: appeared, delay: 0.08)
 
                         if status.showNpdLimit {
-                            npdLimitCard(status)
+                            // WIDGET 2: NPD limit progress — only current state, no duplicates
+                            npdLimitWidget(status)
                                 .cardAppear(appeared: appeared, delay: 0.16)
+
+                            // WIDGET 3: NPD forecast — only forecast data, no used/remaining repeat
                             if let nf = viewModel.npdForecast {
-                                npdForecastCard(nf)
+                                npdForecastWidget(nf)
                                     .cardAppear(appeared: appeared, delay: 0.22)
                             }
                         } else {
-                            usnTaxCard(status)
+                            // WIDGET 2 (USN): quarterly tax breakdown
+                            usnTaxWidget(status)
                                 .cardAppear(appeared: appeared, delay: 0.16)
                         }
 
-                        deadlineCard(status)
-                            .cardAppear(appeared: appeared, delay: 0.24)
+                        // WIDGET 4: Deadline — к уплате / дней / дедлайн
+                        deadlineWidget(status)
+                            .cardAppear(appeared: appeared, delay: 0.28)
 
+                        // WIDGET 5: Cash flow forecast
                         if let forecast = viewModel.cashFlowForecast {
-                            cashFlowCard(forecast)
-                                .cardAppear(appeared: appeared, delay: 0.30)
+                            cashFlowWidget(forecast)
+                                .cardAppear(appeared: appeared, delay: 0.34)
                         }
-                        yearSummaryCard
-                            .cardAppear(appeared: appeared, delay: 0.38)
-                        historyCard
+
+                        // WIDGET 6: Year summary
+                        yearSummaryWidget
+                            .cardAppear(appeared: appeared, delay: 0.40)
+
+                        // WIDGET 7: Monthly history
+                        historyWidget
                             .cardAppear(appeared: appeared, delay: 0.46)
+
                     } else if viewModel.isLoading {
                         loadingState
                     } else if viewModel.userType == .other {
@@ -72,11 +84,11 @@ struct TaxView: View {
         HStack {
             VStack(alignment: .leading, spacing: 3) {
                 Text("Налоги")
-                    .font(.system(.title2, design: .rounded, weight: .semibold))
+                    .fTitle()
                     .foregroundStyle(FC.ink)
                 Text(currentYearLabel)
                     .font(.system(.caption, design: .rounded, weight: .regular))
-                    .foregroundStyle(FC.muted)
+                    .foregroundStyle(FC.inkSecondary)
             }
             Spacer()
         }
@@ -85,31 +97,31 @@ struct TaxView: View {
         .padding(.bottom, 4)
     }
 
-    // MARK: - Tax Mode Card
+    // MARK: - WIDGET 1: Tax Mode
 
-    private func taxModeCard(_ status: TaxStatus) -> some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 4) {
+    private func taxModeWidget(_ status: TaxStatus) -> some View {
+        HStack(alignment: .center, spacing: 0) {
+            VStack(alignment: .leading, spacing: 5) {
                 Text("Режим").fLabel()
                 Text(status.taxMode.displayName)
                     .font(.system(.title3, design: .rounded, weight: .semibold))
                     .foregroundStyle(FC.ink)
                 Text(status.taxMode.shortDescription)
                     .font(.system(.caption, design: .rounded))
-                    .foregroundStyle(FC.muted)
+                    .foregroundStyle(FC.inkSecondary)
             }
             Spacer()
-            Text("%")
-                .font(.system(size: 44, weight: .thin))
-                .foregroundStyle(FC.cobalt.opacity(0.25))
+            Text(status.taxMode.shortDescription.contains("4") || status.taxMode.shortDescription.contains("6") ? status.effectiveRate : "%")
+                .font(.system(size: 40, weight: .thin))
+                .foregroundStyle(FC.cobalt.opacity(0.20))
         }
-        .padding(.horizontal, 4)
-        .padding(.bottom, 4)
+        .padding(20)
+        .dataWidget()
     }
 
-    // MARK: - NPD Limit Card (only for НПД)
+    // MARK: - WIDGET 2a: NPD Limit (progress + numbers, no duplicate text)
 
-    private func npdLimitCard(_ status: TaxStatus) -> some View {
+    private func npdLimitWidget(_ status: TaxStatus) -> some View {
         VStack(alignment: .leading, spacing: 14) {
             HStack {
                 Text("Лимит НПД").fLabel()
@@ -120,30 +132,29 @@ struct TaxView: View {
                         Text(status.isOverLimit ? "Превышен" : "Внимание")
                             .font(.system(.caption, design: .rounded, weight: .semibold))
                     }
-                    .foregroundStyle(status.isOverLimit ? FC.danger : FC.amber)
+                    .foregroundStyle(status.isOverLimit ? FC.danger : FC.warning)
                 }
             }
 
+            // Progress bar
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
                     RoundedRectangle(cornerRadius: 5).fill(FC.border.opacity(0.6)).frame(height: 8)
                     RoundedRectangle(cornerRadius: 5)
-                        .fill(LinearGradient(
-                            colors: [FC.cobalt, FC.amber, FC.danger],
-                            startPoint: .leading, endPoint: .trailing
-                        ))
+                        .fill(trafficColor(status))
                         .frame(width: geo.size.width * CGFloat(min(status.limitUsedPercent / 100, 1.0)), height: 8)
                         .animation(.fineryCard.delay(0.2), value: status.limitUsedPercent)
                 }
             }
             .frame(height: 8)
 
+            // Three numbers: used / remaining / limit
             HStack {
                 statBlock(label: "Использовано", value: status.yearlyIncome.rub(),
                           color: trafficColor(status), align: .leading)
                 Spacer()
                 statBlock(label: "Осталось", value: status.remaining.rub(),
-                          color: FC.muted, align: .center)
+                          color: FC.inkSecondary, align: .center)
                 Spacer()
                 statBlock(label: "Лимит", value: TaxStatus.npdYearLimit.rub(),
                           color: FC.ink, align: .trailing)
@@ -158,88 +169,55 @@ struct TaxView: View {
             }
         }
         .padding(20)
-        .glassCard()
+        .dataWidget()
     }
 
-    // MARK: - NPD Forecast Card
+    // MARK: - WIDGET 3: NPD Forecast (only forecast, used/remaining NOT repeated here)
 
-    private func npdForecastCard(_ forecast: NpdForecast) -> some View {
+    private func npdForecastWidget(_ forecast: NpdForecast) -> some View {
         VStack(alignment: .leading, spacing: 14) {
             Text("Прогноз лимита НПД").fLabel()
 
-            // Progress bar
-            GeometryReader { geo in
-                ZStack(alignment: .leading) {
-                    RoundedRectangle(cornerRadius: 4).fill(FC.border.opacity(0.5)).frame(height: 8)
-                    RoundedRectangle(cornerRadius: 4)
-                        .fill(forecastProgressColor(forecast.usedPercent))
-                        .frame(width: geo.size.width * CGFloat(min(forecast.usedPercent, 100) / 100), height: 8)
-                }
-            }
-            .frame(height: 8)
-
-            // Used / Remaining
-            HStack {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Использовано").fLabel()
-                    Text(forecast.ytdIncome.rub())
-                        .font(.system(.subheadline, design: .rounded, weight: .semibold))
-                        .monospacedDigit()
-                        .foregroundStyle(FC.ink)
-                }
-                Spacer()
-                VStack(alignment: .trailing, spacing: 2) {
-                    Text("Осталось").fLabel()
-                    Text(forecast.remaining.rub())
-                        .font(.system(.subheadline, design: .rounded, weight: .semibold))
-                        .monospacedDigit()
-                        .foregroundStyle(FC.cobalt)
-                }
-            }
-
-            // Velocity
             if let days = forecast.daysToLimit {
-                let color = days < 30 ? FC.danger : days < 90 ? FC.amber : Color(h: "1A7A4A")
-                HStack(spacing: 8) {
-                    Image(systemName: days < 30 ? "exclamationmark.triangle.fill" : "calendar.badge.clock")
-                        .foregroundStyle(color)
-                        .font(.system(size: 13))
-                    Text("При текущем темпе превысите через \(days) дн.")
-                        .font(.system(.caption, design: .rounded))
-                        .foregroundStyle(FC.muted)
-                }
-                .padding(10)
-                .background(color.opacity(0.08))
-                .clipShape(RoundedRectangle(cornerRadius: 8))
-                .overlay(RoundedRectangle(cornerRadius: 8).stroke(color.opacity(0.2), lineWidth: 0.5))
-
-                if days < 60 {
+                let color = days < 30 ? FC.danger : days < 90 ? FC.warning : FC.success
+                VStack(alignment: .leading, spacing: 10) {
                     HStack(spacing: 8) {
-                        Image(systemName: "lightbulb.fill").foregroundStyle(FC.amber).font(.system(size: 12))
-                        Text("Рассмотрите переход на УСН 6%")
-                            .font(.system(.caption, design: .rounded))
-                            .foregroundStyle(FC.muted)
+                        Image(systemName: days < 30 ? "exclamationmark.triangle.fill" : "calendar.badge.clock")
+                            .foregroundStyle(color)
+                            .font(.system(size: 15))
+                        Text("При текущем темпе — через \(days) дн.")
+                            .font(.system(.subheadline, design: .rounded, weight: .medium))
+                            .foregroundStyle(FC.ink)
+                    }
+                    .padding(14)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(color.opacity(0.08))
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .overlay(RoundedRectangle(cornerRadius: 10).stroke(color.opacity(0.18), lineWidth: 0.5))
+
+                    if days < 60 {
+                        HStack(spacing: 8) {
+                            Image(systemName: "lightbulb").foregroundStyle(FC.warning)
+                                .font(.system(size: 13))
+                            Text("Рассмотрите переход на УСН 6%")
+                                .font(.system(.caption, design: .rounded))
+                                .foregroundStyle(FC.inkSecondary)
+                        }
                     }
                 }
             } else {
                 Text("Темп поступлений пока не определён")
                     .font(.system(.caption, design: .rounded))
-                    .foregroundStyle(FC.muted)
+                    .foregroundStyle(FC.inkSecondary)
             }
         }
         .padding(20)
-        .glassCard()
+        .dataWidget()
     }
 
-    private func forecastProgressColor(_ pct: Double) -> Color {
-        if pct >= 100 { return FC.danger }
-        if pct >= 80  { return FC.amber }
-        return FC.cobalt
-    }
+    // MARK: - WIDGET 2b: USN Quarterly Tax
 
-    // MARK: - USN Tax Card (УСН 6% / УСН 15%)
-
-    private func usnTaxCard(_ status: TaxStatus) -> some View {
+    private func usnTaxWidget(_ status: TaxStatus) -> some View {
         VStack(alignment: .leading, spacing: 14) {
             HStack {
                 Text(status.taxMode == .usn15 ? "Налог с прибыли" : "Налог за квартал").fLabel()
@@ -250,26 +228,23 @@ struct TaxView: View {
             }
 
             if status.taxMode == .usn15 {
-                // Show income – expenses = profit × 15%
                 HStack(spacing: 0) {
                     statBlock(label: "Доход", value: status.quarterlyIncome.rub(),
                               color: FC.cobalt, align: .leading)
                     Rectangle().fill(FC.border).frame(width: 1, height: 44)
                     statBlock(label: "Расходы", value: status.quarterlyExpenses.rub(),
-                              color: FC.muted, align: .center)
+                              color: FC.inkSecondary, align: .center)
                     Rectangle().fill(FC.border).frame(width: 1, height: 44)
                     statBlock(label: "Прибыль", value: status.quarterlyProfit.rub(),
                               color: FC.ink, align: .trailing)
                 }
                 .frame(maxWidth: .infinity)
             } else {
-                // USN 6%: just show quarterly income
                 HStack {
                     statBlock(label: "Доход за квартал", value: status.quarterlyIncome.rub(),
                               color: FC.cobalt, align: .leading)
                     Spacer()
-                    statBlock(label: "Ставка", value: "6%",
-                              color: FC.ink, align: .trailing)
+                    statBlock(label: "Ставка", value: "6%", color: FC.ink, align: .trailing)
                 }
             }
 
@@ -293,23 +268,26 @@ struct TaxView: View {
             )
         }
         .padding(20)
-        .glassCard()
+        .dataWidget()
     }
 
-    // MARK: - Deadline Card
+    // MARK: - WIDGET 4: Deadline (к уплате / дней / дедлайн)
 
-    private func deadlineCard(_ status: TaxStatus) -> some View {
+    private func deadlineWidget(_ status: TaxStatus) -> some View {
         HStack(spacing: 0) {
-            deadlineCell(label: "К уплате",       value: status.taxDue.rub(),
-                         color: status.taxDue > 0 ? FC.cobalt : FC.muted)
+            deadlineCell(label: "К уплате",
+                         value: status.taxDue.rub(),
+                         color: status.taxDue > 0 ? FC.cobalt : FC.inkSecondary)
             Rectangle().fill(FC.border).frame(width: 1)
-            deadlineCell(label: "Дней осталось",  value: "\(status.daysUntilDeadline)",
+            deadlineCell(label: "Дней осталось",
+                         value: "\(status.daysUntilDeadline)",
                          color: status.daysUntilDeadline <= 5 ? FC.danger : FC.ink)
             Rectangle().fill(FC.border).frame(width: 1)
-            deadlineCell(label: "Дедлайн",        value: formattedDeadline(status.nextDeadline),
+            deadlineCell(label: "Дедлайн",
+                         value: formattedDeadline(status.nextDeadline),
                          color: FC.ink)
         }
-        .glassCard()
+        .dataWidget()
     }
 
     private func deadlineCell(label: String, value: String, color: Color) -> some View {
@@ -325,9 +303,9 @@ struct TaxView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
-    // MARK: - Cash Flow Forecast
+    // MARK: - WIDGET 5: Cash Flow Forecast (no detail screen — not tappable)
 
-    private func cashFlowCard(_ forecast: CashFlowForecast) -> some View {
+    private func cashFlowWidget(_ forecast: CashFlowForecast) -> some View {
         VStack(alignment: .leading, spacing: 14) {
             HStack {
                 Text("Прогноз кассового разрыва").fLabel()
@@ -335,16 +313,17 @@ struct TaxView: View {
                 if forecast.willGoNegativeIn30Days {
                     HStack(spacing: 4) {
                         Image(systemName: "exclamationmark.triangle").fontWeight(.light).imageScale(.small)
-                        Text("Риск разрыва").font(.system(.caption, design: .rounded, weight: .semibold))
+                        Text("Риск разрыва")
+                            .font(.system(.caption, design: .rounded, weight: .semibold))
                     }
-                    .foregroundStyle(FC.amber)
+                    .foregroundStyle(FC.warning)
                 }
             }
 
             HStack(spacing: 0) {
                 forecastCell(label: "Текущий баланс",
                              value: forecast.currentBalance.rub(),
-                             color: forecast.currentBalance >= 0 ? FC.cobalt : FC.muted)
+                             color: forecast.currentBalance >= 0 ? FC.cobalt : FC.inkSecondary)
                 Rectangle().fill(FC.border).frame(width: 1)
                 forecastCell(label: "Хватит на",
                              value: forecast.daysUntilNegative.map { "\($0) дн." } ?? "∞",
@@ -352,9 +331,9 @@ struct TaxView: View {
                 Rectangle().fill(FC.border).frame(width: 1)
                 forecastCell(label: "Расходы/мес",
                              value: forecast.avgMonthlyExpenses.rub(),
-                             color: FC.muted)
+                             color: FC.inkSecondary)
             }
-            .background(FC.surface)
+            .background(FC.background)
             .clipShape(RoundedRectangle(cornerRadius: 10))
 
             infoBox(
@@ -362,11 +341,11 @@ struct TaxView: View {
                 text: forecast.willGoNegativeIn30Days
                     ? "Средний расход (\(forecast.avgMonthlyExpenses.rub())/мес) превышает доход. Пора сократить траты."
                     : "Среднемесячный доход за 3 мес: \(forecast.avgMonthlyIncome.rub()). Подушка в норме.",
-                color: forecast.willGoNegativeIn30Days ? FC.amber : FC.cobalt
+                color: forecast.willGoNegativeIn30Days ? FC.warning : FC.cobalt
             )
         }
         .padding(20)
-        .glassCard()
+        .dataWidget()
     }
 
     private func forecastCell(label: String, value: String, color: Color) -> some View {
@@ -386,14 +365,14 @@ struct TaxView: View {
 
     private func forecastDaysColor(_ forecast: CashFlowForecast) -> Color {
         guard let days = forecast.daysUntilNegative else { return FC.cobalt }
-        if days <= 7  { return FC.amber }
-        if days <= 30 { return FC.amber }
+        if days <= 7  { return FC.warning }
+        if days <= 30 { return FC.warning }
         return FC.cobalt
     }
 
-    // MARK: - Year Summary
+    // MARK: - WIDGET 6: Year Summary
 
-    private var yearSummaryCard: some View {
+    private var yearSummaryWidget: some View {
         HStack(alignment: .top) {
             VStack(alignment: .leading, spacing: 4) {
                 Text("Доход за год").fLabel()
@@ -409,18 +388,18 @@ struct TaxView: View {
                 Text(viewModel.totalTaxYear.rub())
                     .font(.system(.subheadline, design: .rounded, weight: .semibold))
                     .monospacedDigit()
-                    .foregroundStyle(FC.muted)
+                    .foregroundStyle(FC.inkSecondary)
                     .contentTransition(.numericText())
             }
         }
-        .padding(.horizontal, 4)
-        .padding(.vertical, 4)
+        .padding(20)
+        .dataWidget()
     }
 
-    // MARK: - History
+    // MARK: - WIDGET 7: Monthly History
 
-    private var historyCard: some View {
-        VStack(alignment: .leading, spacing: 10) {
+    private var historyWidget: some View {
+        VStack(alignment: .leading, spacing: 12) {
             Text("История по месяцам").fLabel()
             ForEach(viewModel.monthlyHistory.reversed()) { item in
                 HStack {
@@ -437,7 +416,7 @@ struct TaxView: View {
                         Text("Налог: " + item.taxAmount.rub())
                             .font(.system(.caption2, design: .rounded, weight: .regular))
                             .monospacedDigit()
-                            .foregroundStyle(FC.muted)
+                            .foregroundStyle(FC.inkSecondary)
                     }
                 }
                 .padding(.vertical, 6)
@@ -446,23 +425,24 @@ struct TaxView: View {
                 }
             }
         }
-        .padding(.horizontal, 4)
+        .padding(20)
+        .dataWidget()
     }
 
-    // MARK: - No Data Stub
+    // MARK: - Stubs
 
     private var noDataStub: some View {
         VStack(spacing: 20) {
             Image(systemName: "wifi.slash")
                 .font(.system(size: 48, weight: .light))
-                .foregroundStyle(FC.muted)
+                .foregroundStyle(FC.inkSecondary)
             VStack(spacing: 8) {
                 Text("Нет данных")
                     .font(.system(.title3, design: .rounded, weight: .semibold))
                     .foregroundStyle(FC.ink)
                 Text("Налоговый статус загружается с сервера.\nПроверьте подключение и обновите экран.")
                     .font(.system(.subheadline, design: .rounded))
-                    .foregroundStyle(FC.muted)
+                    .foregroundStyle(FC.inkSecondary)
                     .multilineTextAlignment(.center)
             }
             Button {
@@ -482,20 +462,18 @@ struct TaxView: View {
         .frame(maxWidth: .infinity)
     }
 
-    // MARK: - Personal Tracker Stub
-
     private var personalTrackerStub: some View {
         VStack(spacing: 20) {
             Image(systemName: "house.circle")
                 .font(.system(size: 60, weight: .light))
-                .foregroundStyle(FC.muted)
+                .foregroundStyle(FC.inkSecondary)
             VStack(spacing: 8) {
                 Text("Личный трекер")
                     .font(.system(.title3, design: .rounded, weight: .semibold))
                     .foregroundStyle(FC.ink)
                 Text("Налоги не отслеживаются.\nЭтот режим — для личного бюджета без налоговой отчётности.")
                     .font(.system(.subheadline, design: .rounded))
-                    .foregroundStyle(FC.muted)
+                    .foregroundStyle(FC.inkSecondary)
                     .multilineTextAlignment(.center)
             }
         }
@@ -503,8 +481,6 @@ struct TaxView: View {
         .padding(.vertical, 64)
         .frame(maxWidth: .infinity)
     }
-
-    // MARK: - Loading
 
     private var loadingState: some View {
         HStack {
@@ -532,19 +508,19 @@ struct TaxView: View {
             Image(systemName: icon).fontWeight(.light).foregroundStyle(color)
             Text(text)
                 .font(.system(.caption, design: .rounded))
-                .foregroundStyle(FC.muted)
+                .foregroundStyle(FC.inkSecondary)
                 .fixedSize(horizontal: false, vertical: true)
         }
         .padding(14)
-        .background(color.opacity(0.08))
-        .overlay(RoundedRectangle(cornerRadius: 10).stroke(color.opacity(0.2), lineWidth: 1))
+        .background(color.opacity(0.07))
+        .overlay(RoundedRectangle(cornerRadius: 10).stroke(color.opacity(0.18), lineWidth: 1))
         .clipShape(RoundedRectangle(cornerRadius: 10))
     }
 
     private func trafficColor(_ status: TaxStatus) -> Color {
         switch status.trafficLight {
         case .green:  FC.cobalt
-        case .yellow: FC.amber
+        case .yellow: FC.warning
         case .red:    FC.danger
         }
     }
@@ -566,8 +542,6 @@ private extension DateFormatter {
         configure(self); return self
     }
 }
-
-// MARK: - Card appear
 
 private extension View {
     func cardAppear(appeared: Bool, delay: Double) -> some View {

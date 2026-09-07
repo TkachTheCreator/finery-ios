@@ -19,8 +19,7 @@ struct RootView: View {
     @State private var clipboardChangeCount = -1
     @State private var pendingClipboardVM: AddTransactionViewModel? = nil
     @State private var showClipboardAdd = false
-    @State private var selectedTab: FineryTab = .dashboard
-    @State private var goingRight = true
+    @State private var navPath = NavigationPath()
     @State private var showSettings = false
 
     private enum Phase: Equatable {
@@ -155,8 +154,8 @@ struct RootView: View {
         .onChange(of: SharedDataService.shared.isLoggedOut) { _, loggedOut in
             if loggedOut {
                 let expired = SharedDataService.shared.sessionExpiredMessage != nil
+                navPath = NavigationPath()
                 withAnimation(.fineryPage) { phase = expired ? .login : .welcome }
-                selectedTab = .dashboard
                 if expired { showSessionExpiredAlert = true }
             }
         }
@@ -201,61 +200,53 @@ struct RootView: View {
         }
     }
 
-    // MARK: Main TabView (custom with directional transitions)
+    // MARK: - Navigation Routes
+
+    private enum FineryRoute: Hashable {
+        case tax
+        case clients
+        case transactions
+        case analyticsDynamics
+        case analyticsCategories
+    }
+
+    // MARK: - Main App (NavigationStack, no tab bar)
 
     private func mainTabView(c: AppContainer) -> some View {
-        ZStack(alignment: .bottom) {
-            // Content
-            ZStack {
-                tabSlide { DashboardView(viewModel: c.dashboard, onShowSettings: { showSettings = true }) }
-                    .opacity(selectedTab == .dashboard ? 1 : 0)
-
-                if selectedTab == .transactions {
-                    TransactionsView(viewModel: c.transactions)
-                        .transition(slideTransition)
-                }
-                if selectedTab == .analytics {
-                    AnalyticsView(viewModel: c.analytics)
-                        .transition(slideTransition)
-                }
-                if selectedTab == .clients {
-                    ClientsView(viewModel: c.clients)
-                        .transition(slideTransition)
-                }
-                if selectedTab == .tax {
+        NavigationStack(path: $navPath) {
+            DashboardView(
+                viewModel: c.dashboard,
+                onShowSettings: { showSettings = true },
+                onShowTax: { navPath.append(FineryRoute.tax) },
+                onShowAI: { showChat = true },
+                onShowClients: { navPath.append(FineryRoute.clients) },
+                onShowAddTransaction: { showAddTransaction = true },
+                onShowAnalyticsDynamics: { navPath.append(FineryRoute.analyticsDynamics) },
+                onShowAnalyticsCategories: { navPath.append(FineryRoute.analyticsCategories) }
+            )
+            .navigationTitle("")
+            .navigationBarHidden(true)
+            .navigationDestination(for: FineryRoute.self) { route in
+                switch route {
+                case .tax:
                     TaxView(viewModel: c.tax)
-                        .transition(slideTransition)
+                        .navigationTitle("")
+                        .navigationBarTitleDisplayMode(.inline)
+                case .clients:
+                    ClientsView(viewModel: c.clients)
+                        .navigationTitle("")
+                        .navigationBarTitleDisplayMode(.inline)
+                case .transactions:
+                    TransactionsView(viewModel: c.transactions)
+                        .navigationTitle("")
+                        .navigationBarTitleDisplayMode(.inline)
+                case .analyticsDynamics:
+                    AnalyticsDynamicsView(viewModel: c.analytics)
+                        .navigationBarTitleDisplayMode(.inline)
+                case .analyticsCategories:
+                    AnalyticsCategoriesView(viewModel: c.analytics)
+                        .navigationBarTitleDisplayMode(.inline)
                 }
-            }
-            .animation(.spring(response: 0.35, dampingFraction: 0.85), value: selectedTab)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .ignoresSafeArea(edges: .bottom)
-
-            // Floating tab bar
-            FloatingTabBar(selection: Binding(
-                get: { selectedTab },
-                set: { selectTab($0) }
-            ))
-            .padding(.bottom, 20)
-
-            // AI FAB — above the tab bar on the left, visible only on Dashboard
-            if selectedTab == .dashboard {
-                HStack {
-                    Button { showChat = true } label: {
-                        Image(systemName: "sparkles")
-                            .font(.system(size: 22, weight: .medium))
-                            .foregroundStyle(.white)
-                            .frame(width: 56, height: 56)
-                            .background(FC.cobalt)
-                            .clipShape(Circle())
-                            .shadow(color: FC.cobalt.opacity(0.35), radius: 12, x: 0, y: 6)
-                    }
-                    .buttonStyle(ScaleButtonStyle())
-                    Spacer()
-                }
-                .padding(.leading, 20)
-                .padding(.bottom, 104)
-                .transition(.opacity.combined(with: .scale(scale: 0.8)))
             }
         }
         .fullScreenCover(isPresented: $showReAuth) {
@@ -282,27 +273,6 @@ struct RootView: View {
         .sheet(isPresented: $showChat) {
             AIAdvisorView()
         }
-    }
-
-    private var slideTransition: AnyTransition {
-        .asymmetric(
-            insertion: .move(edge: goingRight ? .trailing : .leading),
-            removal:   .move(edge: goingRight ? .leading  : .trailing)
-        )
-    }
-
-    private func selectTab(_ tab: FineryTab) {
-        guard tab != selectedTab else { return }
-        goingRight = tab.rawValue > selectedTab.rawValue
-        HapticManager.light()
-        withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
-            selectedTab = tab
-        }
-    }
-
-    @ViewBuilder
-    private func tabSlide<V: View>(@ViewBuilder _ content: () -> V) -> some View {
-        content()
     }
 
     // MARK: Clipboard bank SMS check

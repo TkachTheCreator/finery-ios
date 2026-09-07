@@ -12,11 +12,9 @@ struct AddTransactionView: View {
     @State private var showOverlay: OverlayState = .none
     @State private var showCategoryPicker = false
     @State private var showError = false
-    @State private var showVoiceError = false
     @State private var showDeleteConfirm = false
     @State private var showReceiptPicker = false
     @State private var isOCRLoading = false
-    @State private var showRecurringPicker = false
     @State private var showCreateClient = false
     @State private var newClientName = ""
     @State private var isCreatingClient = false
@@ -40,7 +38,7 @@ struct AddTransactionView: View {
                     header
                     hairline
                     amountSection
-                    if viewModel.taxSetAside != nil || (viewModel.isNpdMode && viewModel.direction == .income && viewModel.canSave) {
+                    if showTaxHint {
                         hairline
                         taxHintRow
                     }
@@ -48,25 +46,19 @@ struct AddTransactionView: View {
                     directionToggle
                     hairline
                     formFields
-                    Spacer(minLength: 40)
-                    saveButton
-                        .padding(.horizontal, 20)
-                    if viewModel.isEditing {
-                        Button(role: .destructive) { showDeleteConfirm = true } label: {
-                            Text("Удалить транзакцию")
-                                .font(.system(.subheadline, design: .rounded))
-                                .foregroundStyle(FC.danger)
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 14)
-                                .background(FC.danger.opacity(0.08))
-                                .clipShape(RoundedRectangle(cornerRadius: 14))
-                        }
-                        .padding(.horizontal, 20)
-                    }
+                    Spacer(minLength: 32)
+                    bottomButtons
                     Spacer(minLength: 36)
                 }
             }
             .scrollDismissesKeyboard(.interactively)
+            // Пункт 7: swipe-down anywhere dismisses keyboard
+            .simultaneousGesture(
+                DragGesture(minimumDistance: 28)
+                    .onEnded { value in
+                        if value.translation.height > 28 { amountFocused = false }
+                    }
+            )
         }
         .onAppear {
             if autoStartVoice {
@@ -92,18 +84,10 @@ struct AddTransactionView: View {
         .onChange(of: viewModel.errorMessage) { _, msg in
             if msg != nil { showError = true }
         }
-        .onChange(of: viewModel.voice.voiceError) { _, msg in
-            if msg != nil { showVoiceError = true }
-        }
         .alert("Ошибка сохранения", isPresented: $showError) {
             Button("OK") { viewModel.errorMessage = nil }
         } message: {
-            Text(viewModel.errorMessage ?? "")
-        }
-        .alert("Голосовой ввод", isPresented: $showVoiceError) {
-            Button("OK") { viewModel.voice.state = .idle }
-        } message: {
-            Text(viewModel.voice.voiceError ?? "")
+            if let e = viewModel.errorMessage { Text(e) }
         }
         .sheet(isPresented: $showCategoryPicker) {
             CategoryPickerSheet(
@@ -160,27 +144,71 @@ struct AddTransactionView: View {
         .padding(.vertical, 14)
     }
 
-    // MARK: Amount
+    // MARK: Amount + Currency (Пункт 1 + Пункт 8)
 
     private var amountSection: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text("Сумма").fLabel()
+        VStack(alignment: .leading, spacing: 8) {
+            // Currency picker row
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    ForEach(Currency.allCases, id: \.self) { cur in
+                        currencyChip(cur)
+                    }
+                }
+                .padding(.horizontal, 20)
+            }
+            .task { await CurrencyService.shared.fetchIfNeeded() }
 
+            // Amount input
             HStack(alignment: .firstTextBaseline, spacing: 4) {
                 TextField("0", text: $viewModel.amountText)
                     .keyboardType(.decimalPad)
-                    .font(.system(size: 48, weight: .bold))
+                    .font(.system(size: 48, weight: .bold, design: .rounded))
                     .monospacedDigit()
                     .foregroundStyle(FC.ink)
                     .focused($amountFocused)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                Text("₽")
-                    .font(.system(size: 32, weight: .regular))
-                    .foregroundStyle(FC.muted)
+                    .padding(.leading, 20)
+                Text(viewModel.currency.symbol)
+                    .font(.system(size: 32, weight: .regular, design: .rounded))
+                    .foregroundStyle(FC.inkSecondary)
+                    .padding(.trailing, 20)
+            }
+            .padding(.vertical, 12)
+
+            // Rate hint for non-RUB currencies
+            if viewModel.currency != .rub {
+                let hint = CurrencyService.shared.rateLabel(for: viewModel.currency)
+                if !hint.isEmpty {
+                    Text(hint)
+                        .font(.system(size: 12, weight: .regular, design: .rounded))
+                        .foregroundStyle(FC.inkSecondary)
+                        .padding(.horizontal, 20)
+                        .padding(.bottom, 4)
+                }
             }
         }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 20)
+        .background(FC.background)
+    }
+
+    private func currencyChip(_ cur: Currency) -> some View {
+        let selected = viewModel.currency == cur
+        return Button {
+            withAnimation(.spring(response: 0.28, dampingFraction: 0.8)) {
+                viewModel.currency = cur
+            }
+        } label: {
+            Text(cur.displayName)
+                .font(.system(size: 13, weight: selected ? .semibold : .regular, design: .rounded))
+                .foregroundStyle(selected ? .white : FC.inkSecondary)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(selected ? FC.cobalt : FC.surface)
+                .clipShape(Capsule())
+                .shadow(color: selected ? FC.cobaltGlow : .clear, radius: 6)
+        }
+        .buttonStyle(.plain)
+        .animation(.spring(response: 0.28, dampingFraction: 0.8), value: selected)
     }
 
     // MARK: Tax Hint (6.1 + 6.3)
@@ -249,28 +277,33 @@ struct AddTransactionView: View {
         }
     }
 
-    // MARK: Direction Toggle
+    // MARK: Direction Toggle (Пункт 8: warm palette, matches dataWidget style)
 
     private var directionToggle: some View {
-        HStack(spacing: 0) {
+        HStack(spacing: 8) {
             directionButton(.income,  label: "Доход",  color: FC.cobalt)
-            Rectangle().fill(FC.border).frame(width: 0.5)
-            directionButton(.expense, label: "Расход", color: FC.muted)
+            directionButton(.expense, label: "Расход", color: FC.expense)
         }
-        .frame(height: 48)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
+        .background(FC.background)
     }
 
     private func directionButton(_ dir: TransactionDirection, label: String, color: Color) -> some View {
         let selected = viewModel.direction == dir
         return Button {
-            withAnimation(.easeInOut(duration: 0.15)) { viewModel.setDirection(dir) }
+            withAnimation(.spring(response: 0.28, dampingFraction: 0.8)) { viewModel.setDirection(dir) }
         } label: {
             Text(label)
-                .font(.system(.subheadline, design: .default, weight: selected ? .semibold : .regular))
-                .foregroundStyle(selected ? .white : FC.muted)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .font(.system(.subheadline, design: .rounded, weight: selected ? .semibold : .regular))
+                .foregroundStyle(selected ? .white : FC.inkSecondary)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 10)
                 .background(selected ? color : FC.surface)
+                .clipShape(Capsule())
+                .shadow(color: selected ? color.opacity(0.25) : .clear, radius: 6)
         }
+        .animation(.spring(response: 0.28, dampingFraction: 0.8), value: selected)
     }
 
     // MARK: Receipt OCR Button
@@ -350,26 +383,29 @@ struct AddTransactionView: View {
 
     private var formFields: some View {
         VStack(spacing: 0) {
-            fieldRow(label: "Описание") {
-                HStack(spacing: 10) {
-                    TextField("За что оплата", text: $viewModel.description)
-                        .font(.system(.body))
-                        .foregroundStyle(FC.ink)
-                        .onChange(of: viewModel.description) { _, _ in viewModel.onDescriptionChanged() }
-                    receiptButton
-                    micButton
+            // При редактировании — полная форма; при создании — только категория
+            if viewModel.isEditing {
+                // Пункт 3: mic button removed; receipt OCR stays
+                fieldRow(label: "Описание") {
+                    HStack(spacing: 10) {
+                        TextField("За что оплата", text: $viewModel.description)
+                            .font(.system(.body))
+                            .foregroundStyle(FC.ink)
+                            .onChange(of: viewModel.description) { _, _ in viewModel.onDescriptionChanged() }
+                        receiptButton
+                    }
                 }
-            }
-            hairline
+                hairline
 
-            fieldRow(label: "Дата") {
-                DatePicker("", selection: $viewModel.date, displayedComponents: .date)
-                    .datePickerStyle(.compact)
-                    .labelsHidden()
-                    .tint(FC.cobalt)
-                    .environment(\.locale, Locale(identifier: "ru_RU"))
+                fieldRow(label: "Дата") {
+                    DatePicker("", selection: $viewModel.date, displayedComponents: .date)
+                        .datePickerStyle(.compact)
+                        .labelsHidden()
+                        .tint(FC.cobalt)
+                        .environment(\.locale, Locale(identifier: "ru_RU"))
+                }
+                hairline
             }
-            hairline
 
             fieldRow(label: "Категория") {
                 Button {
@@ -386,100 +422,78 @@ struct AddTransactionView: View {
                     }
                 }
             }
-            hairline
 
-            if viewModel.direction == .income {
-                fieldRow(label: "Тип клиента") {
-                    Menu {
-                        ForEach(ClientType.allCases, id: \.self) { type in
-                            Button("\(type.displayName) — \(NSDecimalNumber(decimal: type.npdRate * 100).intValue)%") {
-                                viewModel.clientType = type
+            // Пункт 2: client picker shown in both create and edit modes
+            hairline
+            clientPickerRow
+
+            if viewModel.isEditing {
+                if viewModel.direction == .income {
+                    hairline
+                    fieldRow(label: "Тип клиента") {
+                        Menu {
+                            ForEach(ClientType.allCases, id: \.self) { type in
+                                Button("\(type.displayName) — \(NSDecimalNumber(decimal: type.npdRate * 100).intValue)%") {
+                                    viewModel.clientType = type
+                                }
                             }
-                        }
-                    } label: {
-                        HStack(spacing: 4) {
-                            Text("\(viewModel.clientType.displayName) · \(NSDecimalNumber(decimal: viewModel.clientType.npdRate * 100).intValue)%")
-                                .font(.system(.body))
-                                .foregroundStyle(FC.ink)
-                            Image(systemName: "chevron.up.chevron.down")
-                                .font(.system(.caption2))
-                                .foregroundStyle(FC.muted)
+                        } label: {
+                            HStack(spacing: 4) {
+                                Text("\(viewModel.clientType.displayName) · \(NSDecimalNumber(decimal: viewModel.clientType.npdRate * 100).intValue)%")
+                                    .font(.system(.body))
+                                    .foregroundStyle(FC.ink)
+                                Image(systemName: "chevron.up.chevron.down")
+                                    .font(.system(.caption2))
+                                    .foregroundStyle(FC.muted)
+                            }
                         }
                     }
                 }
+
                 hairline
+                fieldRow(label: "Заметки") {
+                    TextField("Опционально", text: $viewModel.notes)
+                        .font(.system(.body))
+                        .foregroundStyle(FC.ink)
+                }
+                // Пункт 5: "Повторять" row removed — recurring not yet implemented
             }
+        }
+    }
 
-            fieldRow(label: "Клиент") {
-                Menu {
-                    Button("Без клиента") {
-                        viewModel.selectedClientId   = nil
-                        viewModel.selectedClientName = nil
-                    }
+    // Shared client picker (used in create and edit modes)
+    private var clientPickerRow: some View {
+        fieldRow(label: "Клиент") {
+            Menu {
+                Button("Без клиента") {
+                    viewModel.selectedClientId   = nil
+                    viewModel.selectedClientName = nil
+                }
+                Divider()
+                Button {
+                    newClientName = ""
+                    showCreateClient = true
+                } label: {
+                    Label("Создать клиента", systemImage: "person.badge.plus")
+                }
+                if !SharedDataService.shared.cachedClients.isEmpty {
                     Divider()
-                    Button {
-                        newClientName = ""
-                        showCreateClient = true
-                    } label: {
-                        Label("Создать клиента", systemImage: "person.badge.plus")
-                    }
-                    if !SharedDataService.shared.cachedClients.isEmpty {
-                        Divider()
-                        ForEach(SharedDataService.shared.cachedClients) { client in
-                            Button(client.name) {
-                                viewModel.selectedClientId   = client.id
-                                viewModel.selectedClientName = client.name
-                            }
+                    ForEach(SharedDataService.shared.cachedClients) { client in
+                        Button(client.name) {
+                            viewModel.selectedClientId   = client.id
+                            viewModel.selectedClientName = client.name
                         }
                     }
-                } label: {
-                    HStack(spacing: 4) {
-                        Text(viewModel.selectedClientName ?? "Не выбран")
-                            .font(.system(.body))
-                            .foregroundStyle(viewModel.selectedClientName != nil ? FC.ink : FC.muted)
-                        Image(systemName: "chevron.up.chevron.down")
-                            .font(.system(.caption2))
-                            .foregroundStyle(FC.muted)
-                    }
                 }
-            }
-            hairline
-
-            fieldRow(label: "Заметки") {
-                TextField("Опционально", text: $viewModel.notes)
-                    .font(.system(.body))
-                    .foregroundStyle(FC.ink)
-            }
-            hairline
-            fieldRow(label: "Повторять") {
-                Button {
-                    guard viewModel.canSave else { return }
-                    showRecurringPicker = true
-                } label: {
-                    HStack(spacing: 4) {
-                        Text("Настроить")
-                            .font(.system(.body))
-                            .foregroundStyle(viewModel.canSave ? FC.cobalt : FC.muted)
-                        Image(systemName: "arrow.clockwise")
-                            .font(.system(.caption2))
-                            .foregroundStyle(viewModel.canSave ? FC.cobalt : FC.muted)
-                    }
+            } label: {
+                HStack(spacing: 4) {
+                    Text(viewModel.selectedClientName ?? "Не выбран")
+                        .font(.system(.body))
+                        .foregroundStyle(viewModel.selectedClientName != nil ? FC.ink : FC.muted)
+                    Image(systemName: "chevron.up.chevron.down")
+                        .font(.system(.caption2))
+                        .foregroundStyle(FC.muted)
                 }
-                .disabled(!viewModel.canSave)
-            }
-            .sheet(isPresented: $showRecurringPicker) {
-                RecurringPickerSheet(
-                    amount: viewModel.amount ?? 0,
-                    direction: viewModel.direction,
-                    description: viewModel.description,
-                    incomeCategory: viewModel.incomeCategory,
-                    expenseCategory: viewModel.expenseCategory,
-                    onSave: { rec in
-                        RecurringTransactionService.shared.add(rec)
-                        showRecurringPicker = false
-                    },
-                    onCancel: { showRecurringPicker = false }
-                )
             }
         }
     }
@@ -487,7 +501,10 @@ struct AddTransactionView: View {
     @ViewBuilder
     private func fieldRow<Content: View>(label: String, @ViewBuilder content: () -> Content) -> some View {
         HStack {
-            Text(label).fLabel().frame(width: 110, alignment: .leading)
+            Text(label)
+                .font(.system(.body, design: .rounded, weight: .regular))
+                .foregroundStyle(FC.ink)
+                .frame(width: 110, alignment: .leading)
             Spacer()
             content()
         }
@@ -496,24 +513,46 @@ struct AddTransactionView: View {
         .background(FC.background)
     }
 
+    // MARK: Bottom Buttons (save + optional delete)
+
+    @ViewBuilder
+    private var bottomButtons: some View {
+        VStack(spacing: 10) {
+            saveButton.padding(.horizontal, 20)
+            if viewModel.isEditing {
+                deleteButton.padding(.horizontal, 20)
+            }
+        }
+    }
+
+    // Задача 3: hold-to-delete replaces instant tap
+    private var deleteButton: some View {
+        HoldToDeleteButton {
+            Task { await viewModel.deleteExisting() }
+        }
+    }
+
     // MARK: Save Button
 
     private var saveButton: some View {
         Button {
-            Task { await viewModel.save() }
+            Task {
+                if viewModel.isEditing { await viewModel.update() }
+                else                   { await viewModel.save()   }
+            }
         } label: {
             Group {
                 if viewModel.isSaving {
                     ProgressView().tint(.white)
                 } else {
-                    Text("Сохранить")
-                        .font(.system(.body, design: .default, weight: .semibold))
+                    Text(viewModel.isEditing ? "Сохранить изменения" : "Добавить")
+                        .font(.system(.body, design: .rounded, weight: .semibold))
                 }
             }
             .foregroundStyle(.white)
             .frame(maxWidth: .infinity)
             .padding(.vertical, 16)
-            .background(FC.cobalt.opacity(viewModel.canSave ? 1.0 : 0.5))
+            .background(FC.cobalt.opacity(viewModel.canSave ? 1.0 : 0.4))
             .clipShape(RoundedRectangle(cornerRadius: 14))
         }
         .disabled(!viewModel.canSave || viewModel.isSaving)
@@ -521,6 +560,10 @@ struct AddTransactionView: View {
 
     private var hairline: some View {
         Rectangle().fill(FC.border).frame(height: 0.5)
+    }
+
+    private var showTaxHint: Bool {
+        viewModel.taxSetAside != nil || (viewModel.isNpdMode && viewModel.direction == .income && viewModel.canSave)
     }
 
     // MARK: - Create Client Sheet
@@ -598,4 +641,73 @@ struct AddTransactionView: View {
 
 #Preview {
     AddTransactionView(viewModel: .preview())
+}
+
+// MARK: - Hold-to-Delete Button (Задача 3)
+
+struct HoldToDeleteButton: View {
+    let action: () -> Void
+
+    @State private var fillProgress: CGFloat = 0
+    @State private var isHolding = false
+    @State private var holdTask: Task<Void, Never>? = nil
+
+    private let holdDuration: Double = 0.8
+    private let cornerRadius: CGFloat = 14
+
+    var body: some View {
+        ZStack {
+            // Base: solid danger background
+            RoundedRectangle(cornerRadius: cornerRadius)
+                .fill(FC.danger)
+
+            // Animated fill overlay (white sweep from left)
+            GeometryReader { geo in
+                RoundedRectangle(cornerRadius: cornerRadius)
+                    .fill(Color.white.opacity(0.22))
+                    .frame(width: geo.size.width * fillProgress)
+            }
+            .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
+
+            // Label
+            Text(isHolding ? "Отпусти чтобы отменить" : "Удалить · удерживай")
+                .font(.system(.body, design: .rounded, weight: .semibold))
+                .foregroundStyle(.white)
+                .animation(.easeInOut(duration: 0.18), value: isHolding)
+        }
+        .frame(maxWidth: .infinity)
+        .frame(height: 52)
+        .contentShape(Rectangle())
+        .gesture(
+            DragGesture(minimumDistance: 0)
+                .onChanged { _ in startHolding() }
+                .onEnded   { _ in cancelHolding() }
+        )
+    }
+
+    private func startHolding() {
+        guard !isHolding else { return }
+        isHolding = true
+        fillProgress = 0
+        withAnimation(.linear(duration: holdDuration)) {
+            fillProgress = 1.0
+        }
+        holdTask = Task {
+            try? await Task.sleep(nanoseconds: UInt64(holdDuration * 1_000_000_000))
+            guard !Task.isCancelled, isHolding else { return }
+            await MainActor.run {
+                HapticManager.impact(.medium)
+                isHolding = false
+                fillProgress = 0
+                action()
+            }
+        }
+    }
+
+    private func cancelHolding() {
+        holdTask?.cancel()
+        holdTask = nil
+        isHolding = false
+        withAnimation(.spring(response: 0.3)) { fillProgress = 0 }
+    }
 }

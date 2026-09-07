@@ -154,9 +154,9 @@ struct CashFlowDetailView: View {
 
     private var pageSelector: some View {
         HStack(spacing: 0) {
-            selectorTab(label: "Доходы",  index: 0, color: FC.cobalt, amount: displayedIncome)
+            selectorTab(label: "Доходы",  index: 0, color: FC.cobalt,  amount: displayedIncome)
             Rectangle().fill(FC.border).frame(width: 0.5)
-            selectorTab(label: "Расходы", index: 1, color: FC.muted,  amount: displayedExpenses)
+            selectorTab(label: "Расходы", index: 1, color: FC.expense, amount: displayedExpenses)
         }
         .frame(height: 62)
     }
@@ -177,12 +177,10 @@ struct CashFlowDetailView: View {
                     .contentTransition(.numericText())
                     .animation(.fineryNumber, value: amount)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
+            // D.2: fill full tab area so background highlight is complete
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
             .padding(.horizontal, 20)
-            .background(selected ? color.opacity(0.06) : Color.clear)
-            .overlay(alignment: .bottom) {
-                Rectangle().fill(selected ? color : Color.clear).frame(height: 2)
-            }
+            .background(selected ? color.opacity(0.09) : Color.clear)
         }
         .buttonStyle(.plain)
         .animation(.spring(response: 0.35, dampingFraction: 0.8), value: selected)
@@ -233,42 +231,15 @@ struct CashFlowDetailView: View {
             : "Расходы · \(monthLabel)"
 
         return VStack(alignment: .leading, spacing: 12) {
-            // Header row: month nav + amount
-            HStack(alignment: .top) {
-                VStack(alignment: .leading, spacing: 3) {
-                    Text(periodLabel)
-                        .fLabel()
-                    Text(total.rub())
-                        .font(.system(size: 32, weight: .bold, design: .rounded))
-                        .monospacedDigit()
-                        .foregroundStyle(direction == .income ? FC.cobalt : FC.ink)
-                        .contentTransition(.numericText())
-                        .animation(.fineryNumber, value: total)
-                }
-                Spacer()
-                // Month navigation chevrons
-                HStack(spacing: 12) {
-                    Button { changeMonth(-1) } label: {
-                        Image(systemName: "chevron.left")
-                            .font(.system(.caption, weight: .semibold))
-                            .foregroundStyle(FC.muted)
-                            .frame(width: 28, height: 28)
-                            .background(FC.surface)
-                            .clipShape(Circle())
-                            .overlay(Circle().stroke(FC.border, lineWidth: 0.5))
-                    }
-                    Button { changeMonth(+1) } label: {
-                        Image(systemName: "chevron.right")
-                            .font(.system(.caption, weight: .semibold))
-                            .foregroundStyle(monthOffset < 0 ? FC.muted : FC.border)
-                            .frame(width: 28, height: 28)
-                            .background(FC.surface)
-                            .clipShape(Circle())
-                            .overlay(Circle().stroke(FC.border, lineWidth: 0.5))
-                    }
-                    .disabled(monthOffset >= 0)
-                }
-                .padding(.top, 2)
+            // Header: amount only — month is changed by swipe gesture below
+            VStack(alignment: .leading, spacing: 3) {
+                Text(periodLabel).fLabel()
+                Text(total.rub())
+                    .font(.system(size: 32, weight: .bold, design: .rounded))
+                    .monospacedDigit()
+                    .foregroundStyle(direction == .income ? FC.cobalt : FC.expense)
+                    .contentTransition(.numericText())
+                    .animation(.fineryNumber, value: total)
             }
 
             if slices.isEmpty {
@@ -366,12 +337,13 @@ struct CashFlowDetailView: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 20)
             } else {
+                // D.3: each row uses category color (matches pie chart)
                 ForEach(transactions) { tx in
                     Button {
                         HapticManager.light()
                         editingTransaction = tx
                     } label: {
-                        TransactionRow(transaction: tx)
+                        categoryColoredRow(tx)
                     }
                     .buttonStyle(ScaleButtonStyle())
                 }
@@ -413,35 +385,62 @@ struct CashFlowDetailView: View {
             return s
         }
 
-        return enforceMinimumAngle(slices)
+        // D.4: return slices as-is; no minimum-angle inflation that caused rendering artifacts
+        return slices
     }
 
-    /// Гарантирует минимум 5° дуги для каждого сегмента.
-    /// Легенда остаётся с реальными числами — корректируется только chartValue.
-    private func enforceMinimumAngle(_ slices: [CategorySlice]) -> [CategorySlice] {
-        guard slices.count > 1 else { return slices }
+    // MARK: - Category-colored transaction row (D.3)
 
-        let totalChart = slices.reduce(0.0) { $0 + $1.chartValue }
-        guard totalChart > 0 else { return slices }
+    private func categoryColoredRow(_ tx: Transaction) -> some View {
+        let catName = tx.direction == .income
+            ? (tx.incomeCategory?.displayName ?? "Другое")
+            : (tx.expenseCategory?.displayName ?? "Другое")
+        let catColor = categoryColor(catName)
+        let iconSys  = tx.direction == .income
+            ? (tx.incomeCategory?.iconName  ?? "arrow.down.left")
+            : (tx.expenseCategory?.iconName ?? "arrow.up.right")
 
-        // 5° из 360° = минимальная доля
-        let minFraction = 5.0 / 360.0
-        let minValue    = totalChart * minFraction
+        return HStack(spacing: 12) {
+            ZStack {
+                Circle()
+                    .fill(catColor.opacity(0.12))
+                    .frame(width: 38, height: 38)
+                Image(systemName: iconSys)
+                    .fontWeight(.light)
+                    .imageScale(.small)
+                    .foregroundStyle(catColor)
+            }
 
-        var result   = slices
-        var totalBoost = 0.0
+            VStack(alignment: .leading, spacing: 2) {
+                Text(tx.description)
+                    .font(.system(.subheadline, design: .rounded, weight: .regular))
+                    .foregroundStyle(FC.ink)
+                    .lineLimit(1)
+                Text(catName)
+                    .font(.system(.caption2, design: .rounded, weight: .regular))
+                    .foregroundStyle(FC.inkSecondary)
+            }
 
-        for i in result.indices where result[i].chartValue < minValue {
-            totalBoost += minValue - result[i].chartValue
-            result[i].chartValue = minValue
+            Spacer()
+
+            VStack(alignment: .trailing, spacing: 2) {
+                Text((tx.direction == .income ? "+" : "−") + tx.amount.rub())
+                    .font(.system(.subheadline, design: .rounded, weight: .medium))
+                    .monospacedDigit()
+                    .foregroundStyle(catColor)
+                Text(cfShortTime(tx.date))
+                    .font(.system(.caption2, design: .rounded, weight: .regular))
+                    .foregroundStyle(FC.inkSecondary)
+            }
         }
+        .padding(.vertical, 10)
+        .padding(.horizontal, 14)
+        .glassCardSmall()
+    }
 
-        // Снимаем прирост с самого крупного сегмента
-        if totalBoost > 0,
-           let maxIdx = result.indices.max(by: { result[$0].chartValue < result[$1].chartValue }) {
-            result[maxIdx].chartValue = max(minValue, result[maxIdx].chartValue - totalBoost)
-        }
-
-        return result
+    private func cfShortTime(_ date: Date) -> String {
+        let fmt = DateFormatter()
+        fmt.dateFormat = "HH:mm"
+        return fmt.string(from: date)
     }
 }
