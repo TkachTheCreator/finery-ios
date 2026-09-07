@@ -123,7 +123,7 @@ struct CategoriesView: View {
                 HStack(spacing: 12) {
                     Image(systemName: cat.icon)
                         .font(.system(size: 15))
-                        .foregroundStyle(FC.cobalt)
+                        .foregroundStyle(FC.inkSecondary)
                         .frame(width: 28)
                     Text(cat.name)
                         .font(.system(.body, design: .rounded))
@@ -260,7 +260,7 @@ struct SettingsView: View {
             HStack(spacing: 14) {
                 Image(systemName: icon)
                     .font(.system(size: 22, weight: .light))
-                    .foregroundStyle(FC.cobalt)
+                    .foregroundStyle(FC.inkSecondary)
                     .frame(width: 30)
 
                 VStack(alignment: .leading, spacing: 2) {
@@ -382,16 +382,28 @@ struct TaxSettingsView: View {
             } else {
                 List {
                     Section {
-                        // Режим
-                        Picker("Режим налогообложения", selection: $viewModel.user.taxMode) {
-                            ForEach(TaxMode.allCases, id: \.self) { mode in
-                                Text(mode.displayName).tag(mode)
+                        HStack {
+                            Text("Режим")
+                                .font(.system(.body))
+                                .foregroundStyle(FC.ink)
+                            Spacer()
+                            Menu {
+                                ForEach(TaxMode.allCases, id: \.self) { mode in
+                                    Button {
+                                        viewModel.user.taxMode = mode
+                                        Task { await viewModel.save() }
+                                    } label: {
+                                        Label(
+                                            mode.displayName,
+                                            systemImage: viewModel.user.taxMode == mode ? "checkmark" : ""
+                                        )
+                                    }
+                                }
+                            } label: {
+                                Text(viewModel.user.taxMode.displayName)
+                                    .font(.system(.body))
+                                    .foregroundStyle(FC.inkSecondary)
                             }
-                        }
-                        .pickerStyle(.navigationLink)
-                        .font(.system(.body))
-                        .onChange(of: viewModel.user.taxMode) { _, _ in
-                            Task { await viewModel.save() }
                         }
                     } footer: {
                         Text(viewModel.user.taxMode.shortDescription)

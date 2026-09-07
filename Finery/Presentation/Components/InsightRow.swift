@@ -8,7 +8,6 @@ struct InsightRow: View {
             RoundedRectangle(cornerRadius: 3)
                 .fill(accentColor)
                 .frame(width: 3)
-                .shadow(color: accentColor.opacity(0.6), radius: 4)
 
             VStack(alignment: .leading, spacing: 3) {
                 Text(insight.title)

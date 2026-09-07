@@ -171,7 +171,7 @@ struct CashFlowDetailView: View {
                     .font(.system(.caption, design: .rounded, weight: .medium))
                     .foregroundStyle(selected ? color : FC.muted)
                 Text(amount.rub())
-                    .font(.system(.subheadline, design: .rounded, weight: .bold))
+                    .font(.system(.subheadline, design: .rounded, weight: .semibold))
                     .monospacedDigit()
                     .foregroundStyle(selected ? color : FC.muted.opacity(0.6))
                     .contentTransition(.numericText())
@@ -235,7 +235,7 @@ struct CashFlowDetailView: View {
             VStack(alignment: .leading, spacing: 3) {
                 Text(periodLabel).fLabel()
                 Text(total.rub())
-                    .font(.system(size: 32, weight: .bold, design: .rounded))
+                    .font(.system(size: 32, weight: .semibold, design: .rounded))
                     .monospacedDigit()
                     .foregroundStyle(direction == .income ? FC.cobalt : FC.expense)
                     .contentTransition(.numericText())

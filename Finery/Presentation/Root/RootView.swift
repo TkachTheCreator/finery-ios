@@ -9,6 +9,7 @@ struct RootView: View {
     @State private var appLock = AppLockManager.shared
     @State private var container: AppContainer?
     @State private var phase: Phase = .splash
+    @Namespace var zoomNS
     @State private var showReAuth = false
     @State private var showSessionExpiredAlert = false
     @State private var showChat            = false
@@ -224,7 +225,8 @@ struct RootView: View {
                 onShowAddTransaction: { showAddTransaction = true },
                 onShowAnalyticsDynamics: { navPath.append(FineryRoute.analyticsDynamics) },
                 onShowAnalyticsCategories: { navPath.append(FineryRoute.analyticsCategories) },
-                onShowTips: { navPath.append(FineryRoute.tips) }
+                onShowTips: { navPath.append(FineryRoute.tips) },
+                zoomNamespace: zoomNS
             )
             .navigationTitle("")
             .navigationBarHidden(true)
@@ -234,10 +236,12 @@ struct RootView: View {
                     TaxView(viewModel: c.tax)
                         .navigationTitle("")
                         .navigationBarTitleDisplayMode(.inline)
+                        .navigationTransition(.zoom(sourceID: "tax", in: zoomNS))
                 case .clients:
                     ClientsView(viewModel: c.clients)
                         .navigationTitle("")
                         .navigationBarTitleDisplayMode(.inline)
+                        .navigationTransition(.zoom(sourceID: "clients", in: zoomNS))
                 case .transactions:
                     TransactionsView(viewModel: c.transactions)
                         .navigationTitle("")
@@ -245,12 +249,15 @@ struct RootView: View {
                 case .analyticsDynamics:
                     AnalyticsDynamicsView(viewModel: c.analytics)
                         .navigationBarTitleDisplayMode(.inline)
+                        .navigationTransition(.zoom(sourceID: "dynamics", in: zoomNS))
                 case .analyticsCategories:
                     AnalyticsCategoriesView(viewModel: c.analytics)
                         .navigationBarTitleDisplayMode(.inline)
+                        .navigationTransition(.zoom(sourceID: "categories", in: zoomNS))
                 case .tips:
                     TipsListView(insights: c.dashboard.insights, onShowAI: { showChat = true })
                         .navigationBarTitleDisplayMode(.large)
+                        .navigationTransition(.zoom(sourceID: "tips", in: zoomNS))
                 }
             }
         }

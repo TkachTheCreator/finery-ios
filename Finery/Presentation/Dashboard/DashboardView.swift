@@ -10,6 +10,7 @@ struct DashboardView: View {
     var onShowAnalyticsDynamics: (() -> Void)?
     var onShowAnalyticsCategories: (() -> Void)?
     var onShowTips: (() -> Void)?
+    var zoomNamespace: Namespace.ID?
 
     @State private var appeared          = false
     @State private var barProgress: Double = 0
@@ -24,7 +25,8 @@ struct DashboardView: View {
         onShowAddTransaction: (() -> Void)? = nil,
         onShowAnalyticsDynamics: (() -> Void)? = nil,
         onShowAnalyticsCategories: (() -> Void)? = nil,
-        onShowTips: (() -> Void)? = nil
+        onShowTips: (() -> Void)? = nil,
+        zoomNamespace: Namespace.ID? = nil
     ) {
         _viewModel = State(wrappedValue: viewModel)
         self.onShowSettings = onShowSettings
@@ -35,6 +37,7 @@ struct DashboardView: View {
         self.onShowAnalyticsDynamics = onShowAnalyticsDynamics
         self.onShowAnalyticsCategories = onShowAnalyticsCategories
         self.onShowTips = onShowTips
+        self.zoomNamespace = zoomNamespace
     }
 
     var body: some View {
@@ -62,6 +65,7 @@ struct DashboardView: View {
 
                         // Row 3: Tax (full width, ring indicator)
                         taxTile
+                            .zoomSource(id: "tax", ns: zoomNamespace)
                             .widgetAppear(index: 3, appeared: appeared)
 
                         // Row 4: Dynamics (62%) + Clients (38%) — Bento asymmetry
@@ -70,9 +74,11 @@ struct DashboardView: View {
                         HStack(alignment: .top, spacing: 12) {
                             dynamicsTile
                                 .frame(width: col1)
+                                .zoomSource(id: "dynamics", ns: zoomNamespace)
                                 .widgetAppear(index: 4, appeared: appeared)
                             clientsTile
                                 .frame(width: col2)
+                                .zoomSource(id: "clients", ns: zoomNamespace)
                                 .widgetAppear(index: 5, appeared: appeared)
                         }
 
@@ -80,9 +86,11 @@ struct DashboardView: View {
                         HStack(alignment: .top, spacing: 12) {
                             categoriesTile
                                 .frame(width: col2)
+                                .zoomSource(id: "categories", ns: zoomNamespace)
                                 .widgetAppear(index: 6, appeared: appeared)
                             tipsTile
                                 .frame(width: col1)
+                                .zoomSource(id: "tips", ns: zoomNamespace)
                                 .widgetAppear(index: 7, appeared: appeared)
                         }
                     }

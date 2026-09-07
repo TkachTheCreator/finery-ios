@@ -159,9 +159,6 @@ extension View {
         modifier(DataWidgetModifier(cornerRadius: 14))
     }
 
-    func glassCardGlow(_ glowColor: Color = FC.cobaltGlow, cornerRadius: CGFloat = 18) -> some View {
-        modifier(GlassCardGlowModifier(glowColor: glowColor, cornerRadius: cornerRadius))
-    }
 }
 
 // Keep struct names for code that references them directly
@@ -179,21 +176,6 @@ struct GlassCardModifier: ViewModifier {
     }
 }
 
-struct GlassCardGlowModifier: ViewModifier {
-    var glowColor: Color
-    var cornerRadius: CGFloat
-
-    func body(content: Content) -> some View {
-        content
-            .background(FC.surface)
-            .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
-            .overlay(
-                RoundedRectangle(cornerRadius: cornerRadius)
-                    .stroke(FC.border.opacity(0.7), lineWidth: 0.5)
-            )
-            .shadow(color: glowColor, radius: 12, y: 2)
-    }
-}
 
 // MARK: - Category color palette (shared across analytics screens)
 
@@ -426,5 +408,14 @@ struct BorderTrailModifier: ViewModifier {
 extension View {
     func borderTrail(cornerRadius: CGFloat = 20, color: Color = FC.ivory.opacity(0.45), delay: Double = 0.4) -> some View {
         modifier(BorderTrailModifier(cornerRadius: cornerRadius, color: color, delay: delay))
+    }
+
+    @ViewBuilder
+    func zoomSource(id: some Hashable, ns: Namespace.ID?) -> some View {
+        if let ns {
+            self.matchedTransitionSource(id: id, in: ns)
+        } else {
+            self
+        }
     }
 }

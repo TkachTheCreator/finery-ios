@@ -144,22 +144,11 @@ struct AddTransactionView: View {
         .padding(.vertical, 14)
     }
 
-    // MARK: Amount + Currency (Пункт 1 + Пункт 8)
+    // MARK: Amount + Currency
 
     private var amountSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            // Currency picker row
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 8) {
-                    ForEach(Currency.allCases, id: \.self) { cur in
-                        currencyChip(cur)
-                    }
-                }
-                .padding(.horizontal, 20)
-            }
-            .task { await CurrencyService.shared.fetchIfNeeded() }
-
-            // Amount input
+        VStack(alignment: .leading, spacing: 0) {
+            // Amount input — currency symbol is a tappable menu
             HStack(alignment: .firstTextBaseline, spacing: 4) {
                 TextField("0", text: $viewModel.amountText)
                     .keyboardType(.decimalPad)
@@ -169,10 +158,25 @@ struct AddTransactionView: View {
                     .focused($amountFocused)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.leading, 20)
-                Text(viewModel.currency.symbol)
-                    .font(.system(size: 32, weight: .regular, design: .rounded))
-                    .foregroundStyle(FC.inkSecondary)
-                    .padding(.trailing, 20)
+
+                Menu {
+                    ForEach(Currency.allCases, id: \.self) { cur in
+                        Button {
+                            withAnimation(.spring(response: 0.28, dampingFraction: 0.8)) {
+                                viewModel.currency = cur
+                            }
+                        } label: {
+                            Label(cur.displayName, systemImage: viewModel.currency == cur ? "checkmark" : "")
+                        }
+                    }
+                } label: {
+                    Text(viewModel.currency.symbol)
+                        .font(.system(size: 32, weight: .regular, design: .rounded))
+                        .foregroundStyle(FC.inkSecondary)
+                        .contentShape(Rectangle())
+                }
+                .task { await CurrencyService.shared.fetchIfNeeded() }
+                .padding(.trailing, 20)
             }
             .padding(.vertical, 12)
 
@@ -189,26 +193,6 @@ struct AddTransactionView: View {
             }
         }
         .background(FC.background)
-    }
-
-    private func currencyChip(_ cur: Currency) -> some View {
-        let selected = viewModel.currency == cur
-        return Button {
-            withAnimation(.spring(response: 0.28, dampingFraction: 0.8)) {
-                viewModel.currency = cur
-            }
-        } label: {
-            Text(cur.displayName)
-                .font(.system(size: 13, weight: selected ? .semibold : .regular, design: .rounded))
-                .foregroundStyle(selected ? .white : FC.inkSecondary)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 6)
-                .background(selected ? FC.cobalt : FC.surface)
-                .clipShape(Capsule())
-                .shadow(color: selected ? FC.cobaltGlow : .clear, radius: 6)
-        }
-        .buttonStyle(.plain)
-        .animation(.spring(response: 0.28, dampingFraction: 0.8), value: selected)
     }
 
     // MARK: Tax Hint (6.1 + 6.3)
@@ -301,7 +285,7 @@ struct AddTransactionView: View {
                 .padding(.vertical, 10)
                 .background(selected ? color : FC.surface)
                 .clipShape(Capsule())
-                .shadow(color: selected ? color.opacity(0.25) : .clear, radius: 6)
+                .overlay(Capsule().stroke(selected ? Color.clear : FC.border, lineWidth: 1))
         }
         .animation(.spring(response: 0.28, dampingFraction: 0.8), value: selected)
     }
