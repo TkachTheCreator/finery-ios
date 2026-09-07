@@ -99,6 +99,7 @@
 		F03FCD35C229BA94095A1AB6 /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = C900F261B1963F026CD898B2 /* Client.swift */; };
 		F1AE7C2A94B173851217D863 /* AnalyticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B73BE6B840255FE525903F14 /* AnalyticsView.swift */; };
 		F32D6FF0C5E47010341EA8E2 /* TaxCalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FCDD1C9C2F31381AC106478 /* TaxCalculatorTests.swift */; };
+		F3CAF47E484751F55ECCC748 /* TipsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58D0339446ADF1902A2B2272 /* TipsListView.swift */; };
 		F430E274A1D416043C4DCDB8 /* TransactionsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F2C94236A147B2275A4C7B4 /* TransactionsViewModel.swift */; };
 		F5A4780A6555EA06DF2D87DA /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 43249DC6BB94489E878746F4 /* Lottie */; };
 		F7554B4154E8B9D123B58552 /* FineryPDFGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A22F96E80B26D493834CA4 /* FineryPDFGenerator.swift */; };
@@ -155,6 +156,7 @@
 		536977A95B8339D67FF45B42 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5537288A26312E121FEE587C /* Finery.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Finery.entitlements; sourceTree = "<group>"; };
 		5738C2C033066D32AE90C89F /* ClipboardTransactionBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardTransactionBanner.swift; sourceTree = "<group>"; };
+		58D0339446ADF1902A2B2272 /* TipsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TipsListView.swift; sourceTree = "<group>"; };
 		5A23D73F7A964B88C2347CC9 /* InvoiceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvoiceView.swift; sourceTree = "<group>"; };
 		5B9757BE2B397BAF4F9FA65C /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
 		5E139A4F9AFC176D183F3632 /* TransactionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionsView.swift; sourceTree = "<group>"; };
@@ -184,7 +186,7 @@
 		9BBDDAAF81E5B7A4C4D22783 /* GetMonthlyDynamicsUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetMonthlyDynamicsUseCase.swift; sourceTree = "<group>"; };
 		9DE470362E77980A05FBBA37 /* TransactionLocalRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionLocalRepository.swift; sourceTree = "<group>"; };
 		9E8A3D0228E2EE3ADAE37A86 /* FloatingTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingTabBar.swift; sourceTree = "<group>"; };
-		9F40AEF0915FDE1ADF55A664 /* Finery.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Finery.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9F40AEF0915FDE1ADF55A664 /* Finery.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Finery.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9FE83955C51012112BD1C60A /* NetworkDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkDebugView.swift; sourceTree = "<group>"; };
 		A808E46673806C37D5BF707B /* UserRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRepository.swift; sourceTree = "<group>"; };
 		A8BB4775422C9B1A7C044A2F /* AuthFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthFlowView.swift; sourceTree = "<group>"; };
@@ -405,6 +407,7 @@
 				DC01C5EC8EE86264958FA807 /* CashFlowDetailView.swift */,
 				F9FDB18528D5474099877283 /* DashboardView.swift */,
 				DFD3FEDDD06A99D9BC586E2C /* DashboardViewModel.swift */,
+				58D0339446ADF1902A2B2272 /* TipsListView.swift */,
 			);
 			path = Dashboard;
 			sourceTree = "<group>";
@@ -746,6 +749,7 @@
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
 					2515D379705AE448BB7D130D = {
+						DevelopmentTeam = HU22U632B9;
 						ProvisioningStyle = Automatic;
 					};
 					5C06D7CDFAC4737927523827 = {
@@ -912,6 +916,7 @@
 				5DDB9EEE1ED1D2F26BE47D49 /* TaxStatus.swift in Sources */,
 				E9DEF104FE00898537267D34 /* TaxView.swift in Sources */,
 				532DD8E6ECC926BCC1FD1509 /* TaxViewModel.swift in Sources */,
+				F3CAF47E484751F55ECCC748 /* TipsListView.swift in Sources */,
 				D5B323A2400D0070F2213C0D /* Transaction.swift in Sources */,
 				B3213706B3839773FB09DBB5 /* TransactionDirection.swift in Sources */,
 				D1E17F9EB7662E4DDC587927 /* TransactionEntity.swift in Sources */,
@@ -1159,7 +1164,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 6CP3FXPA4J;
+				DEVELOPMENT_TEAM = HU22U632B9;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_FILE = Finery/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -1268,7 +1273,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 6CP3FXPA4J;
+				DEVELOPMENT_TEAM = HU22U632B9;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_FILE = Finery/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;

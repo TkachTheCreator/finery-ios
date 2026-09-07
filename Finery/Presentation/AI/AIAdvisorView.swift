@@ -260,30 +260,31 @@ struct AIAdvisorView: View {
 
 struct TypewriterText: View {
     let text: String
-    var speed: Double = 0.018  // seconds per character
+    var speed: Double = 0.018
 
     @State private var displayed = ""
-    @State private var timer: Timer?
+    @State private var isDone = false
 
     var body: some View {
-        Text(displayed.isEmpty ? " " : displayed)  // non-empty to maintain layout height
+        Text(displayed.isEmpty ? " " : displayed)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .onAppear { startAnimation() }
-            .onChange(of: text) { _, _ in startAnimation() }
-            .onDisappear { timer?.invalidate() }
+            .onAppear { animate() }
     }
 
-    private func startAnimation() {
-        timer?.invalidate()
-        displayed = ""
-        guard !text.isEmpty else { return }
-
-        var index = text.startIndex
-        timer = Timer.scheduledTimer(withTimeInterval: speed, repeats: true) { t in
-            guard index < text.endIndex else { t.invalidate(); return }
-            displayed.append(text[index])
-            index = text.index(after: index)
+    @MainActor
+    private func animate() {
+        // Already played — show instantly without replay
+        if isDone {
+            displayed = text
+            return
         }
-        RunLoop.main.add(timer!, forMode: .common)
+        displayed = ""
+        Task { @MainActor in
+            for char in text {
+                displayed.append(char)
+                try? await Task.sleep(nanoseconds: UInt64(speed * 1_000_000_000))
+            }
+            isDone = true
+        }
     }
 }

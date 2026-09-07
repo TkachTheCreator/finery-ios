@@ -412,7 +412,11 @@ struct BorderTrailModifier: ViewModifier {
         )
         .onAppear {
             progress = 0
-            withAnimation(.linear(duration: 1.6).delay(delay)) {
+            withAnimation(
+                .timingCurve(0, 0.5, 0.8, 0.5, duration: 4)
+                .delay(delay)
+                .repeatCount(2, autoreverses: false)
+            ) {
                 progress = 1.0
             }
         }
