@@ -152,6 +152,7 @@ struct RootView: View {
         }
         .animation(.fineryPage, value: phase)
         .fontDesign(.rounded)
+        .preferredColorScheme(.light)
         .onChange(of: SharedDataService.shared.isLoggedOut) { _, loggedOut in
             if loggedOut {
                 let expired = SharedDataService.shared.sessionExpiredMessage != nil
