@@ -33,6 +33,12 @@
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>mynalog</string>
+	</array>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Finery использует Face ID для защиты ваших финансовых данных</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Finery использует микрофон для голосового ввода транзакций</string>
 	<key>NSSpeechRecognitionUsageDescription</key>

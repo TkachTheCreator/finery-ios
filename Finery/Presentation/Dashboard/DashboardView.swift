@@ -1,30 +1,93 @@
 import SwiftUI
-import Shimmer
-import Pow
 
 struct DashboardView: View {
     @State var viewModel: DashboardViewModel
     var onShowSettings: (() -> Void)?
-    @State private var appeared    = false
-    @State private var barProgress: Double = 0
-    @State private var showCashFlow = false
+    var onShowTax: (() -> Void)?
+    var onShowAI: (() -> Void)?
+    var onShowClients: (() -> Void)?
+    var onShowAddTransaction: (() -> Void)?
+    var onShowAnalyticsDynamics: (() -> Void)?
+    var onShowAnalyticsCategories: (() -> Void)?
 
-    init(viewModel: DashboardViewModel, onShowSettings: (() -> Void)? = nil) {
+    @State private var appeared          = false
+    @State private var barProgress: Double = 0
+    @State private var showCashFlow      = false
+    @State private var expandedInsightId: UUID? = nil
+
+    init(
+        viewModel: DashboardViewModel,
+        onShowSettings: (() -> Void)? = nil,
+        onShowTax: (() -> Void)? = nil,
+        onShowAI: (() -> Void)? = nil,
+        onShowClients: (() -> Void)? = nil,
+        onShowAddTransaction: (() -> Void)? = nil,
+        onShowAnalyticsDynamics: (() -> Void)? = nil,
+        onShowAnalyticsCategories: (() -> Void)? = nil
+    ) {
         _viewModel = State(wrappedValue: viewModel)
         self.onShowSettings = onShowSettings
+        self.onShowTax = onShowTax
+        self.onShowAI = onShowAI
+        self.onShowClients = onShowClients
+        self.onShowAddTransaction = onShowAddTransaction
+        self.onShowAnalyticsDynamics = onShowAnalyticsDynamics
+        self.onShowAnalyticsCategories = onShowAnalyticsCategories
     }
 
     var body: some View {
-        ZStack {
-            FC.background.ignoresSafeArea()
+        // GeometryReader for minHeight fill + bento column widths (Задача 1)
+        GeometryReader { geo in
+            ZStack {
+                FC.background.ignoresSafeArea()
 
-            ScrollView(showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 12) {
-                    headerSection
-                    cardStack
-                    Color.clear.frame(height: 32)
+                ScrollView(showsIndicators: false) {
+                    VStack(alignment: .leading, spacing: 18) {
+                        headerSection
+
+                        // Row 1: Hero income (full width) — border trail on appear (Задача 4)
+                        incomeHeroTile
+                            .borderTrail(cornerRadius: 20, delay: 0.5)
+                            .widgetAppear(index: 0, appeared: appeared)
+
+                        // Row 2: Add (compact) + AI — unequal heights for bento variety
+                        HStack(alignment: .top, spacing: 12) {
+                            addTransactionTile
+                                .widgetAppear(index: 1, appeared: appeared)
+                            aiTile
+                                .widgetAppear(index: 2, appeared: appeared)
+                        }
+
+                        // Row 3: Tax (full width, ring indicator)
+                        taxTile
+                            .widgetAppear(index: 3, appeared: appeared)
+
+                        // Row 4: Dynamics (62%) + Clients (38%) — Bento asymmetry
+                        let col1 = (geo.size.width - 40 - 12) * 0.62
+                        let col2 = (geo.size.width - 40 - 12) * 0.38
+                        HStack(alignment: .top, spacing: 12) {
+                            dynamicsTile
+                                .frame(width: col1)
+                                .widgetAppear(index: 4, appeared: appeared)
+                            clientsTile
+                                .frame(width: col2)
+                                .widgetAppear(index: 5, appeared: appeared)
+                        }
+
+                        // Row 5: Categories (38%) + Tips (62%) — reversed bento
+                        HStack(alignment: .top, spacing: 12) {
+                            categoriesTile
+                                .frame(width: col2)
+                                .widgetAppear(index: 6, appeared: appeared)
+                            tipsTile
+                                .frame(width: col1)
+                                .widgetAppear(index: 7, appeared: appeared)
+                        }
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 24)
+                    .frame(minHeight: geo.size.height, alignment: .top)
                 }
-                .padding(.horizontal, 20)
             }
         }
         .overlay {
@@ -39,16 +102,11 @@ struct DashboardView: View {
         .animation(.easeOut(duration: 0.3), value: viewModel.isLoading)
         .task {
             appeared = false
-            barProgress = 0
-            // Карточки появляются сразу (stagger) — с нулями
-            withAnimation(.spring(response: 0.55, dampingFraction: 0.82)) {
-                appeared = true
-            }
-            // Данные загружаются — числа считаются через contentTransition
+            withAnimation(.spring(response: 0.62, dampingFraction: 0.82)) { appeared = true }
             await viewModel.load()
             if let status = viewModel.taxStatus {
                 let target = min(status.limitUsedPercent / 100.0, 1.0)
-                withAnimation(.spring(response: 1.2, dampingFraction: 0.8).delay(0.2)) {
+                withAnimation(.spring(response: 1.2, dampingFraction: 0.8).delay(0.3)) {
                     barProgress = target
                 }
             }
@@ -61,7 +119,8 @@ struct DashboardView: View {
             }
         }
         .animation(.spring(response: 0.4, dampingFraction: 0.8), value: viewModel.isOffline)
-        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: SharedDataService.shared.isSlowConnection)
+        .animation(.spring(response: 0.4, dampingFraction: 0.8),
+                   value: SharedDataService.shared.isSlowConnection)
         .sheet(isPresented: $showCashFlow) {
             CashFlowDetailView(dashboardViewModel: viewModel)
         }
@@ -76,12 +135,9 @@ struct DashboardView: View {
                 .font(.system(.caption, design: .rounded, weight: .medium))
         }
         .foregroundStyle(.white)
-        .padding(.horizontal, 16)
-        .padding(.vertical, 10)
-        .background(FC.muted.opacity(0.9))
-        .clipShape(Capsule())
-        .padding(.top, 8)
-        .padding(.horizontal, 20)
+        .padding(.horizontal, 16).padding(.vertical, 10)
+        .background(FC.muted.opacity(0.9)).clipShape(Capsule())
+        .padding(.top, 8).padding(.horizontal, 20)
     }
 
     private var offlineBanner: some View {
@@ -90,24 +146,17 @@ struct DashboardView: View {
             Text("Сервер недоступен")
                 .font(.system(.caption, design: .rounded, weight: .medium))
             Spacer(minLength: 0)
-            Button {
-                Task { await viewModel.load() }
-            } label: {
+            Button { Task { await viewModel.load() } } label: {
                 Text("Повторить")
                     .font(.system(.caption, design: .rounded, weight: .semibold))
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 4)
-                    .background(.white.opacity(0.25))
-                    .clipShape(Capsule())
+                    .padding(.horizontal, 10).padding(.vertical, 4)
+                    .background(.white.opacity(0.25)).clipShape(Capsule())
             }
         }
         .foregroundStyle(.white)
-        .padding(.horizontal, 16)
-        .padding(.vertical, 10)
-        .background(FC.danger.opacity(0.88))
-        .clipShape(Capsule())
-        .padding(.top, 8)
-        .padding(.horizontal, 20)
+        .padding(.horizontal, 16).padding(.vertical, 10)
+        .background(FC.danger.opacity(0.88)).clipShape(Capsule())
+        .padding(.top, 8).padding(.horizontal, 20)
     }
 
     // MARK: - Header
@@ -116,314 +165,455 @@ struct DashboardView: View {
         HStack(alignment: .center) {
             VStack(alignment: .leading, spacing: 2) {
                 Text(greeting)
-                    .font(.system(.title2, design: .rounded, weight: .bold))
+                    .font(.system(.title2, design: .rounded, weight: .medium))  // T0: medium not bold
                     .foregroundStyle(FC.ink)
                 Text(currentMonthFull)
                     .font(.system(.subheadline, design: .rounded, weight: .regular))
-                    .foregroundStyle(FC.muted)
+                    .foregroundStyle(FC.inkSecondary)
             }
             Spacer()
             Button { onShowSettings?() } label: {
                 Image(systemName: "gearshape")
-                    .font(.system(size: 18, weight: .light))
-                    .foregroundStyle(FC.muted)
+                    .font(.system(size: 18, weight: .regular))
+                    .foregroundStyle(FC.ink)
                     .frame(width: 36, height: 36)
                     .contentShape(Rectangle())
             }
         }
-        .padding(.top, 16)
-        .padding(.bottom, 4)
-        .offset(y: appeared ? 0 : -12)
+        .padding(.top, 16).padding(.bottom, 4)
+        .offset(y: appeared ? 0 : -14)
         .opacity(appeared ? 1 : 0)
-        .animation(.spring(response: 0.55, dampingFraction: 0.8), value: appeared)
+        .blur(radius: appeared ? 0 : 4)
+        .animation(.spring(response: 0.52, dampingFraction: 0.82), value: appeared)
     }
 
-    // MARK: - Card Stack
+    // MARK: - 1. Hero Income Tile (T0: ivory text, semibold weight; T4: border trail applied above)
 
-    @ViewBuilder
-    private var cardStack: some View {
-        incomeHeroCard
-            .offset(y: appeared ? 0 : 40)
-            .opacity(appeared ? 1 : 0)
-            .animation(.spring(response: 0.55, dampingFraction: 0.8).delay(0.05), value: appeared)
-
-        if viewModel.userType != .other {
-            taxCard
-                .offset(y: appeared ? 0 : 40)
-                .opacity(appeared ? 1 : 0)
-                .animation(.spring(response: 0.55, dampingFraction: 0.8).delay(0.15), value: appeared)
-        }
-
-        topSourcesCard
-            .offset(y: appeared ? 0 : 40)
-            .opacity(appeared ? 1 : 0)
-            .animation(.spring(response: 0.55, dampingFraction: 0.8).delay(0.25), value: appeared)
-
-        if !viewModel.insights.isEmpty {
-            insightsCard
-                .offset(y: appeared ? 0 : 40)
-                .opacity(appeared ? 1 : 0)
-                .animation(.spring(response: 0.55, dampingFraction: 0.8).delay(0.35), value: appeared)
-        }
-    }
-
-    // MARK: - Income Hero Card
-
-    private var incomeHeroCard: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            HStack {
-                Text("Доход за \(currentMonthShort)").fLabel()
-                Spacer()
-                Image(systemName: "chevron.right")
-                    .font(.system(.caption2, weight: .semibold))
-                    .foregroundStyle(FC.border)
-            }
+    private var incomeHeroTile: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Text("Доход · \(currentMonthShort)")
+                .font(.system(size: 13, weight: .regular, design: .rounded))
+                .foregroundStyle(FC.ivory.opacity(0.55))
 
             Text(viewModel.pnl?.totalIncome.rub() ?? "0\u{202F}₽")
-                .font(.system(size: 46, weight: .bold, design: .rounded))
+                .font(.system(size: 50, weight: .semibold, design: .rounded))  // T0: semibold not bold
                 .monospacedDigit()
-                .foregroundStyle(FC.cobalt.opacity(viewModel.isLoading ? 0.22 : 1))
+                .foregroundStyle(FC.ivory.opacity(viewModel.isLoading ? 0.30 : 1))
                 .contentTransition(.numericText(countsDown: false))
                 .animation(.fineryNumber, value: viewModel.pnl?.totalIncome)
                 .animation(.spring(response: 0.4, dampingFraction: 0.8), value: viewModel.isLoading)
+                .padding(.top, 8)
+                .padding(.bottom, 16)
+
+            Rectangle().fill(FC.ivory.opacity(0.10)).frame(height: 0.5).padding(.bottom, 14)
 
             HStack(alignment: .top, spacing: 0) {
-                miniMetric(label: "Расходы", value: viewModel.pnl?.totalExpenses, align: .leading,  valueColor: FC.ink)
+                heroMetric(label: "расходы", value: viewModel.pnl?.totalExpenses, align: .leading)
                 Spacer()
                 if viewModel.userType != .other {
-                    miniMetric(label: "Налог", value: viewModel.pnl?.taxAmount, align: .center, valueColor: FC.muted)
+                    heroMetric(label: "налог", value: viewModel.pnl?.taxAmount, align: .center)
                     Spacer()
                 }
-                miniMetric(label: "Чистая",  value: viewModel.pnl?.netProfit, align: .trailing, valueColor: FC.cobalt)
+                heroMetric(label: "прибыль", value: viewModel.pnl?.netProfit, align: .trailing)
             }
         }
-        .padding(.vertical, 8)
+        .padding(22)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .heroWidget()
         .contentShape(Rectangle())
-        .onTapGesture { showCashFlow = true }
+        .onTapGesture {
+            HapticManager.light()
+            showCashFlow = true
+        }
     }
 
-    @ViewBuilder
-    private func miniMetric(label: String, value: Decimal?, align: HorizontalAlignment, valueColor: Color = FC.ink) -> some View {
-        VStack(alignment: align, spacing: 4) {
-            Text(label).fLabel()
+    private func heroMetric(label: String, value: Decimal?, align: HorizontalAlignment) -> some View {
+        VStack(alignment: align, spacing: 3) {
+            Text(label)
+                .font(.system(size: 11, weight: .regular, design: .rounded))  // T0: regular
+                .foregroundStyle(FC.ivory.opacity(0.38))
             Text(value?.rub() ?? "—")
-                .font(.system(.footnote, design: .rounded, weight: .semibold))
+                .font(.system(.footnote, design: .rounded, weight: .regular))  // T0: regular
                 .monospacedDigit()
-                .foregroundStyle((viewModel.isLoading ? FC.muted : valueColor).opacity(viewModel.isLoading ? 0.35 : 1))
+                .foregroundStyle(FC.ivory.opacity(viewModel.isLoading ? 0.18 : 0.72))
                 .contentTransition(.numericText())
                 .animation(.fineryNumber, value: value)
-                .animation(.spring(response: 0.4, dampingFraction: 0.8), value: viewModel.isLoading)
         }
     }
 
-    // MARK: - Tax Card
+    // MARK: - 2. Add Transaction Tile (compact — T1)
+
+    private var addTransactionTile: some View {
+        HStack(spacing: 12) {
+            Image(systemName: "plus.circle.fill")
+                .font(.system(size: 20, weight: .medium))
+                .foregroundStyle(FC.cobalt)  // T0: keep cobalt on main CTA
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Добавить")
+                    .font(.system(size: 14, weight: .medium, design: .rounded))
+                    .foregroundStyle(FC.ink)
+                Text("операцию")
+                    .font(.system(size: 12, weight: .regular, design: .rounded))
+                    .foregroundStyle(FC.inkSecondary)
+            }
+            Spacer()
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, minHeight: 72, alignment: .leading)  // T1: compact
+        .dataWidget()
+        .contentShape(Rectangle())
+        .onTapGesture {
+            HapticManager.light()
+            onShowAddTransaction?()
+        }
+    }
+
+    // MARK: - 3. AI Tile
+
+    private var aiTile: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Image(systemName: "sparkles")
+                .font(.system(size: 20, weight: .regular))
+                .foregroundStyle(FC.inkSecondary)  // T0: decorative icon = secondary, not accent
+
+            Spacer(minLength: 14)
+
+            Text("ИИ-помощник")
+                .font(.system(size: 14, weight: .medium, design: .rounded))
+                .foregroundStyle(FC.ink)
+            Text("Спросить")
+                .font(.system(size: 12, weight: .regular, design: .rounded))
+                .foregroundStyle(FC.inkSecondary)
+                .padding(.top, 2)
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, minHeight: 110, alignment: .leading)
+        .dataWidget()
+        .contentShape(Rectangle())
+        .onTapGesture {
+            HapticManager.light()
+            onShowAI?()
+        }
+    }
+
+    // MARK: - 4. Tax Tile (full width, ring indicator — Задача 2)
 
     @ViewBuilder
-    private var taxCard: some View {
+    private var taxTile: some View {
         if viewModel.taxStatus?.showNpdLimit == true {
-            npdLimitCard
-        } else if let status = viewModel.taxStatus {
-            usnQuarterlyCard(status)
+            npdRingTile
+        } else if let status = viewModel.taxStatus, viewModel.userType != .other {
+            usnTile(status)
+        } else {
+            fullWidthSimpleTile(
+                icon: "percent",
+                title: "Налоги",
+                detail: viewModel.userType == .other ? "личный трекер" : "нет данных",
+                action: onShowTax
+            )
         }
     }
 
-    // НПД: limit progress bar
-    private var npdLimitCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Text("Лимит НПД").fLabel()
-                Spacer()
-                Text(limitPercentText)
-                    .font(.system(.caption, design: .rounded, weight: .semibold))
-                    .monospacedDigit()
-                    .foregroundStyle(trafficColor)
-                    .contentTransition(.numericText())
-                    .animation(.fineryNumber, value: limitPercentText)
-            }
-
-            GeometryReader { geo in
-                ZStack(alignment: .leading) {
-                    RoundedRectangle(cornerRadius: 4).fill(FC.border).frame(height: 5)
-                    RoundedRectangle(cornerRadius: 4)
-                        .fill(LinearGradient(colors: [FC.cobalt, trafficColor],
-                                             startPoint: .leading, endPoint: .trailing))
-                        .frame(width: geo.size.width * barProgress, height: 5)
-                        .animation(.spring(response: 1.2, dampingFraction: 0.8), value: barProgress)
-                }
-            }
-            .frame(height: 5)
-
-            if let status = viewModel.taxStatus {
-                Text("Использовано \(status.yearlyIncome.rub()) из \(TaxStatus.npdYearLimit.rub())")
-                    .font(.system(.caption, design: .rounded, weight: .regular))
-                    .foregroundStyle(FC.muted)
-            }
-
-            npdDeadlineRow
-        }
-        .padding(20)
-        .background(FC.surface)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
-        .overlay(RoundedRectangle(cornerRadius: 16).stroke(FC.border, lineWidth: 0.5))
-    }
-
-    // УСН: quarterly tax card
-    private func usnQuarterlyCard(_ status: TaxStatus) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Text("Налог за квартал").fLabel()
-                Spacer()
-                Text(status.effectiveRate)
-                    .font(.system(.caption, design: .rounded, weight: .semibold))
-                    .foregroundStyle(FC.cobalt)
-            }
-
-            HStack {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("К уплате").fLabel()
-                    Text(status.taxDue.rub())
-                        .font(.system(.title3, design: .rounded, weight: .bold))
+    // Задача 2: Ring indicator replaces linear bar
+    private var npdRingTile: some View {
+        HStack(alignment: .center, spacing: 16) {
+            // Ring with % in center
+            ZStack {
+                RingProgressView(progress: barProgress, color: trafficColor, size: 66, lineWidth: 7)
+                VStack(spacing: 1) {
+                    Text(limitPercentText)
+                        .font(.system(size: 15, weight: .semibold, design: .rounded))
                         .monospacedDigit()
-                        .foregroundStyle(FC.cobalt)
-                }
-                Spacer()
-                VStack(alignment: .trailing, spacing: 2) {
-                    Text("Дедлайн").fLabel()
-                    Text(formattedDeadline(status.nextDeadline))
-                        .font(.system(.subheadline, design: .rounded, weight: .semibold))
-                        .foregroundStyle(status.daysUntilDeadline <= 7 ? FC.danger : FC.ink)
+                        .foregroundStyle(trafficColor)
+                        .contentTransition(.numericText())
+                        .animation(.fineryNumber, value: limitPercentText)
+                    Text("НПД")
+                        .font(.system(size: 9, weight: .regular, design: .rounded))
+                        .foregroundStyle(FC.inkSecondary)
                 }
             }
 
-            HStack(spacing: 6) {
-                Image(systemName: "calendar").fontWeight(.light).imageScale(.medium).foregroundStyle(FC.muted)
-                Text("Авансовый платёж раз в квартал")
-                    .font(.system(.caption, design: .rounded, weight: .regular))
-                    .foregroundStyle(FC.muted)
+            // Info: label + к уплате + дедлайн
+            VStack(alignment: .leading, spacing: 3) {
+                Text("Налоги · НПД")
+                    .font(.system(size: 13, weight: .medium, design: .rounded))
+                    .foregroundStyle(FC.inkSecondary)
+                if let status = viewModel.taxStatus {
+                    Text(status.taxDue.rub())
+                        .font(.system(size: 22, weight: .semibold, design: .rounded))
+                        .monospacedDigit()
+                        .foregroundStyle(FC.ink)
+                        .minimumScaleFactor(0.6)
+                        .lineLimit(1)
+                    Text("к уплате · до 28 \(nextMonthGenitive)")
+                        .font(.system(size: 12, weight: .regular, design: .rounded))
+                        .foregroundStyle(FC.inkSecondary)
+                }
             }
-            .padding(.top, 2)
+
+            Spacer()
+
+            if let status = viewModel.taxStatus, status.isNearLimit {
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .font(.system(size: 14))
+                    .foregroundStyle(status.isOverLimit ? FC.danger : FC.warning)
+            }
         }
         .padding(20)
-        .background(FC.surface)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
-        .overlay(RoundedRectangle(cornerRadius: 16).stroke(FC.border, lineWidth: 0.5))
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .dataWidget()
+        .contentShape(Rectangle())
+        .onTapGesture { HapticManager.light(); onShowTax?() }
     }
 
-    private var npdDeadlineRow: some View {
-        HStack(spacing: 6) {
-            Image(systemName: "calendar").fontWeight(.light).imageScale(.medium).foregroundStyle(FC.muted)
-            Text("Следующий налог: ")
-                .font(.system(.caption, design: .rounded, weight: .regular))
-                .foregroundStyle(FC.muted)
-            if let tax = viewModel.taxStatus?.taxDue {
-                Text(tax.rub())
-                    .font(.system(.caption, design: .rounded, weight: .semibold))
+    private func usnTile(_ status: TaxStatus) -> some View {
+        HStack(alignment: .center, spacing: 20) {
+            VStack(alignment: .leading, spacing: 4) {
+                HStack(spacing: 5) {
+                    Image(systemName: "calendar.badge.clock")
+                        .font(.system(size: 12))
+                        .foregroundStyle(FC.inkSecondary)
+                    Text("Налоги · \(status.taxMode == .usn15 ? "УСН 15%" : "УСН 6%")")
+                        .font(.system(size: 13, weight: .medium, design: .rounded))
+                        .foregroundStyle(FC.inkSecondary)
+                }
+                Text(status.taxDue.rub())
+                    .font(.system(size: 28, weight: .semibold, design: .rounded))
                     .monospacedDigit()
                     .foregroundStyle(FC.ink)
+                    .minimumScaleFactor(0.55)
+                    .lineLimit(1)
+                Text("к уплате")
+                    .font(.system(size: 12, weight: .regular, design: .rounded))
+                    .foregroundStyle(FC.inkSecondary)
             }
-            Text("· до 28 \(nextMonthGenitive)")
-                .font(.system(.caption, design: .rounded, weight: .regular))
-                .foregroundStyle(FC.muted)
+            Spacer()
+            VStack(alignment: .trailing, spacing: 3) {
+                Text("Дедлайн")
+                    .font(.system(size: 12, weight: .regular, design: .rounded))
+                    .foregroundStyle(FC.inkSecondary)
+                Text(formattedDeadline(status.nextDeadline))
+                    .font(.system(size: 15, weight: .semibold, design: .rounded))
+                    .foregroundStyle(status.daysUntilDeadline <= 7 ? FC.danger : FC.ink)
+                Text("\(status.daysUntilDeadline) дн.")
+                    .font(.system(size: 12, weight: .regular, design: .rounded))
+                    .foregroundStyle(status.daysUntilDeadline <= 7 ? FC.danger : FC.inkSecondary)
+            }
         }
-        .padding(.top, 2)
+        .padding(20)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .dataWidget()
+        .contentShape(Rectangle())
+        .onTapGesture { HapticManager.light(); onShowTax?() }
     }
 
-    private func formattedDeadline(_ date: Date) -> String {
-        let fmt = DateFormatter()
-        fmt.dateFormat = "d MMMM"
-        fmt.locale = Locale(identifier: "ru_RU")
-        return fmt.string(from: date)
+    // MARK: - 5. Dynamics Tile (T1: wider in bento)
+
+    private var dynamicsTile: some View {
+        simpleTile(
+            icon: "chart.bar",
+            title: "Динамика",
+            detail: "за 6 месяцев",
+            action: onShowAnalyticsDynamics
+        )
     }
 
-    // MARK: - Top Sources Card
+    // MARK: - 6. Clients Tile (T1: narrower in bento)
 
-    private var topSourcesCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Топ источников").fLabel()
+    private var clientsTile: some View {
+        let clients  = SharedDataService.shared.cachedClients
+        let active   = clients.filter { $0.status == .active }.count
+        let done     = clients.filter { $0.status == .completed }.count
 
-            if viewModel.isLoading {
-                ForEach(0..<3, id: \.self) { _ in skeletonRow }
-            } else if viewModel.topSources.isEmpty {
-                HStack {
-                    Image(systemName: "tray")
-                        .fontWeight(.light)
-                        .imageScale(.medium)
-                        .foregroundStyle(FC.muted)
-                    Text("Нет данных за этот месяц")
-                        .font(.system(.subheadline, design: .rounded))
-                        .foregroundStyle(FC.muted)
-                }
-                .padding(.vertical, 4)
+        return VStack(alignment: .leading, spacing: 0) {
+            Image(systemName: "person.2")
+                .font(.system(size: 18, weight: .light))
+                .foregroundStyle(FC.inkSecondary)  // T0: secondary
+
+            Spacer(minLength: 12)
+
+            Text("Клиенты")
+                .font(.system(size: 14, weight: .medium, design: .rounded))
+                .foregroundStyle(FC.ink)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Активных: \(active)")
+                    .font(.system(size: 12, weight: .regular, design: .rounded))
+                    .foregroundStyle(FC.inkSecondary)
+                Text("Завершено: \(done)")
+                    .font(.system(size: 12, weight: .regular, design: .rounded))
+                    .foregroundStyle(FC.inkSecondary)
+            }
+            .padding(.top, 4)
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, minHeight: 110, alignment: .leading)
+        .dataWidget()
+        .contentShape(Rectangle())
+        .onTapGesture { HapticManager.light(); onShowClients?() }
+    }
+
+    // MARK: - 7. Categories Tile
+
+    private var categoriesTile: some View {
+        simpleTile(
+            icon: "chart.pie",
+            title: "Категории",
+            detail: "доходы / расходы",
+            action: onShowAnalyticsCategories
+        )
+    }
+
+    // MARK: - 8. Tips Tile (expandable insights — T6 smooth disclosure)
+
+    private var tipsTile: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 5) {
+                Image(systemName: "lightbulb")
+                    .font(.system(size: 12, weight: .regular))
+                    .foregroundStyle(FC.warning)
+                Text("Советы")
+                    .font(.system(size: 13, weight: .medium, design: .rounded))
+                    .foregroundStyle(FC.inkSecondary)
+            }
+
+            if viewModel.insights.isEmpty {
+                Spacer(minLength: 8)
+                Text("Всё в порядке")
+                    .font(.system(size: 13, weight: .regular, design: .rounded))
+                    .foregroundStyle(FC.inkSecondary)
             } else {
-                ForEach(Array(viewModel.topSources.enumerated()), id: \.element.id) { index, item in
-                    sourceRow(rank: index + 1, source: item)
-                    if index < viewModel.topSources.count - 1 {
-                        Rectangle().fill(FC.border.opacity(0.5)).frame(height: 0.5)
+                VStack(spacing: 6) {
+                    ForEach(viewModel.insights) { insight in
+                        insightCard(insight)
                     }
                 }
             }
         }
-        .padding(.vertical, 4)
+        .padding(16)
+        .frame(maxWidth: .infinity, minHeight: 110, alignment: .leading)
+        .dataWidget()
     }
 
+    // Задача 6: smooth disclosure animation
     @ViewBuilder
-    private func sourceRow(rank: Int, source: IncomeSource) -> some View {
-        HStack(spacing: 12) {
-            Text("\(rank)")
-                .font(.system(.caption2, design: .rounded, weight: .semibold))
-                .monospacedDigit()
-                .foregroundStyle(FC.muted)
-                .frame(width: 14, alignment: .center)
-            Image(systemName: source.icon)
-                .fontWeight(.light)
-                .imageScale(.medium)
-                .foregroundStyle(FC.cobalt)
-                .frame(width: 20)
-            Text(source.name)
-                .font(.system(.subheadline, design: .rounded, weight: .regular))
-                .foregroundStyle(FC.ink)
-            Spacer()
-            Text(source.amount.rub())
-                .font(.system(.subheadline, design: .rounded, weight: .semibold))
-                .monospacedDigit()
-                .foregroundStyle(FC.cobalt)
-        }
-        .padding(.vertical, 6)
-    }
+    private func insightCard(_ insight: Insight) -> some View {
+        let isExpanded = expandedInsightId == insight.id
+        let accent: Color = {
+            switch insight.severity {
+            case .critical: return FC.danger
+            case .warning:  return FC.warning
+            case .info:     return FC.cobalt
+            }
+        }()
 
-    // MARK: - Insights Card
-
-    private var insightsCard: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("Инсайты").fLabel()
-            VStack(spacing: 6) {
-                ForEach(viewModel.insights) { insight in
-                    InsightRow(insight: insight)
+        VStack(alignment: .leading, spacing: 0) {
+            Button {
+                withAnimation(.spring(response: 0.38, dampingFraction: 0.82)) {
+                    expandedInsightId = isExpanded ? nil : insight.id
                 }
+            } label: {
+                HStack(alignment: .top, spacing: 8) {
+                    Circle().fill(accent).frame(width: 6, height: 6).padding(.top, 4)
+                    Text(insight.title)
+                        .font(.system(size: 12, weight: .medium, design: .rounded))
+                        .foregroundStyle(FC.ink)
+                        .multilineTextAlignment(.leading)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
+                        .font(.system(size: 9, weight: .regular))
+                        .foregroundStyle(FC.border)
+                        .padding(.top, 2)
+                }
+                .padding(.vertical, 7).padding(.horizontal, 10)
+            }
+            .buttonStyle(.plain)
+
+            if isExpanded {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(insight.body)
+                        .font(.system(size: 12, weight: .regular, design: .rounded))
+                        .foregroundStyle(FC.inkSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(.horizontal, 10)
+                    Button {
+                        HapticManager.light()
+                        onShowAI?()
+                    } label: {
+                        HStack(spacing: 4) {
+                            Image(systemName: "sparkles").font(.system(size: 11))
+                            Text("Уточнить у ИИ")
+                                .font(.system(size: 12, weight: .medium, design: .rounded))
+                        }
+                        .foregroundStyle(FC.cobalt)
+                        .padding(.horizontal, 10).padding(.bottom, 6)
+                    }
+                    .buttonStyle(.plain)
+                }
+                .transition(.opacity.combined(with: .move(edge: .top)))
             }
         }
-        .padding(.vertical, 4)
+        .background(accent.opacity(isExpanded ? 0.07 : 0.04))
+        .clipShape(RoundedRectangle(cornerRadius: 10))
+        .animation(.spring(response: 0.38, dampingFraction: 0.82), value: isExpanded)
     }
 
-    // MARK: - Skeleton
+    // MARK: - Simple Tile helper
 
-    private var skeletonRow: some View {
-        HStack {
-            RoundedRectangle(cornerRadius: 4).fill(FC.border).frame(width: 130, height: 12).skeleton(active: true)
-            Spacer()
-            RoundedRectangle(cornerRadius: 4).fill(FC.border).frame(width: 60, height: 12).skeleton(active: true)
+    private func simpleTile(icon: String, title: String, detail: String, action: (() -> Void)?) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Image(systemName: icon)
+                .font(.system(size: 18, weight: .light))
+                .foregroundStyle(FC.inkSecondary)  // T0: decorative = secondary
+
+            Spacer(minLength: 14)
+
+            Text(title)
+                .font(.system(size: 14, weight: .medium, design: .rounded))
+                .foregroundStyle(FC.ink)
+            Text(detail)
+                .font(.system(size: 12, weight: .regular, design: .rounded))
+                .foregroundStyle(FC.inkSecondary)
+                .padding(.top, 2)
         }
-        .padding(.vertical, 6)
+        .padding(16)
+        .frame(maxWidth: .infinity, minHeight: 110, alignment: .leading)
+        .dataWidget()
+        .contentShape(Rectangle())
+        .onTapGesture { HapticManager.light(); action?() }
     }
 
-    // MARK: - Computed
+    private func fullWidthSimpleTile(icon: String, title: String, detail: String, action: (() -> Void)?) -> some View {
+        HStack {
+            Image(systemName: icon)
+                .font(.system(size: 22, weight: .light))
+                .foregroundStyle(FC.inkSecondary)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.system(size: 15, weight: .medium, design: .rounded))
+                    .foregroundStyle(FC.ink)
+                Text(detail)
+                    .font(.system(size: 13, weight: .regular, design: .rounded))
+                    .foregroundStyle(FC.inkSecondary)
+            }
+            .padding(.leading, 8)
+            Spacer()
+        }
+        .padding(20)
+        .frame(maxWidth: .infinity)
+        .dataWidget()
+        .contentShape(Rectangle())
+        .onTapGesture { HapticManager.light(); action?() }
+    }
+
+    // MARK: - Computed helpers
 
     private var trafficColor: Color {
         switch viewModel.taxStatus?.trafficLight {
         case .green:  FC.cobalt
-        case .yellow: FC.amber
+        case .yellow: FC.warning
         case .red:    FC.danger
-        case nil:     FC.muted
+        case nil:     FC.inkSecondary
         }
     }
 
@@ -439,14 +629,37 @@ struct DashboardView: View {
     private var currentMonthFull: String { formatted(Date(), "LLLL yyyy") }
     private var currentMonthShort: String { formatted(Date(), "LLLL") }
     private var nextMonthGenitive: String {
-        formatted(Calendar.current.date(byAdding: .month, value: 1, to: Date())!, "LLLL")
+        let next = Calendar.current.date(byAdding: .month, value: 1, to: Date())!
+        return formatted(next, "LLLL")
     }
 
     private func formatted(_ date: Date, _ format: String) -> String {
         let fmt = DateFormatter()
         fmt.dateFormat = format
         fmt.locale = Locale(identifier: "ru_RU")
-        return fmt.string(from: date).capitalized
+        return fmt.string(from: date)
+    }
+
+    private func formattedDeadline(_ date: Date) -> String {
+        let fmt = DateFormatter()
+        fmt.dateFormat = "d MMMM"
+        fmt.locale = Locale(identifier: "ru_RU")
+        return fmt.string(from: date)
+    }
+}
+
+// MARK: - Widget appear animation
+
+private extension View {
+    func widgetAppear(index: Int, appeared: Bool) -> some View {
+        self
+            .offset(y: appeared ? 0 : 36)
+            .opacity(appeared ? 1 : 0)
+            .scaleEffect(appeared ? 1 : 0.97, anchor: .top)
+            .animation(
+                .spring(response: 0.55, dampingFraction: 0.80).delay(Double(index) * 0.055),
+                value: appeared
+            )
     }
 }
 

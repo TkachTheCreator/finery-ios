@@ -162,10 +162,18 @@ final class SharedDataService {
         }
         catch { pnlResult = nil }
 
-        let taxResult: TaxStatus?
+        var taxResult: TaxStatus?
         do { taxResult = try await taxTask }
         catch NetworkError.unauthorized { handleSessionExpired(); return }
         catch { taxResult = nil }
+
+        // C: if the user's actual mode differs from what taxTask used (stale resolvedMode),
+        // re-fetch with the correct mode so limitUsedPercent reflects real income.
+        let actualMode = currentUser?.taxMode ?? .npd
+        if actualMode != resolvedMode {
+            do { taxResult = try await APIClient.shared.getTaxStatus(year: year, taxMode: actualMode) }
+            catch { /* keep original result; next load will use correct mode */ }
+        }
 
         // Don't corrupt state on cancellation
         guard !Task.isCancelled else { return }
@@ -201,23 +209,23 @@ final class SharedDataService {
     /// Force the next loadAll() to fetch fresh data regardless of the 30-second window.
     func invalidate() { lastUpdated = nil }
 
-    /// Immediately prepend or update a transaction, then refresh pnl and the affected client.
+    /// Immediately prepend or update a transaction, then refresh pnl, tax status, and the affected client.
     func appendTransaction(_ tx: Transaction) {
         transactions.removeAll { $0.id == tx.id }
         transactions.insert(tx, at: 0)
         TransactionStore.shared.append(tx)
         invalidate()
-        Task { await refreshPnL() }
+        Task { await refreshPnLAndTax() }
         if let cid = tx.clientId { updateCachedClientTotal(id: cid) }
     }
 
-    /// Immediately remove a transaction, then refresh pnl and the affected client.
+    /// Immediately remove a transaction, then refresh pnl, tax status, and the affected client.
     func removeTransaction(id: UUID) {
         let removed = transactions.first { $0.id == id }
         transactions.removeAll { $0.id == id }
         TransactionStore.shared.remove(id: id)
         invalidate()
-        Task { await refreshPnL() }
+        Task { await refreshPnLAndTax() }
         if let cid = removed?.clientId { updateCachedClientTotal(id: cid) }
     }
 
@@ -235,6 +243,23 @@ final class SharedDataService {
             saveToCache()
             saveToWidget()
         }
+    }
+
+    /// Re-fetches tax status for the current year without a full loadAll().
+    private func refreshTaxStatus() async {
+        guard APIClient.shared.isAuthenticated else { return }
+        let year = Calendar.current.component(.year, from: Date())
+        let mode = currentUser?.taxMode ?? .npd
+        if let fresh = try? await APIClient.shared.getTaxStatus(year: year, taxMode: mode) {
+            taxStatus = fresh
+        }
+    }
+
+    /// Refreshes both PnL and tax status in parallel after any transaction change.
+    private func refreshPnLAndTax() async {
+        async let pnlFetch = refreshPnL()
+        async let taxFetch = refreshTaxStatus()
+        _ = await (pnlFetch, taxFetch)
     }
 
     /// Public entry point to refresh a client's locally-cached total after a link/unlink.

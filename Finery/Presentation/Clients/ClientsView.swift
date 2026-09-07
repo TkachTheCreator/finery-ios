@@ -465,7 +465,7 @@ struct ClientDetailView: View {
                                         Text((tx.direction == .income ? "+" : "-") + tx.amount.rub())
                                             .font(.system(.subheadline, design: .rounded, weight: .semibold))
                                             .monospacedDigit()
-                                            .foregroundStyle(tx.direction == .income ? FC.cobalt : FC.danger)
+                                            .foregroundStyle(tx.direction == .income ? FC.cobalt : FC.expense)
                                     }
                                     .padding(.vertical, 4)
                                     if tx.id != linkedTransactions.prefix(20).last?.id {
