@@ -212,6 +212,8 @@ struct DashboardView: View {
                 .contentTransition(.numericText(countsDown: false))
                 .animation(.fineryNumber, value: viewModel.pnl?.totalIncome)
                 .animation(.spring(response: 0.4, dampingFraction: 0.8), value: viewModel.isLoading)
+                .minimumScaleFactor(0.4)
+                .lineLimit(1)
                 .padding(.top, 8)
                 .padding(.bottom, 16)
 
@@ -240,14 +242,17 @@ struct DashboardView: View {
     private func heroMetric(label: String, value: Decimal?, align: HorizontalAlignment) -> some View {
         VStack(alignment: align, spacing: 3) {
             Text(label)
-                .font(.system(size: 11, weight: .regular, design: .rounded))  // T0: regular
+                .font(.system(size: 11, weight: .regular, design: .rounded))
                 .foregroundStyle(FC.ivory.opacity(0.38))
+                .lineLimit(1)
             Text(value?.rub() ?? "—")
-                .font(.system(.footnote, design: .rounded, weight: .regular))  // T0: regular
+                .font(.system(.footnote, design: .rounded, weight: .regular))
                 .monospacedDigit()
                 .foregroundStyle(FC.ivory.opacity(viewModel.isLoading ? 0.18 : 0.72))
                 .contentTransition(.numericText())
                 .animation(.fineryNumber, value: value)
+                .minimumScaleFactor(0.5)
+                .lineLimit(1)
         }
     }
 
