@@ -208,6 +208,7 @@ struct RootView: View {
         case transactions
         case analyticsDynamics
         case analyticsCategories
+        case tips
     }
 
     // MARK: - Main App (NavigationStack, no tab bar)
@@ -222,7 +223,8 @@ struct RootView: View {
                 onShowClients: { navPath.append(FineryRoute.clients) },
                 onShowAddTransaction: { showAddTransaction = true },
                 onShowAnalyticsDynamics: { navPath.append(FineryRoute.analyticsDynamics) },
-                onShowAnalyticsCategories: { navPath.append(FineryRoute.analyticsCategories) }
+                onShowAnalyticsCategories: { navPath.append(FineryRoute.analyticsCategories) },
+                onShowTips: { navPath.append(FineryRoute.tips) }
             )
             .navigationTitle("")
             .navigationBarHidden(true)
@@ -246,6 +248,9 @@ struct RootView: View {
                 case .analyticsCategories:
                     AnalyticsCategoriesView(viewModel: c.analytics)
                         .navigationBarTitleDisplayMode(.inline)
+                case .tips:
+                    TipsListView(insights: c.dashboard.insights, onShowAI: { showChat = true })
+                        .navigationBarTitleDisplayMode(.large)
                 }
             }
         }

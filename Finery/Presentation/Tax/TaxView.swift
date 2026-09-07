@@ -3,6 +3,7 @@ import SwiftUI
 struct TaxView: View {
     @State var viewModel: TaxViewModel
     @State private var appeared = false
+    @State private var ringProgress: Double = 0
 
     init(viewModel: TaxViewModel) {
         _viewModel = State(wrappedValue: viewModel)
@@ -71,7 +72,15 @@ struct TaxView: View {
                 .padding(.horizontal, 16)
             }
         }
-        .task { await viewModel.load() }
+        .task {
+            await viewModel.load()
+            if let status = viewModel.taxStatus, status.showNpdLimit {
+                let target = min(status.limitUsedPercent / 100.0, 1.0)
+                withAnimation(.spring(response: 1.2, dampingFraction: 0.8).delay(0.3)) {
+                    ringProgress = target
+                }
+            }
+        }
         .onAppear {
             guard !appeared else { return }
             withAnimation(.spring(response: 0.7, dampingFraction: 0.82)) { appeared = true }
@@ -136,28 +145,41 @@ struct TaxView: View {
                 }
             }
 
-            // Progress bar
-            GeometryReader { geo in
-                ZStack(alignment: .leading) {
-                    RoundedRectangle(cornerRadius: 5).fill(FC.border.opacity(0.6)).frame(height: 8)
-                    RoundedRectangle(cornerRadius: 5)
-                        .fill(trafficColor(status))
-                        .frame(width: geo.size.width * CGFloat(min(status.limitUsedPercent / 100, 1.0)), height: 8)
-                        .animation(.fineryCard.delay(0.2), value: status.limitUsedPercent)
-                }
-            }
-            .frame(height: 8)
+            // Ring + stats
+            HStack(alignment: .center, spacing: 20) {
+                ZStack {
+                    RingProgressView(
+                        progress: ringProgress,
+                        color: trafficColor(status),
+                        size: 72,
+                        lineWidth: 7
+                    )
+                    .scaleEffect(appeared ? 1 : 0.8)
+                    .opacity(appeared ? 1 : 0)
+                    .animation(.easeOut(duration: 0.8).delay(0.2), value: appeared)
 
-            // Three numbers: used / remaining / limit
-            HStack {
-                statBlock(label: "Использовано", value: status.yearlyIncome.rub(),
-                          color: trafficColor(status), align: .leading)
+                    VStack(spacing: 1) {
+                        Text("\(Int(status.limitUsedPercent))%")
+                            .font(.system(size: 15, weight: .semibold, design: .rounded))
+                            .monospacedDigit()
+                            .foregroundStyle(trafficColor(status))
+                            .contentTransition(.numericText())
+                        Text("НПД")
+                            .font(.system(size: 9, weight: .regular, design: .rounded))
+                            .foregroundStyle(FC.inkSecondary)
+                    }
+                }
+
+                VStack(alignment: .leading, spacing: 8) {
+                    statBlock(label: "Использовано", value: status.yearlyIncome.rub(),
+                              color: trafficColor(status), align: .leading)
+                    statBlock(label: "Осталось", value: status.remaining.rub(),
+                              color: FC.inkSecondary, align: .leading)
+                    statBlock(label: "Лимит", value: TaxStatus.npdYearLimit.rub(),
+                              color: FC.ink, align: .leading)
+                }
+
                 Spacer()
-                statBlock(label: "Осталось", value: status.remaining.rub(),
-                          color: FC.inkSecondary, align: .center)
-                Spacer()
-                statBlock(label: "Лимит", value: TaxStatus.npdYearLimit.rub(),
-                          color: FC.ink, align: .trailing)
             }
 
             if status.isNearLimit {

@@ -9,11 +9,11 @@ struct DashboardView: View {
     var onShowAddTransaction: (() -> Void)?
     var onShowAnalyticsDynamics: (() -> Void)?
     var onShowAnalyticsCategories: (() -> Void)?
+    var onShowTips: (() -> Void)?
 
     @State private var appeared          = false
     @State private var barProgress: Double = 0
     @State private var showCashFlow      = false
-    @State private var expandedInsightId: UUID? = nil
 
     init(
         viewModel: DashboardViewModel,
@@ -23,7 +23,8 @@ struct DashboardView: View {
         onShowClients: (() -> Void)? = nil,
         onShowAddTransaction: (() -> Void)? = nil,
         onShowAnalyticsDynamics: (() -> Void)? = nil,
-        onShowAnalyticsCategories: (() -> Void)? = nil
+        onShowAnalyticsCategories: (() -> Void)? = nil,
+        onShowTips: (() -> Void)? = nil
     ) {
         _viewModel = State(wrappedValue: viewModel)
         self.onShowSettings = onShowSettings
@@ -33,6 +34,7 @@ struct DashboardView: View {
         self.onShowAddTransaction = onShowAddTransaction
         self.onShowAnalyticsDynamics = onShowAnalyticsDynamics
         self.onShowAnalyticsCategories = onShowAnalyticsCategories
+        self.onShowTips = onShowTips
     }
 
     var body: some View {
@@ -464,10 +466,10 @@ struct DashboardView: View {
         )
     }
 
-    // MARK: - 8. Tips Tile (expandable insights — T6 smooth disclosure)
+    // MARK: - 8. Tips Tile — tap to open TipsListView
 
     private var tipsTile: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: 0) {
             HStack(spacing: 5) {
                 Image(systemName: "lightbulb")
                     .font(.system(size: 12, weight: .regular))
@@ -477,85 +479,46 @@ struct DashboardView: View {
                     .foregroundStyle(FC.inkSecondary)
             }
 
+            Spacer(minLength: 10)
+
             if viewModel.insights.isEmpty {
-                Spacer(minLength: 8)
                 Text("Всё в порядке")
                     .font(.system(size: 13, weight: .regular, design: .rounded))
                     .foregroundStyle(FC.inkSecondary)
             } else {
-                VStack(spacing: 6) {
-                    ForEach(viewModel.insights) { insight in
-                        insightCard(insight)
+                VStack(alignment: .leading, spacing: 4) {
+                    ForEach(viewModel.insights.prefix(2)) { insight in
+                        HStack(spacing: 6) {
+                            let accent: Color = insight.severity == .info ? FC.cobalt : FC.warning
+                            Circle().fill(accent).frame(width: 5, height: 5)
+                            Text(insight.title)
+                                .font(.system(size: 12, weight: .regular, design: .rounded))
+                                .foregroundStyle(FC.inkSecondary)
+                                .lineLimit(1)
+                        }
+                    }
+                    if viewModel.insights.count > 2 {
+                        Text("+ ещё \(viewModel.insights.count - 2)")
+                            .font(.system(size: 11, weight: .regular, design: .rounded))
+                            .foregroundStyle(FC.muted)
                     }
                 }
+            }
+
+            Spacer(minLength: 8)
+
+            HStack {
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 11, weight: .regular))
+                    .foregroundStyle(FC.border)
             }
         }
         .padding(16)
         .frame(maxWidth: .infinity, minHeight: 110, alignment: .leading)
         .dataWidget()
-    }
-
-    // Задача 6: smooth disclosure animation
-    @ViewBuilder
-    private func insightCard(_ insight: Insight) -> some View {
-        let isExpanded = expandedInsightId == insight.id
-        let accent: Color = {
-            switch insight.severity {
-            case .critical: return FC.danger
-            case .warning:  return FC.warning
-            case .info:     return FC.cobalt
-            }
-        }()
-
-        VStack(alignment: .leading, spacing: 0) {
-            Button {
-                withAnimation(.spring(response: 0.38, dampingFraction: 0.82)) {
-                    expandedInsightId = isExpanded ? nil : insight.id
-                }
-            } label: {
-                HStack(alignment: .top, spacing: 8) {
-                    Circle().fill(accent).frame(width: 6, height: 6).padding(.top, 4)
-                    Text(insight.title)
-                        .font(.system(size: 12, weight: .medium, design: .rounded))
-                        .foregroundStyle(FC.ink)
-                        .multilineTextAlignment(.leading)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-                        .font(.system(size: 9, weight: .regular))
-                        .foregroundStyle(FC.border)
-                        .padding(.top, 2)
-                }
-                .padding(.vertical, 7).padding(.horizontal, 10)
-            }
-            .buttonStyle(.plain)
-
-            if isExpanded {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text(insight.body)
-                        .font(.system(size: 12, weight: .regular, design: .rounded))
-                        .foregroundStyle(FC.inkSecondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .padding(.horizontal, 10)
-                    Button {
-                        HapticManager.light()
-                        onShowAI?()
-                    } label: {
-                        HStack(spacing: 4) {
-                            Image(systemName: "sparkles").font(.system(size: 11))
-                            Text("Уточнить у ИИ")
-                                .font(.system(size: 12, weight: .medium, design: .rounded))
-                        }
-                        .foregroundStyle(FC.cobalt)
-                        .padding(.horizontal, 10).padding(.bottom, 6)
-                    }
-                    .buttonStyle(.plain)
-                }
-                .transition(.opacity.combined(with: .move(edge: .top)))
-            }
-        }
-        .background(accent.opacity(isExpanded ? 0.07 : 0.04))
-        .clipShape(RoundedRectangle(cornerRadius: 10))
-        .animation(.spring(response: 0.38, dampingFraction: 0.82), value: isExpanded)
+        .contentShape(Rectangle())
+        .onTapGesture { HapticManager.light(); onShowTips?() }
     }
 
     // MARK: - Simple Tile helper
