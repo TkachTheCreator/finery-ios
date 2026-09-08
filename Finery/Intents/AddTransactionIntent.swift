@@ -13,7 +13,11 @@ struct AddTransactionIntent: AppIntent {
     )
     static let openAppWhenRun: Bool = false
 
-    @Parameter(title: "Операция", description: "Например: расход 500 рублей обед")
+    @Parameter(
+        title: "Операция",
+        description: "Например: расход 500 рублей обед",
+        requestValueDialog: IntentDialog("Что добавить? Например: «расход 500 такси»")
+    )
     var input: String
 
     func perform() async throws -> some ProvidesDialog {
