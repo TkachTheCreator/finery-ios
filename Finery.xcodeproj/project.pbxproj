@@ -223,14 +223,14 @@
 		9BBDDAAF81E5B7A4C4D22783 /* GetMonthlyDynamicsUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetMonthlyDynamicsUseCase.swift; sourceTree = "<group>"; };
 		9DE470362E77980A05FBBA37 /* TransactionLocalRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionLocalRepository.swift; sourceTree = "<group>"; };
 		9E8A3D0228E2EE3ADAE37A86 /* FloatingTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingTabBar.swift; sourceTree = "<group>"; };
-		9F40AEF0915FDE1ADF55A664 /* Finery.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Finery.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9F40AEF0915FDE1ADF55A664 /* Finery.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Finery.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9FE83955C51012112BD1C60A /* NetworkDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkDebugView.swift; sourceTree = "<group>"; };
 		A808E46673806C37D5BF707B /* UserRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRepository.swift; sourceTree = "<group>"; };
 		A8BB4775422C9B1A7C044A2F /* AuthFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthFlowView.swift; sourceTree = "<group>"; };
 		A8F86C2EED64EC8EC4EA3257 /* ClientsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientsView.swift; sourceTree = "<group>"; };
 		AB8D7D57EA3C0EC851F0F031 /* AIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIService.swift; sourceTree = "<group>"; };
 		ACDBC4D508F240C87B80ADBB /* ReceiptPickerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptPickerSheet.swift; sourceTree = "<group>"; };
-		B0948239B5CC62ED44EAD4F7 /* FineryWidget.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = FineryWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		B0948239B5CC62ED44EAD4F7 /* FineryWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = FineryWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		B2AF7832F0FB4AA340E1AC40 /* RecurringTransaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecurringTransaction.swift; sourceTree = "<group>"; };
 		B73BE6B840255FE525903F14 /* AnalyticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsView.swift; sourceTree = "<group>"; };
 		B84589DEF693D5737501347D /* ClassifyTransactionUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassifyTransactionUseCase.swift; sourceTree = "<group>"; };
@@ -245,7 +245,7 @@
 		D63DC38B29DA04BE54BB2733 /* FineryTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FineryTheme.swift; sourceTree = "<group>"; };
 		D6594DF992676C1A5BDA9E7F /* IncomeCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IncomeCategory.swift; sourceTree = "<group>"; };
 		D6F747A35F6E89CF3EFE0629 /* UserLocalRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLocalRepository.swift; sourceTree = "<group>"; };
-		D7022D30A9327D2DFB16A4C6 /* FineryControl.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = FineryControl.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		D7022D30A9327D2DFB16A4C6 /* FineryControl.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = FineryControl.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		D785BC5D2C9E6FC774371B0E /* AppLockManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockManager.swift; sourceTree = "<group>"; };
 		D8DE02F4DE40E007481DA107 /* DonutChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DonutChartView.swift; sourceTree = "<group>"; };
 		DBA3BDDB6EC21859BC0FAF0A /* TransactionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionStore.swift; sourceTree = "<group>"; };
@@ -821,14 +821,12 @@
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
 					2515D379705AE448BB7D130D = {
-						DevelopmentTeam = HU22U632B9;
 						ProvisioningStyle = Automatic;
 					};
 					5C06D7CDFAC4737927523827 = {
 						TestTargetID = 2515D379705AE448BB7D130D;
 					};
 					94BD8A5289F23374F054FB09 = {
-						DevelopmentTeam = HU22U632B9;
 						ProvisioningStyle = Automatic;
 					};
 					DF31E32ADCC64C831609F20B = {
@@ -836,7 +834,6 @@
 						ProvisioningStyle = Automatic;
 					};
 					FB3BF94C50472C3384D73E03 = {
-						DevelopmentTeam = HU22U632B9;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -1094,7 +1091,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = HU22U632B9;
+				DEVELOPMENT_TEAM = 6CP3FXPA4J;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_FILE = FineryWidget/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
@@ -1206,7 +1203,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = HU22U632B9;
+				DEVELOPMENT_TEAM = 6CP3FXPA4J;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_FILE = FineryWidget/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
@@ -1261,7 +1258,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = HU22U632B9;
+				DEVELOPMENT_TEAM = 6CP3FXPA4J;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_FILE = Finery/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
@@ -1287,7 +1284,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = HU22U632B9;
+				DEVELOPMENT_TEAM = 6CP3FXPA4J;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_FILE = FineryControl/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
@@ -1334,7 +1331,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = HU22U632B9;
+				DEVELOPMENT_TEAM = 6CP3FXPA4J;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_FILE = FineryControl/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
@@ -1425,7 +1422,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = HU22U632B9;
+				DEVELOPMENT_TEAM = 6CP3FXPA4J;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_FILE = Finery/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;

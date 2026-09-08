@@ -1,7 +1,7 @@
 import WidgetKit
 import SwiftUI
 
-// MARK: - Модель данных виджета
+// MARK: - Data model
 
 struct FineryEntry: TimelineEntry {
     let date: Date
@@ -24,172 +24,145 @@ struct WidgetTransaction: Codable {
 
 struct FineryProvider: TimelineProvider {
     func placeholder(in context: Context) -> FineryEntry {
-        FineryEntry(
-            date: Date(), income: 150000,
-            expense: 30000, netProfit: 114000,
-            taxAmount: 6000, taxMode: "НПД",
-            lastTransactions: []
-        )
+        FineryEntry(date: Date(), income: 150000, expense: 30000,
+                    netProfit: 114000, taxAmount: 6000, taxMode: "НПД", lastTransactions: [])
     }
 
-    func getSnapshot(in context: Context,
-                     completion: @escaping (FineryEntry) -> Void) {
+    func getSnapshot(in context: Context, completion: @escaping (FineryEntry) -> Void) {
         completion(loadEntry())
     }
 
-    func getTimeline(in context: Context,
-                     completion: @escaping (Timeline<FineryEntry>) -> Void) {
+    func getTimeline(in context: Context, completion: @escaping (Timeline<FineryEntry>) -> Void) {
         let entry = loadEntry()
-        let nextUpdate = Calendar.current.date(byAdding: .minute, value: 30, to: Date())!
-        completion(Timeline(entries: [entry], policy: .after(nextUpdate)))
+        let next = Calendar.current.date(byAdding: .minute, value: 30, to: Date())!
+        completion(Timeline(entries: [entry], policy: .after(next)))
     }
 
     private func loadEntry() -> FineryEntry {
-        let defaults = UserDefaults(suiteName: "group.com.tkachev.finery")
-        let income  = defaults?.double(forKey: "widget_income")  ?? 0
-        let expense = defaults?.double(forKey: "widget_expense") ?? 0
-        let tax     = defaults?.double(forKey: "widget_tax")     ?? 0
-        let taxMode = defaults?.string(forKey: "widget_taxMode") ?? "НПД"
-
-        var transactions: [WidgetTransaction] = []
-        if let data = defaults?.data(forKey: "widget_transactions"),
-           let txs = try? JSONDecoder().decode([WidgetTransaction].self, from: data) {
-            transactions = Array(txs.prefix(3))
+        let d = UserDefaults(suiteName: "group.com.tkachev.finery")
+        let income  = d?.double(forKey: "widget_income")  ?? 0
+        let expense = d?.double(forKey: "widget_expense") ?? 0
+        let tax     = d?.double(forKey: "widget_tax")     ?? 0
+        let taxMode = d?.string(forKey: "widget_taxMode") ?? "НПД"
+        var txs: [WidgetTransaction] = []
+        if let data = d?.data(forKey: "widget_transactions"),
+           let decoded = try? JSONDecoder().decode([WidgetTransaction].self, from: data) {
+            txs = Array(decoded.prefix(3))
         }
-
-        return FineryEntry(
-            date: Date(),
-            income: income,
-            expense: expense,
-            netProfit: income - expense - tax,
-            taxAmount: tax,
-            taxMode: taxMode,
-            lastTransactions: transactions
-        )
+        return FineryEntry(date: Date(), income: income, expense: expense,
+                           netProfit: income - expense - tax,
+                           taxAmount: tax, taxMode: taxMode, lastTransactions: txs)
     }
 }
 
-// MARK: - Маленький виджет (systemSmall)
+// MARK: - Palette helpers
 
-struct SmallWidgetView: View {
+private let sand    = Color(hex: "#F5EFE0")
+private let cobalt  = Color(hex: "#0047AB")
+private let ink     = Color(hex: "#1A1A18")
+private let muted   = Color(hex: "#6B6560")
+private let divider = Color(hex: "#C8C0B0")
+private let success = Color(hex: "#1A7A4A")
+private let danger  = Color(hex: "#C0392B")
+
+// MARK: - ═══════════════════════════
+// MARK:   HOME SCREEN — systemSmall
+// MARK:   "Быстрое добавление"
+// MARK: - ═══════════════════════════
+
+struct QuickAddSmallView: View {
+    var body: some View {
+        ZStack {
+            sand
+            VStack(spacing: 10) {
+                ZStack {
+                    Circle()
+                        .fill(cobalt)
+                        .frame(width: 52, height: 52)
+                    Image(systemName: "plus")
+                        .font(.system(size: 24, weight: .semibold))
+                        .foregroundStyle(.white)
+                }
+                Text("Добавить\nоперацию")
+                    .font(.caption.weight(.semibold))
+                    .multilineTextAlignment(.center)
+                    .foregroundStyle(ink)
+                    .lineSpacing(1)
+            }
+        }
+        .widgetURL(URL(string: "finery://add-transaction")!)
+    }
+}
+
+struct FineryQuickAddWidget: Widget {
+    let kind = "FineryQuickAdd"
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: kind, provider: FineryProvider()) { _ in
+            QuickAddSmallView()
+                .containerBackground(sand, for: .widget)
+        }
+        .configurationDisplayName("Finery — Добавить")
+        .description("Открывает быстрое добавление операции одним тапом")
+        .supportedFamilies([.systemSmall])
+    }
+}
+
+// MARK: - ═══════════════════════════
+// MARK:   HOME SCREEN — systemSmall
+// MARK:   "Баланс"
+// MARK: - ═══════════════════════════
+
+struct BalanceSmallView: View {
     let entry: FineryEntry
 
     var body: some View {
         ZStack {
-            Color(hex: "#F5EFE0")
-            VStack(alignment: .leading, spacing: 6) {
+            sand
+            VStack(alignment: .leading, spacing: 0) {
                 HStack {
                     Text("Finery")
-                        .font(.caption2)
-                        .fontWeight(.semibold)
-                        .foregroundColor(Color(hex: "#8B7D5A"))
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(muted)
                     Spacer()
                     Text(entry.taxMode)
                         .font(.caption2)
-                        .foregroundColor(Color(hex: "#0047AB"))
+                        .foregroundStyle(cobalt)
                 }
+
                 Spacer()
+
                 Text("Доход")
                     .font(.caption2)
-                    .foregroundColor(Color(hex: "#8B7D5A"))
-                Text(formatAmount(entry.income))
-                    .font(.title3)
-                    .fontWeight(.bold)
-                    .foregroundColor(Color(hex: "#1A1A18"))
-                    .minimumScaleFactor(0.7)
+                    .foregroundStyle(muted)
+                Text(fmtAmt(entry.income))
+                    .font(.title3.weight(.bold))
+                    .foregroundStyle(cobalt)
+                    .minimumScaleFactor(0.65)
+                    .lineLimit(1)
+
                 Spacer()
-                HStack {
-                    VStack(alignment: .leading) {
+
+                HStack(alignment: .bottom) {
+                    VStack(alignment: .leading, spacing: 2) {
                         Text("Расход")
                             .font(.caption2)
-                            .foregroundColor(Color(hex: "#8B7D5A"))
-                        Text(formatAmount(entry.expense))
-                            .font(.caption)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.red)
+                            .foregroundStyle(muted)
+                        Text(fmtAmt(entry.expense))
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(ink)
+                            .minimumScaleFactor(0.8)
+                            .lineLimit(1)
                     }
                     Spacer()
-                    VStack(alignment: .trailing) {
+                    VStack(alignment: .trailing, spacing: 2) {
                         Text("Налог")
                             .font(.caption2)
-                            .foregroundColor(Color(hex: "#8B7D5A"))
-                        Text(formatAmount(entry.taxAmount))
-                            .font(.caption)
-                            .fontWeight(.semibold)
-                            .foregroundColor(Color(hex: "#0047AB"))
-                    }
-                }
-            }
-            .padding(12)
-        }
-    }
-}
-
-// MARK: - Средний виджет (systemMedium)
-
-struct MediumWidgetView: View {
-    let entry: FineryEntry
-
-    var body: some View {
-        ZStack {
-            Color(hex: "#F5EFE0")
-            HStack(spacing: 12) {
-                VStack(alignment: .leading, spacing: 6) {
-                    Text("Finery")
-                        .font(.caption2)
-                        .fontWeight(.semibold)
-                        .foregroundColor(Color(hex: "#8B7D5A"))
-                    Text("Чистая прибыль")
-                        .font(.caption2)
-                        .foregroundColor(Color(hex: "#8B7D5A"))
-                    Text(formatAmount(entry.netProfit))
-                        .font(.title2)
-                        .fontWeight(.bold)
-                        .foregroundColor(Color(hex: "#1A1A18"))
-                        .minimumScaleFactor(0.6)
-                    Spacer()
-                    Link(destination: URL(string: "finery://add-transaction")!) {
-                        HStack(spacing: 4) {
-                            Image(systemName: "plus.circle.fill")
-                            Text("Добавить")
-                        }
-                        .font(.caption)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 6)
-                        .background(Color(hex: "#0047AB"))
-                        .cornerRadius(8)
-                    }
-                }
-
-                Divider()
-                    .background(Color(hex: "#8B7D5A").opacity(0.3))
-
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Последние")
-                        .font(.caption2)
-                        .foregroundColor(Color(hex: "#8B7D5A"))
-                    if entry.lastTransactions.isEmpty {
-                        Text("Нет транзакций")
-                            .font(.caption)
-                            .foregroundColor(Color(hex: "#8B7D5A"))
-                    } else {
-                        ForEach(Array(entry.lastTransactions.prefix(3).enumerated()), id: \.offset) { _, tx in
-                            HStack {
-                                Text(tx.description)
-                                    .font(.caption2)
-                                    .lineLimit(1)
-                                    .foregroundColor(Color(hex: "#1A1A18"))
-                                Spacer()
-                                Text(tx.direction == "income"
-                                     ? "+\(formatAmount(tx.amount))"
-                                     : "-\(formatAmount(tx.amount))")
-                                    .font(.caption2)
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(tx.direction == "income" ? .green : .red)
-                            }
-                        }
+                            .foregroundStyle(muted)
+                        Text(fmtAmt(entry.taxAmount))
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(ink)
+                            .minimumScaleFactor(0.8)
+                            .lineLimit(1)
                     }
                 }
             }
@@ -198,87 +171,167 @@ struct MediumWidgetView: View {
     }
 }
 
-// MARK: - Виджет быстрой записи (Home Screen)
-
-struct QuickRecordWidgetView: View {
-    var body: some View {
-        ZStack {
-            Color(hex: "#F5EFE0")
-            VStack(spacing: 8) {
-                ZStack {
-                    Circle()
-                        .fill(Color(hex: "#0047AB").opacity(0.12))
-                        .frame(width: 44, height: 44)
-                    Image(systemName: "plus.circle.fill")
-                        .font(.system(size: 20, weight: .medium))
-                        .foregroundColor(Color(hex: "#0047AB"))
-                }
-                Text("Добавить")
-                    .font(.caption2)
-                    .fontWeight(.semibold)
-                    .foregroundColor(Color(hex: "#1A1A18"))
-                Text("Finery")
-                    .font(.system(size: 9))
-                    .foregroundColor(Color(hex: "#8B7D5A"))
-            }
-        }
-        .widgetURL(URL(string: "finery://add-transaction")!)
-    }
-}
-
-struct FineryQuickRecordWidget: Widget {
-    let kind = "FineryQuickRecord"
+struct FineryBalanceWidget: Widget {
+    let kind = "FineryWidgetSmall"
     var body: some WidgetConfiguration {
-        StaticConfiguration(kind: kind, provider: FineryProvider()) { _ in
-            QuickRecordWidgetView()
-                .containerBackground(Color(hex: "#F5EFE0"), for: .widget)
+        StaticConfiguration(kind: kind, provider: FineryProvider()) { entry in
+            BalanceSmallView(entry: entry)
+                .containerBackground(sand, for: .widget)
         }
-        .configurationDisplayName("Finery — Добавить операцию")
-        .description("Открывает быстрое добавление транзакции")
+        .configurationDisplayName("Finery — Баланс")
+        .description("Доходы, расходы и налог за текущий месяц")
         .supportedFamilies([.systemSmall])
     }
 }
 
-// MARK: - Lock Screen виджеты (.accessoryCircular / .accessoryRectangular)
-// Рендерятся монохромно — не используем цвета, только SF Symbols + текст.
+// MARK: - ═══════════════════════════
+// MARK:   HOME SCREEN — systemMedium
+// MARK:   "Сводка + Добавить"
+// MARK: - ═══════════════════════════
 
-struct LockScreenCircularView: View {
+struct ComboMediumView: View {
+    let entry: FineryEntry
+
+    var body: some View {
+        ZStack {
+            sand
+            HStack(spacing: 0) {
+
+                // ── Left: balance ──
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack {
+                        Text("Finery")
+                            .font(.caption2.weight(.semibold))
+                            .foregroundStyle(muted)
+                        Spacer()
+                        Text(entry.taxMode)
+                            .font(.caption2)
+                            .foregroundStyle(cobalt)
+                    }
+
+                    Spacer()
+
+                    Text("Доход за месяц")
+                        .font(.caption2)
+                        .foregroundStyle(muted)
+                    Text(fmtAmt(entry.income))
+                        .font(.title3.weight(.bold))
+                        .foregroundStyle(cobalt)
+                        .minimumScaleFactor(0.6)
+                        .lineLimit(1)
+
+                    Spacer()
+
+                    HStack(spacing: 16) {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Расход")
+                                .font(.caption2).foregroundStyle(muted)
+                            Text(fmtAmt(entry.expense))
+                                .font(.caption.weight(.semibold)).foregroundStyle(ink)
+                                .minimumScaleFactor(0.8).lineLimit(1)
+                        }
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Прибыль")
+                                .font(.caption2).foregroundStyle(muted)
+                            Text(fmtAmt(entry.netProfit))
+                                .font(.caption.weight(.semibold))
+                                .foregroundStyle(entry.netProfit >= 0 ? success : danger)
+                                .minimumScaleFactor(0.8).lineLimit(1)
+                        }
+                    }
+                }
+                .padding(14)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+
+                // ── Divider ──
+                Rectangle()
+                    .fill(divider.opacity(0.6))
+                    .frame(width: 0.5)
+
+                // ── Right: add button ──
+                Link(destination: URL(string: "finery://add-transaction")!) {
+                    VStack(spacing: 8) {
+                        ZStack {
+                            Circle()
+                                .fill(cobalt)
+                                .frame(width: 46, height: 46)
+                            Image(systemName: "plus")
+                                .font(.system(size: 22, weight: .semibold))
+                                .foregroundStyle(.white)
+                        }
+                        Text("Добавить")
+                            .font(.caption2.weight(.semibold))
+                            .foregroundStyle(ink)
+                    }
+                }
+                .frame(width: 90)
+            }
+        }
+    }
+}
+
+struct FineryComboWidget: Widget {
+    let kind = "FineryWidgetMedium"
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: kind, provider: FineryProvider()) { entry in
+            ComboMediumView(entry: entry)
+                .containerBackground(sand, for: .widget)
+        }
+        .configurationDisplayName("Finery — Сводка")
+        .description("Баланс за месяц и кнопка быстрого добавления")
+        .supportedFamilies([.systemMedium])
+    }
+}
+
+// MARK: - ═══════════════════════════
+// MARK:   LOCK SCREEN — accessoryRectangular
+// MARK: - ═══════════════════════════
+
+struct LockRectView: View {
+    var body: some View {
+        HStack(spacing: 14) {
+            Image(systemName: "plus.circle.fill")
+                .font(.system(size: 30, weight: .medium))
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Добавить операцию")
+                    .font(.headline)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.85)
+                Text("Finery")
+                    .font(.caption2)
+                    .opacity(0.7)
+            }
+            Spacer(minLength: 0)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+        .widgetURL(URL(string: "finery://add-transaction")!)
+    }
+}
+
+// MARK: - ═══════════════════════════
+// MARK:   LOCK SCREEN — accessoryCircular
+// MARK: - ═══════════════════════════
+
+struct LockCircularView: View {
     var body: some View {
         ZStack {
             AccessoryWidgetBackground()
-            Image(systemName: "plus.circle")
-                .font(.system(size: 22, weight: .light))
+            Image(systemName: "plus.circle.fill")
+                .font(.system(size: 26, weight: .medium))
         }
         .widgetURL(URL(string: "finery://add-transaction")!)
     }
 }
 
-struct LockScreenRectangularView: View {
-    var body: some View {
-        HStack(spacing: 10) {
-            Image(systemName: "plus.circle")
-                .font(.system(size: 20, weight: .light))
-            VStack(alignment: .leading, spacing: 1) {
-                Text("Добавить")
-                    .font(.caption.weight(.semibold))
-                Text("операцию · Finery")
-                    .font(.caption2)
-            }
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .widgetURL(URL(string: "finery://add-transaction")!)
-    }
-}
-
-struct LockScreenWidgetView: View {
+struct LockScreenAdaptiveView: View {
     @Environment(\.widgetFamily) var family
 
     var body: some View {
         switch family {
         case .accessoryCircular:
-            LockScreenCircularView()
+            LockCircularView()
         default:
-            LockScreenRectangularView()
+            LockRectView()
         }
     }
 }
@@ -287,61 +340,37 @@ struct FineryLockScreenWidget: Widget {
     let kind = "FineryLockScreen"
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: FineryProvider()) { _ in
-            LockScreenWidgetView()
+            LockScreenAdaptiveView()
                 .containerBackground(.clear, for: .widget)
         }
         .configurationDisplayName("Finery — Добавить")
-        .description("Быстро открыть запись операции с экрана блокировки")
+        .description("Открыть запись операции прямо с экрана блокировки")
         .supportedFamilies([.accessoryCircular, .accessoryRectangular])
     }
 }
 
-// MARK: - Widget bundle (entry point)
+// MARK: - ═══════════════════════════
+// MARK:   WIDGET BUNDLE
+// MARK: - ═══════════════════════════
 
 @main
 struct FineryWidgetBundle: WidgetBundle {
     var body: some Widget {
-        FineryWidgetSmall()
-        FineryWidgetMedium()
-        FineryQuickRecordWidget()
-        FineryLockScreenWidget()
-    }
-}
-
-struct FineryWidgetSmall: Widget {
-    let kind = "FineryWidgetSmall"
-    var body: some WidgetConfiguration {
-        StaticConfiguration(kind: kind, provider: FineryProvider()) { entry in
-            SmallWidgetView(entry: entry)
-                .containerBackground(Color(hex: "#F5EFE0"), for: .widget)
-        }
-        .configurationDisplayName("Finery — Баланс")
-        .description("Доходы, расходы и налог за месяц")
-        .supportedFamilies([.systemSmall])
-    }
-}
-
-struct FineryWidgetMedium: Widget {
-    let kind = "FineryWidgetMedium"
-    var body: some WidgetConfiguration {
-        StaticConfiguration(kind: kind, provider: FineryProvider()) { entry in
-            MediumWidgetView(entry: entry)
-                .containerBackground(Color(hex: "#F5EFE0"), for: .widget)
-        }
-        .configurationDisplayName("Finery — Сводка")
-        .description("Баланс и последние транзакции")
-        .supportedFamilies([.systemMedium])
+        FineryQuickAddWidget()   // Home: "Добавить" small
+        FineryBalanceWidget()    // Home: "Баланс" small
+        FineryComboWidget()      // Home: "Сводка" medium
+        FineryLockScreenWidget() // Lock Screen: rectangular + circular
     }
 }
 
 // MARK: - Helpers
 
-private func formatAmount(_ amount: Double) -> String {
-    let formatter = NumberFormatter()
-    formatter.numberStyle = .decimal
-    formatter.groupingSeparator = " "
-    formatter.maximumFractionDigits = 0
-    return "\(formatter.string(from: NSNumber(value: amount)) ?? "0") ₽"
+private func fmtAmt(_ amount: Double) -> String {
+    let f = NumberFormatter()
+    f.numberStyle = .decimal
+    f.groupingSeparator = "\u{202F}"
+    f.maximumFractionDigits = 0
+    return "\(f.string(from: NSNumber(value: amount)) ?? "0") ₽"
 }
 
 extension Color {
