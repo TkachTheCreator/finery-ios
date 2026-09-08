@@ -57,6 +57,8 @@ targets:
         product: Lottie
       - package: Shimmer
         product: Shimmer
+      - target: FineryWidget
+        embed: true
       - target: FineryControl
         embed: true
     settings:

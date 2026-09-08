@@ -36,6 +36,7 @@
 		42F92C1337CD08F72B200AF2 /* TaxCalculatorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9925A0E4CA8F1006122C1BD8 /* TaxCalculatorService.swift */; };
 		447D6B5CA8337259EC304907 /* Pow in Frameworks */ = {isa = PBXBuildFile; productRef = CA9FE20FDDBC787F3252883A /* Pow */; };
 		4553951B9921BD842E11C029 /* FineryControl.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = D7022D30A9327D2DFB16A4C6 /* FineryControl.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		45CC2CCC7EA90E01087AA6BC /* FineryWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B0948239B5CC62ED44EAD4F7 /* FineryWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		46A5C4A951725A7ACCCEC222 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A7AB35CED17D75500E5AF1 /* APIClient.swift */; };
 		4A35287097CCC4C3E2479F16 /* SMSParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F4EBBF2422130E162828054 /* SMSParser.swift */; };
 		4B117A31774BF9F428CFB325 /* TransactionSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51872C806C150DBEB4911CE0 /* TransactionSource.swift */; };
@@ -127,6 +128,13 @@
 			remoteGlobalIDString = 2515D379705AE448BB7D130D;
 			remoteInfo = Finery;
 		};
+		9DA0DB525A520AF020E850C9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FE88024E604A1C5DF0261666 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FB3BF94C50472C3384D73E03;
+			remoteInfo = FineryWidget;
+		};
 		AA2E33BAB3142EE51697B9FF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = FE88024E604A1C5DF0261666 /* Project object */;
@@ -143,6 +151,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				45CC2CCC7EA90E01087AA6BC /* FineryWidget.appex in Embed Foundation Extensions */,
 				4553951B9921BD842E11C029 /* FineryControl.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
@@ -702,6 +711,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				DA24E5719F534A3196ED661B /* PBXTargetDependency */,
 				CACC2F66E6764CD4C328567A /* PBXTargetDependency */,
 			);
 			name = Finery;
@@ -1029,6 +1039,11 @@
 			isa = PBXTargetDependency;
 			target = 94BD8A5289F23374F054FB09 /* FineryControl */;
 			targetProxy = AA2E33BAB3142EE51697B9FF /* PBXContainerItemProxy */;
+		};
+		DA24E5719F534A3196ED661B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FB3BF94C50472C3384D73E03 /* FineryWidget */;
+			targetProxy = 9DA0DB525A520AF020E850C9 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
