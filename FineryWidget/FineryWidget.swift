@@ -199,7 +199,7 @@ struct MediumWidgetView: View {
     }
 }
 
-// MARK: - Виджет быстрой записи
+// MARK: - Виджет быстрой записи (Home Screen)
 
 struct QuickRecordWidgetView: View {
     var body: some View {
@@ -210,11 +210,11 @@ struct QuickRecordWidgetView: View {
                     Circle()
                         .fill(Color(hex: "#0047AB").opacity(0.12))
                         .frame(width: 44, height: 44)
-                    Image(systemName: "mic.fill")
+                    Image(systemName: "plus.circle.fill")
                         .font(.system(size: 20, weight: .medium))
                         .foregroundColor(Color(hex: "#0047AB"))
                 }
-                Text("Запись")
+                Text("Добавить")
                     .font(.caption2)
                     .fontWeight(.semibold)
                     .foregroundColor(Color(hex: "#1A1A18"))
@@ -223,7 +223,7 @@ struct QuickRecordWidgetView: View {
                     .foregroundColor(Color(hex: "#8B7D5A"))
             }
         }
-        .widgetURL(URL(string: "finery://voice")!)
+        .widgetURL(URL(string: "finery://add-transaction")!)
     }
 }
 
@@ -234,9 +234,66 @@ struct FineryQuickRecordWidget: Widget {
             QuickRecordWidgetView()
                 .containerBackground(Color(hex: "#F5EFE0"), for: .widget)
         }
-        .configurationDisplayName("Finery — Быстрая запись")
-        .description("Открывает голосовой ввод транзакции одним тапом")
+        .configurationDisplayName("Finery — Добавить операцию")
+        .description("Открывает быстрое добавление транзакции")
         .supportedFamilies([.systemSmall])
+    }
+}
+
+// MARK: - Lock Screen виджеты (.accessoryCircular / .accessoryRectangular)
+// Рендерятся монохромно — не используем цвета, только SF Symbols + текст.
+
+struct LockScreenCircularView: View {
+    var body: some View {
+        ZStack {
+            AccessoryWidgetBackground()
+            Image(systemName: "plus.circle")
+                .font(.system(size: 22, weight: .light))
+        }
+        .widgetURL(URL(string: "finery://add-transaction")!)
+    }
+}
+
+struct LockScreenRectangularView: View {
+    var body: some View {
+        HStack(spacing: 10) {
+            Image(systemName: "plus.circle")
+                .font(.system(size: 20, weight: .light))
+            VStack(alignment: .leading, spacing: 1) {
+                Text("Добавить")
+                    .font(.caption.weight(.semibold))
+                Text("операцию · Finery")
+                    .font(.caption2)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .widgetURL(URL(string: "finery://add-transaction")!)
+    }
+}
+
+struct LockScreenWidgetView: View {
+    @Environment(\.widgetFamily) var family
+
+    var body: some View {
+        switch family {
+        case .accessoryCircular:
+            LockScreenCircularView()
+        default:
+            LockScreenRectangularView()
+        }
+    }
+}
+
+struct FineryLockScreenWidget: Widget {
+    let kind = "FineryLockScreen"
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: kind, provider: FineryProvider()) { _ in
+            LockScreenWidgetView()
+                .containerBackground(.clear, for: .widget)
+        }
+        .configurationDisplayName("Finery — Добавить")
+        .description("Быстро открыть запись операции с экрана блокировки")
+        .supportedFamilies([.accessoryCircular, .accessoryRectangular])
     }
 }
 
@@ -272,6 +329,7 @@ struct FineryWidgetBundle: WidgetBundle {
         FineryWidgetSmall()
         FineryWidgetMedium()
         FineryQuickRecordWidget()
+        FineryLockScreenWidget()
         FineryAddTransactionControl()
     }
 }
