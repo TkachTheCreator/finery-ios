@@ -110,43 +110,27 @@ struct AIAdvisorView: View {
 
     @ViewBuilder
     private func messageBubble(_ msg: AIMessage) -> some View {
-        HStack(alignment: .bottom, spacing: 8) {
-            if msg.role == "assistant" {
+        if msg.role == "user" {
+            HStack(alignment: .bottom, spacing: 8) {
+                Spacer(minLength: 48)
+                Text(msg.content)
+                    .font(.system(.body, design: .rounded))
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 10)
+                    .background(RoundedRectangle(cornerRadius: 18).fill(FC.cobalt))
+            }
+            .transition(.opacity.combined(with: .move(edge: .trailing)))
+        } else {
+            HStack(alignment: .top, spacing: 10) {
                 advisorAvatar(size: 28)
-            } else {
-                Spacer(minLength: 48)
+                TypewriterText(text: msg.content, speed: 0.018)
+                    .font(.system(.body, design: .rounded))
+                    .foregroundStyle(FC.ink)
+                    .frame(maxWidth: .infinity, alignment: .leading)
             }
-
-            // Задача 5: typewriter for assistant messages, instant for user
-            Group {
-                if msg.role == "assistant" {
-                    TypewriterText(text: msg.content, speed: 0.018)
-                        .font(.system(.body, design: .rounded))
-                        .foregroundStyle(FC.ink)
-                } else {
-                    Text(msg.content)
-                        .font(.system(.body, design: .rounded))
-                        .foregroundStyle(.white)
-                }
-            }
-            .padding(.horizontal, 14)
-            .padding(.vertical, 10)
-            .background(
-                RoundedRectangle(cornerRadius: 18)
-                    .fill(msg.role == "user" ? FC.cobalt : Color.white)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 18)
-                    .stroke(msg.role == "user" ? Color.clear : FC.border.opacity(0.4), lineWidth: 0.5)
-            )
-
-            if msg.role == "user" {
-                Spacer(minLength: 0)
-            } else {
-                Spacer(minLength: 48)
-            }
+            .transition(.opacity.combined(with: .move(edge: .leading)))
         }
-        .transition(.opacity.combined(with: .move(edge: msg.role == "user" ? .trailing : .leading)))
     }
 
     private var typingBubble: some View {

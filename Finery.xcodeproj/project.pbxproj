@@ -76,10 +76,12 @@
 		97CBD9CC4EFB17586DB79CA2 /* RecurringTransactionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFBD99DEC8EC7E7AE21E097B /* RecurringTransactionService.swift */; };
 		99749BD373E8E06A3CC8378B /* TaxMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82440E40D8C6C2AE2D27D8A5 /* TaxMode.swift */; };
 		9D3FF7AFFEF09117B8087900 /* ReceiptOCRService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2BF952C5B9974517B77369 /* ReceiptOCRService.swift */; };
+		AB3E31EE7CD7A422211FCF9F /* DonutChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DE02F4DE40E007481DA107 /* DonutChartView.swift */; };
 		ADE05D6F2C7A8BB1596F7047 /* CashFlowForecast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 037A0F1ACA321DF3BE7740A4 /* CashFlowForecast.swift */; };
 		B183A2A671407F2C3CFB56B2 /* AppContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 866B1A5E002A254F53748A3D /* AppContainer.swift */; };
 		B3213706B3839773FB09DBB5 /* TransactionDirection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C21FF8736E7CAAF54FB5048F /* TransactionDirection.swift */; };
 		B3B0734E6DF2C86A4AA73AD2 /* FineryTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = D63DC38B29DA04BE54BB2733 /* FineryTheme.swift */; };
+		B67736AC6C133332CCC457C6 /* SpringToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8955110E03A6D16BD6E2CF68 /* SpringToggle.swift */; };
 		BBE61F28FF7F44CA4B840E0A /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E262ACD8872F105202BFDD43 /* AuthViewModel.swift */; };
 		C2E7BB8D40E2E138E609556A /* AuthFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8BB4775422C9B1A7C044A2F /* AuthFlowView.swift */; };
 		C5FAC65990E36490FCD90CE6 /* SeasonalAnalysis.swift in Sources */ = {isa = PBXBuildFile; fileRef = E760E5BD4242916BFCB60779 /* SeasonalAnalysis.swift */; };
@@ -171,6 +173,7 @@
 		84D1DEB2173CC458C001C1CB /* LockScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockScreenView.swift; sourceTree = "<group>"; };
 		863573B06FC5E41B69167E2D /* FineryLoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FineryLoadingView.swift; sourceTree = "<group>"; };
 		866B1A5E002A254F53748A3D /* AppContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppContainer.swift; sourceTree = "<group>"; };
+		8955110E03A6D16BD6E2CF68 /* SpringToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpringToggle.swift; sourceTree = "<group>"; };
 		8B38440EFFA21F1F82715A28 /* PnL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PnL.swift; sourceTree = "<group>"; };
 		8E11AB2848324149C0B3D7CB /* Invoice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Invoice.swift; sourceTree = "<group>"; };
 		8E269B3C38185B26E8B4184F /* FineryShare.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = FineryShare.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -209,6 +212,7 @@
 		D6594DF992676C1A5BDA9E7F /* IncomeCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IncomeCategory.swift; sourceTree = "<group>"; };
 		D6F747A35F6E89CF3EFE0629 /* UserLocalRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLocalRepository.swift; sourceTree = "<group>"; };
 		D785BC5D2C9E6FC774371B0E /* AppLockManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockManager.swift; sourceTree = "<group>"; };
+		D8DE02F4DE40E007481DA107 /* DonutChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DonutChartView.swift; sourceTree = "<group>"; };
 		DBA3BDDB6EC21859BC0FAF0A /* TransactionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionStore.swift; sourceTree = "<group>"; };
 		DC01C5EC8EE86264958FA807 /* CashFlowDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CashFlowDetailView.swift; sourceTree = "<group>"; };
 		DCE055888C0EC773FBED99DC /* success.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = success.json; sourceTree = "<group>"; };
@@ -346,10 +350,12 @@
 			isa = PBXGroup;
 			children = (
 				5738C2C033066D32AE90C89F /* ClipboardTransactionBanner.swift */,
+				D8DE02F4DE40E007481DA107 /* DonutChartView.swift */,
 				863573B06FC5E41B69167E2D /* FineryLoadingView.swift */,
 				9E8A3D0228E2EE3ADAE37A86 /* FloatingTabBar.swift */,
 				F290DAB89D8CFCE0528870E3 /* InsightRow.swift */,
 				400E887DDE95D38E6E31F0E5 /* LottieSuccessView.swift */,
+				8955110E03A6D16BD6E2CF68 /* SpringToggle.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -871,6 +877,7 @@
 				0EB94049741B6912820C5543 /* CurrencyService.swift in Sources */,
 				855F45860FA1BB1228C677B7 /* DashboardView.swift in Sources */,
 				762B77DCEDCB65E919D99691 /* DashboardViewModel.swift in Sources */,
+				AB3E31EE7CD7A422211FCF9F /* DonutChartView.swift in Sources */,
 				082F44E6A0528399DC16BE5F /* ExpenseCategory.swift in Sources */,
 				CE61AB72C74CD48311DFED14 /* FineryApp.swift in Sources */,
 				5F258607B2857A0A18A56191 /* FineryLoadingView.swift in Sources */,
@@ -909,6 +916,7 @@
 				6DF61355766320364D5B7694 /* SettingsViewModel.swift in Sources */,
 				35F4639E9AECB81581CA7E76 /* SharedDataService.swift in Sources */,
 				D7182FC815B11F3DD24A2F60 /* SplashView.swift in Sources */,
+				B67736AC6C133332CCC457C6 /* SpringToggle.swift in Sources */,
 				30B51A1F80AB530F64ADB1A0 /* StoreBackedTransactionRepository.swift in Sources */,
 				42F92C1337CD08F72B200AF2 /* TaxCalculatorService.swift in Sources */,
 				99749BD373E8E06A3CC8378B /* TaxMode.swift in Sources */,

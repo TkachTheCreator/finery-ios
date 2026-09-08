@@ -378,7 +378,7 @@ struct DashboardView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .dataWidget()
         .contentShape(Rectangle())
-        .onTapGesture { HapticManager.light(); onShowTax?() }
+        .onTapGesture { HapticManager.impact(.medium); onShowTax?() }
     }
 
     private func usnTile(_ status: TaxStatus) -> some View {
@@ -419,7 +419,7 @@ struct DashboardView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .dataWidget()
         .contentShape(Rectangle())
-        .onTapGesture { HapticManager.light(); onShowTax?() }
+        .onTapGesture { HapticManager.impact(.medium); onShowTax?() }
     }
 
     // MARK: - 5. Dynamics Tile (T1: wider in bento)
@@ -465,7 +465,7 @@ struct DashboardView: View {
         .frame(maxWidth: .infinity, minHeight: 110, alignment: .leading)
         .dataWidget()
         .contentShape(Rectangle())
-        .onTapGesture { HapticManager.light(); onShowClients?() }
+        .onTapGesture { HapticManager.impact(.medium); onShowClients?() }
     }
 
     // MARK: - 7. Categories Tile
@@ -531,7 +531,7 @@ struct DashboardView: View {
         .frame(maxWidth: .infinity, minHeight: 110, alignment: .leading)
         .dataWidget()
         .contentShape(Rectangle())
-        .onTapGesture { HapticManager.light(); onShowTips?() }
+        .onTapGesture { HapticManager.impact(.medium); onShowTips?() }
     }
 
     // MARK: - Simple Tile helper
@@ -556,7 +556,7 @@ struct DashboardView: View {
         .frame(maxWidth: .infinity, minHeight: 110, alignment: .leading)
         .dataWidget()
         .contentShape(Rectangle())
-        .onTapGesture { HapticManager.light(); action?() }
+        .onTapGesture { HapticManager.impact(.medium); action?() }
     }
 
     private func fullWidthSimpleTile(icon: String, title: String, detail: String, action: (() -> Void)?) -> some View {
@@ -579,7 +579,7 @@ struct DashboardView: View {
         .frame(maxWidth: .infinity)
         .dataWidget()
         .contentShape(Rectangle())
-        .onTapGesture { HapticManager.light(); action?() }
+        .onTapGesture { HapticManager.impact(.medium); action?() }
     }
 
     // MARK: - Computed helpers

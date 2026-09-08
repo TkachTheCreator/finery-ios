@@ -35,7 +35,10 @@ struct ClientsView: View {
         .task { await viewModel.load() }
         .onAppear {
             guard !appeared else { return }
-            withAnimation(.spring(response: 0.7, dampingFraction: 0.82)) { appeared = true }
+            Task {
+                try? await Task.sleep(for: .seconds(0.30))
+                withAnimation(.spring(response: 0.7, dampingFraction: 0.82)) { appeared = true }
+            }
         }
         .sheet(isPresented: $viewModel.showAddClient, onDismiss: { viewModel.voice.stop() }) { addClientSheet }
         .sheet(item: $selectedClient) { ClientDetailView(client: $0, viewModel: viewModel) }
