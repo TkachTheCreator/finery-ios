@@ -1,12 +1,14 @@
 import AppIntents
 import Foundation
 
-// MARK: - Siri / Action Button intent: "Добавь расход 500 рублей в Finery"
+// MARK: - App Intent: "Добавить операцию в Finery"
+// Доступен через приложение "Команды" и Control Center без Siri capability.
+// Siri-фразы ("Hey Siri, добавь расход") — отложены до подключения Apple Developer Program.
 
 struct AddTransactionIntent: AppIntent {
     static let title: LocalizedStringResource = "Добавить операцию в Finery"
     static let description = IntentDescription(
-        "Записывает доход или расход. Скажите: «Добавь расход 500 рублей в Finery».",
+        "Записывает доход или расход по тексту. Например: «расход 500 такси».",
         categoryName: "Финансы"
     )
     static let openAppWhenRun: Bool = false
@@ -16,7 +18,7 @@ struct AddTransactionIntent: AppIntent {
 
     func perform() async throws -> some ProvidesDialog {
         guard let amount = VoiceInputManager.parseAmount(from: input) else {
-            return .result(dialog: "Не удалось распознать сумму. Скажите, например: «Расход 500 рублей».")
+            return .result(dialog: "Не удалось распознать сумму. Введите, например: «расход 500 обед».")
         }
 
         let lower = input.lowercased()
@@ -36,7 +38,6 @@ struct AddTransactionIntent: AppIntent {
         for word in expenseWords + incomeWords {
             cleaned = cleaned.replacingOccurrences(of: word, with: "", options: .caseInsensitive)
         }
-        // Also strip numeric amount from description to avoid "500 рублей" in notes
         let amountWords = ["рублей", "рубля", "рубль", "руб", "₽"]
         for word in amountWords {
             cleaned = cleaned.replacingOccurrences(of: word, with: "", options: .caseInsensitive)
@@ -77,23 +78,5 @@ struct AddTransactionIntent: AppIntent {
         } catch {
             return .result(dialog: "Не удалось сохранить. Проверьте интернет и повторите.")
         }
-    }
-}
-
-// MARK: - AppShortcutsProvider (регистрирует фразы для Siri)
-
-struct FineryShortcutsProvider: AppShortcutsProvider {
-    static var appShortcuts: [AppShortcut] {
-        AppShortcut(
-            intent: AddTransactionIntent(),
-            phrases: [
-                "Добавь операцию в \(.applicationName)",
-                "Запиши операцию в \(.applicationName)",
-                "Добавь расход в \(.applicationName)",
-                "Добавь доход в \(.applicationName)"
-            ],
-            shortTitle: "Добавить операцию",
-            systemImageName: "mic.fill"
-        )
     }
 }

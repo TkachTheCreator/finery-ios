@@ -28,8 +28,6 @@ targets:
           - Info.plist
     entitlements:
       path: Finery/Finery.entitlements
-      properties:
-        com.apple.developer.siri: true
     info:
       path: Finery/Info.plist
       properties:
