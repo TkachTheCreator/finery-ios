@@ -189,7 +189,7 @@
 		9BBDDAAF81E5B7A4C4D22783 /* GetMonthlyDynamicsUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetMonthlyDynamicsUseCase.swift; sourceTree = "<group>"; };
 		9DE470362E77980A05FBBA37 /* TransactionLocalRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionLocalRepository.swift; sourceTree = "<group>"; };
 		9E8A3D0228E2EE3ADAE37A86 /* FloatingTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingTabBar.swift; sourceTree = "<group>"; };
-		9F40AEF0915FDE1ADF55A664 /* Finery.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Finery.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9F40AEF0915FDE1ADF55A664 /* Finery.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Finery.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9FE83955C51012112BD1C60A /* NetworkDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkDebugView.swift; sourceTree = "<group>"; };
 		A808E46673806C37D5BF707B /* UserRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRepository.swift; sourceTree = "<group>"; };
 		A8BB4775422C9B1A7C044A2F /* AuthFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthFlowView.swift; sourceTree = "<group>"; };
@@ -755,6 +755,7 @@
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
 					2515D379705AE448BB7D130D = {
+						DevelopmentTeam = HU22U632B9;
 						ProvisioningStyle = Automatic;
 					};
 					5C06D7CDFAC4737927523827 = {
@@ -1171,7 +1172,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 6CP3FXPA4J;
+				DEVELOPMENT_TEAM = HU22U632B9;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_FILE = Finery/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
@@ -1280,7 +1281,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 6CP3FXPA4J;
+				DEVELOPMENT_TEAM = HU22U632B9;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_FILE = Finery/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;

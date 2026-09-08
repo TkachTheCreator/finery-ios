@@ -1,8 +1,13 @@
 import SwiftUI
 import SwiftData
+import AppIntents
 
 @main
 struct FineryApp: App {
+    init() {
+        FineryShortcutsProvider.updateAppShortcutParameters()
+    }
+
     var body: some Scene {
         WindowGroup {
             RootView()
