@@ -1,6 +1,5 @@
 import WidgetKit
 import SwiftUI
-import AppIntents
 
 // MARK: - Модель данных виджета
 
@@ -297,30 +296,6 @@ struct FineryLockScreenWidget: Widget {
     }
 }
 
-// MARK: - iOS 18 Control Widget
-
-// Separate intent for widget extension (opens app — no network calls from extension)
-struct OpenAddTransactionIntent: AppIntent {
-    static let title: LocalizedStringResource = "Добавить операцию в Finery"
-    static let openAppWhenRun: Bool = true
-
-    func perform() async throws -> some IntentResult {
-        .result()
-    }
-}
-
-struct FineryAddTransactionControl: ControlWidget {
-    var body: some ControlWidgetConfiguration {
-        StaticControlConfiguration(kind: "com.tkachev.finery.control.add") {
-            ControlWidgetButton(action: OpenAddTransactionIntent()) {
-                Label("Добавить", systemImage: "plus.circle.fill")
-            }
-        }
-        .displayName("Finery — Добавить")
-        .description("Открыть запись операции в Finery")
-    }
-}
-
 // MARK: - Widget bundle (entry point)
 
 @main
@@ -330,7 +305,6 @@ struct FineryWidgetBundle: WidgetBundle {
         FineryWidgetMedium()
         FineryQuickRecordWidget()
         FineryLockScreenWidget()
-        FineryAddTransactionControl()
     }
 }
 
