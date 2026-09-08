@@ -35,6 +35,7 @@
 		3EA59CEC864D0D95A65A44BB /* GetInsightsUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B7428812D629E1EEDF5B7D /* GetInsightsUseCase.swift */; };
 		42F92C1337CD08F72B200AF2 /* TaxCalculatorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9925A0E4CA8F1006122C1BD8 /* TaxCalculatorService.swift */; };
 		447D6B5CA8337259EC304907 /* Pow in Frameworks */ = {isa = PBXBuildFile; productRef = CA9FE20FDDBC787F3252883A /* Pow */; };
+		4553951B9921BD842E11C029 /* FineryControl.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = D7022D30A9327D2DFB16A4C6 /* FineryControl.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		46A5C4A951725A7ACCCEC222 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A7AB35CED17D75500E5AF1 /* APIClient.swift */; };
 		4A35287097CCC4C3E2479F16 /* SMSParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F4EBBF2422130E162828054 /* SMSParser.swift */; };
 		4B117A31774BF9F428CFB325 /* TransactionSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51872C806C150DBEB4911CE0 /* TransactionSource.swift */; };
@@ -49,6 +50,7 @@
 		5455763DEB51751F2BD30444 /* MonthlyData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F93123DFD18F0824E532091 /* MonthlyData.swift */; };
 		58B22BC0114CF4DC17035316 /* LottieSuccessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 400E887DDE95D38E6E31F0E5 /* LottieSuccessView.swift */; };
 		5DDB9EEE1ED1D2F26BE47D49 /* TaxStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = D369C24192D675392A205C4B /* TaxStatus.swift */; };
+		5E0E3B4B352301E72DEE455C /* FineryControlBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48536D8DFB98C33EC167613E /* FineryControlBundle.swift */; };
 		5F258607B2857A0A18A56191 /* FineryLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 863573B06FC5E41B69167E2D /* FineryLoadingView.swift */; };
 		615CA91F82633A7A2C1F40E1 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9712285D88F65D5F9E23430 /* SettingsView.swift */; };
 		63412F99BE3A8888CD392DAD /* RecurringTransaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2AF7832F0FB4AA340E1AC40 /* RecurringTransaction.swift */; };
@@ -125,10 +127,32 @@
 			remoteGlobalIDString = 2515D379705AE448BB7D130D;
 			remoteInfo = Finery;
 		};
+		AA2E33BAB3142EE51697B9FF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FE88024E604A1C5DF0261666 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 94BD8A5289F23374F054FB09;
+			remoteInfo = FineryControl;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		D55545548923C487446E404A /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				4553951B9921BD842E11C029 /* FineryControl.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		037A0F1ACA321DF3BE7740A4 /* CashFlowForecast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CashFlowForecast.swift; sourceTree = "<group>"; };
+		05FEA84689E8CB0A733E843C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		0C00BB60C8DA88F1771E5540 /* AddTransactionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTransactionView.swift; sourceTree = "<group>"; };
 		0D609E274E02D3A213A6CC31 /* AddTransactionIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTransactionIntent.swift; sourceTree = "<group>"; };
 		0D88CD843413770BF082111D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -150,6 +174,7 @@
 		4364BE73D18016B547D1E0B5 /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
 		44189399A774FD5E8FAE4227 /* ScreenshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotTests.swift; sourceTree = "<group>"; };
 		4549C8183DDAA6A1F4D00996 /* FineryTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = FineryTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		48536D8DFB98C33EC167613E /* FineryControlBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FineryControlBundle.swift; sourceTree = "<group>"; };
 		4E2B0D520284CDD9E5311821 /* InvoicesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvoicesViewModel.swift; sourceTree = "<group>"; };
 		4E3B3F7DAC41282629E2C6B2 /* TaxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaxView.swift; sourceTree = "<group>"; };
 		4F2B3F9FFFE9B4D34E99D83B /* HapticManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticManager.swift; sourceTree = "<group>"; };
@@ -211,6 +236,7 @@
 		D63DC38B29DA04BE54BB2733 /* FineryTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FineryTheme.swift; sourceTree = "<group>"; };
 		D6594DF992676C1A5BDA9E7F /* IncomeCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IncomeCategory.swift; sourceTree = "<group>"; };
 		D6F747A35F6E89CF3EFE0629 /* UserLocalRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLocalRepository.swift; sourceTree = "<group>"; };
+		D7022D30A9327D2DFB16A4C6 /* FineryControl.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = FineryControl.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		D785BC5D2C9E6FC774371B0E /* AppLockManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockManager.swift; sourceTree = "<group>"; };
 		D8DE02F4DE40E007481DA107 /* DonutChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DonutChartView.swift; sourceTree = "<group>"; };
 		DBA3BDDB6EC21859BC0FAF0A /* TransactionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionStore.swift; sourceTree = "<group>"; };
@@ -254,6 +280,7 @@
 			isa = PBXGroup;
 			children = (
 				8FBCCF9833F5AA4643284D82 /* Finery */,
+				EE358AE1E8B47AC3BDDE9CEF /* FineryControl */,
 				4BC6EF36881826E0F768ACDD /* FineryShare */,
 				437E92DB0EE17E04892611C6 /* FineryTests */,
 				D9D1057C86A8A4E3D9E8A2FF /* FineryUITests */,
@@ -594,6 +621,7 @@
 			isa = PBXGroup;
 			children = (
 				9F40AEF0915FDE1ADF55A664 /* Finery.app */,
+				D7022D30A9327D2DFB16A4C6 /* FineryControl.appex */,
 				8E269B3C38185B26E8B4184F /* FineryShare.appex */,
 				4549C8183DDAA6A1F4D00996 /* FineryTests.xctest */,
 				F8810F65A98B400AFE5A590F /* FineryUITests.xctest */,
@@ -617,6 +645,15 @@
 				5A23D73F7A964B88C2347CC9 /* InvoiceView.swift */,
 			);
 			path = Invoice;
+			sourceTree = "<group>";
+		};
+		EE358AE1E8B47AC3BDDE9CEF /* FineryControl */ = {
+			isa = PBXGroup;
+			children = (
+				48536D8DFB98C33EC167613E /* FineryControlBundle.swift */,
+				05FEA84689E8CB0A733E843C /* Info.plist */,
+			);
+			path = FineryControl;
 			sourceTree = "<group>";
 		};
 		FCFC5D63DCFD1B760DDD602F /* Presentation */ = {
@@ -660,10 +697,12 @@
 				EB4994D0E1EA91A9BBD545C4 /* Sources */,
 				75EE556DCBB1DFFE053A2812 /* Resources */,
 				A2B26546D7B8B377D961F595 /* Frameworks */,
+				D55545548923C487446E404A /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				CACC2F66E6764CD4C328567A /* PBXTargetDependency */,
 			);
 			name = Finery;
 			packageProductDependencies = (
@@ -710,6 +749,23 @@
 			productName = FineryUITests;
 			productReference = F8810F65A98B400AFE5A590F /* FineryUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		94BD8A5289F23374F054FB09 /* FineryControl */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1689A98B3D09A431B14C8D88 /* Build configuration list for PBXNativeTarget "FineryControl" */;
+			buildPhases = (
+				7BF258B2C82EF2891255C256 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = FineryControl;
+			packageProductDependencies = (
+			);
+			productName = FineryControl;
+			productReference = D7022D30A9327D2DFB16A4C6 /* FineryControl.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 		DF31E32ADCC64C831609F20B /* FineryShare */ = {
 			isa = PBXNativeTarget;
@@ -761,6 +817,10 @@
 					5C06D7CDFAC4737927523827 = {
 						TestTargetID = 2515D379705AE448BB7D130D;
 					};
+					94BD8A5289F23374F054FB09 = {
+						DevelopmentTeam = HU22U632B9;
+						ProvisioningStyle = Automatic;
+					};
 					DF31E32ADCC64C831609F20B = {
 						DevelopmentTeam = HU22U632B9;
 						ProvisioningStyle = Automatic;
@@ -791,6 +851,7 @@
 			projectRoot = "";
 			targets = (
 				2515D379705AE448BB7D130D /* Finery */,
+				94BD8A5289F23374F054FB09 /* FineryControl */,
 				DF31E32ADCC64C831609F20B /* FineryShare */,
 				4CE30BA1FB6463193BB581B9 /* FineryTests */,
 				5C06D7CDFAC4737927523827 /* FineryUITests */,
@@ -835,6 +896,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				F32D6FF0C5E47010341EA8E2 /* TaxCalculatorTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7BF258B2C82EF2891255C256 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5E0E3B4B352301E72DEE455C /* FineryControlBundle.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -955,6 +1024,11 @@
 			isa = PBXTargetDependency;
 			target = 2515D379705AE448BB7D130D /* Finery */;
 			targetProxy = 3BB209E13E5EDF9D419E90B3 /* PBXContainerItemProxy */;
+		};
+		CACC2F66E6764CD4C328567A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 94BD8A5289F23374F054FB09 /* FineryControl */;
+			targetProxy = AA2E33BAB3142EE51697B9FF /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1190,6 +1264,34 @@
 			};
 			name = Debug;
 		};
+		B90029CBE8773041934F957D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = FineryControl/FineryControl.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 3;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = HU22U632B9;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				INFOPLIST_FILE = FineryControl/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tkachev.finery.control;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_STRICT_CONCURRENCY = minimal;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		B937DD0EDADFE0E2B8CC5CA3 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1208,6 +1310,33 @@
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Finery.app/Finery";
 			};
 			name = Release;
+		};
+		B9E2A4C2757500C0A04DBFC3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = FineryControl/FineryControl.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 3;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = HU22U632B9;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				INFOPLIST_FILE = FineryControl/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tkachev.finery.control;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_STRICT_CONCURRENCY = minimal;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
 		};
 		E7740104D031861FBCCBA80A /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -1322,6 +1451,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		1689A98B3D09A431B14C8D88 /* Build configuration list for PBXNativeTarget "FineryControl" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B9E2A4C2757500C0A04DBFC3 /* Debug */,
+				B90029CBE8773041934F957D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
 		5EF6C4FD24D780811D8BCBAE /* Build configuration list for PBXNativeTarget "FineryTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
