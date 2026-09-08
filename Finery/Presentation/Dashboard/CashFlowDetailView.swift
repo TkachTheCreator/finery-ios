@@ -6,45 +6,8 @@ import Charts
 private struct CategorySlice: Identifiable {
     let id = UUID()
     let name: String
-    let amount: Decimal       // настоящая сумма — для легенды
-    var percentage: Double = 0  // настоящий процент — для легенды
-    var chartValue: Double      // скорректированное значение — только для SectorMark
-
-    init(name: String, amount: Decimal, percentage: Double = 0) {
-        self.name = name
-        self.amount = amount
-        self.percentage = percentage
-        self.chartValue = NSDecimalNumber(decimal: amount).doubleValue
-    }
-}
-
-// MARK: - Fixed color palette
-
-private let categoryPalette: [String: Color] = [
-    // Income
-    "Boosty/Подписки":  Color(red: 0.90, green: 0.27, blue: 0.27),
-    "Донаты":           Color(red: 0.97, green: 0.55, blue: 0.14),
-    "Реклама":          Color(red: 0.97, green: 0.78, blue: 0.09),
-    "Фриланс":          Color(red: 0.20, green: 0.65, blue: 0.42),
-    "Платформы":        Color(red: 0.06, green: 0.60, blue: 0.75),
-    "Курсы/Обучение":   Color(red: 0.38, green: 0.35, blue: 0.82),
-    // Expense
-    "Инструменты":      Color(red: 0.06, green: 0.60, blue: 0.75),
-    "Своя реклама":     Color(red: 0.97, green: 0.55, blue: 0.14),
-    "Оборудование":     Color(red: 0.20, green: 0.65, blue: 0.42),
-    "Команда":          Color(red: 0.90, green: 0.27, blue: 0.27),
-    "Еда":              Color(red: 0.55, green: 0.76, blue: 0.29),
-    "Транспорт":        Color(red: 0.97, green: 0.78, blue: 0.09),
-    "Связь":            Color(red: 0.38, green: 0.35, blue: 0.82),
-    // Shared
-    "Другое":           Color(red: 0.60, green: 0.57, blue: 0.54),
-    "Остальное":        Color(red: 0.75, green: 0.72, blue: 0.68),
-]
-
-private func categoryColor(_ name: String) -> Color {
-    if let c = categoryPalette[name] { return c }
-    let h = Double(abs(name.hashValue) % 360) / 360.0
-    return Color(hue: h, saturation: 0.6, brightness: 0.72)
+    let amount: Decimal
+    var percentage: Double = 0
 }
 
 // MARK: - CashFlowDetailView
@@ -54,8 +17,7 @@ struct CashFlowDetailView: View {
 
     @Environment(\.dismiss) private var dismiss
     @State private var selectedPage   = 0
-    @State private var monthOffset    = 0   // 0 = current, -1 = prev, …
-    @State private var animDirection  = 0   // +1 newer→left-in, -1 older→right-in
+    @State private var monthOffset    = 0
     @State private var editingTransaction: Transaction? = nil
 
     private var cal: Calendar { Calendar.current }
@@ -94,6 +56,26 @@ struct CashFlowDetailView: View {
         return s.prefix(1).uppercased() + s.dropFirst()
     }
 
+    // MARK: - Current-page helpers (no TabView — direction switches via pageSelector buttons only)
+
+    private var currentDirection: TransactionDirection {
+        selectedPage == 0 ? .income : .expense
+    }
+    private var currentTotal: Decimal {
+        selectedPage == 0 ? displayedIncome : displayedExpenses
+    }
+    private var currentEmptyLabel: String {
+        selectedPage == 0 ? "Нет доходов" : "Нет расходов"
+    }
+    private var currentSectionTitle: String {
+        selectedPage == 0 ? "Все доходы" : "Все расходы"
+    }
+    private var currentTransactions: [Transaction] {
+        monthTransactions
+            .filter { $0.direction == currentDirection }
+            .sorted { $0.date > $1.date }
+    }
+
     var body: some View {
         ZStack {
             FC.background.ignoresSafeArea()
@@ -102,11 +84,24 @@ struct CashFlowDetailView: View {
                 hairline
                 pageSelector
                 hairline
-                TabView(selection: $selectedPage) {
-                    pageContent(direction: .income).tag(0)
-                    pageContent(direction: .expense).tag(1)
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: 16) {
+                        chartCard(
+                            total: currentTotal,
+                            slices: categorySlices(for: currentDirection),
+                            emptyLabel: currentEmptyLabel,
+                            direction: currentDirection
+                        )
+                        transactionBlock(
+                            title: currentSectionTitle,
+                            transactions: currentTransactions,
+                            emptyLabel: currentEmptyLabel
+                        )
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.top, 16)
+                    .padding(.bottom, 60)
                 }
-                .tabViewStyle(.page(indexDisplayMode: .never))
             }
         }
         .sheet(item: $editingTransaction) { tx in
@@ -177,7 +172,6 @@ struct CashFlowDetailView: View {
                     .contentTransition(.numericText())
                     .animation(.fineryNumber, value: amount)
             }
-            // D.2: fill full tab area so background highlight is complete
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
             .padding(.horizontal, 20)
             .background(selected ? color.opacity(0.09) : Color.clear)
@@ -186,35 +180,13 @@ struct CashFlowDetailView: View {
         .animation(.spring(response: 0.35, dampingFraction: 0.8), value: selected)
     }
 
-    // MARK: - Page Content
-
-    @ViewBuilder
-    private func pageContent(direction: TransactionDirection) -> some View {
-        let total: Decimal = direction == .income ? displayedIncome : displayedExpenses
-        let slices = categorySlices(for: direction)
-        let txns = monthTransactions.filter { $0.direction == direction }.sorted { $0.date > $1.date }
-        let emptyLabel = direction == .income ? "Нет доходов" : "Нет расходов"
-        let sectionTitle = direction == .income ? "Все доходы" : "Все расходы"
-
-        ScrollView(showsIndicators: false) {
-            VStack(spacing: 16) {
-                chartCard(total: total, slices: slices, emptyLabel: emptyLabel, direction: direction)
-                transactionBlock(title: sectionTitle, transactions: txns, emptyLabel: emptyLabel)
-            }
-            .padding(.horizontal, 16)
-            .padding(.top, 16)
-            .padding(.bottom, 60)
-        }
-    }
-
     // MARK: - Month Navigation
 
     private func changeMonth(_ delta: Int) {
         let next = monthOffset + delta
-        guard next <= 0 else { return }   // не заходим в будущее
+        guard next <= 0 else { return }
         withAnimation(.spring(response: 0.38, dampingFraction: 0.85)) {
-            animDirection = delta > 0 ? 1 : -1
-            monthOffset   = next
+            monthOffset = next
         }
     }
 
@@ -231,7 +203,6 @@ struct CashFlowDetailView: View {
             : "Расходы · \(monthLabel)"
 
         return VStack(alignment: .leading, spacing: 12) {
-            // Header: amount only — month is changed by swipe gesture below
             VStack(alignment: .leading, spacing: 3) {
                 Text(periodLabel).fLabel()
                 Text(total.rub())
@@ -253,16 +224,20 @@ struct CashFlowDetailView: View {
                 .padding(.vertical, 12)
             } else {
                 HStack(alignment: .top, spacing: 20) {
-                    Chart(slices) { slice in
-                        SectorMark(
-                            angle: .value("Сумма", slice.chartValue),
-                            innerRadius: .ratio(0.58),
-                            angularInset: 2.5
-                        )
-                        .cornerRadius(4)
-                        .foregroundStyle(categoryColor(slice.name))
-                    }
-                    .frame(width: 130, height: 130)
+                    DonutChartView(
+                        slices: slices.map {
+                            DonutChartView.Slice(
+                                name: $0.name,
+                                value: $0.percentage,
+                                color: fineryCategoryColor($0.name)
+                            )
+                        },
+                        size: 130,
+                        innerRatio: 0.58,
+                        angularInset: 2.5,
+                        cornerRadius: 4
+                    )
+                    .animation(.spring(response: 0.4, dampingFraction: 0.85), value: monthOffset)
 
                     VStack(alignment: .leading, spacing: 6) {
                         ForEach(slices) { slice in
@@ -270,27 +245,21 @@ struct CashFlowDetailView: View {
                         }
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
+                    .animation(.spring(response: 0.4, dampingFraction: 0.85), value: monthOffset)
                 }
                 .padding(.top, 4)
-                .id(monthOffset)
-                .transition(.asymmetric(
-                    insertion: .move(edge: animDirection >= 0 ? .trailing : .leading)
-                        .combined(with: .opacity),
-                    removal:   .move(edge: animDirection >= 0 ? .leading  : .trailing)
-                        .combined(with: .opacity)
-                ))
             }
         }
         .padding(16)
         .background(FC.surface)
         .clipShape(RoundedRectangle(cornerRadius: 16))
         .overlay(RoundedRectangle(cornerRadius: 16).stroke(FC.border, lineWidth: 0.5))
-        // Swipe on chart card — highPriority to win over TabView page swipe
-        .highPriorityGesture(
+        // Swipe on chart card changes month — no TabView above this, so no gesture conflict
+        .gesture(
             DragGesture(minimumDistance: 40)
                 .onEnded { value in
-                    if value.translation.width < -40 { changeMonth(+1) }  // влево = вперёд
-                    else if value.translation.width > 40 { changeMonth(-1) }  // вправо = назад
+                    if value.translation.width < -40 { changeMonth(+1) }
+                    else if value.translation.width > 40 { changeMonth(-1) }
                 }
         )
     }
@@ -300,7 +269,7 @@ struct CashFlowDetailView: View {
     private func legendRow(slice: CategorySlice) -> some View {
         HStack(spacing: 6) {
             Circle()
-                .fill(categoryColor(slice.name))
+                .fill(fineryCategoryColor(slice.name))
                 .frame(width: 8, height: 8)
             VStack(alignment: .leading, spacing: 1) {
                 Text(slice.name)
@@ -337,7 +306,6 @@ struct CashFlowDetailView: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 20)
             } else {
-                // D.3: each row uses category color (matches pie chart)
                 ForEach(transactions) { tx in
                     Button {
                         HapticManager.light()
@@ -377,25 +345,22 @@ struct CashFlowDetailView: View {
         }
 
         let totalDouble = NSDecimalNumber(decimal: total).doubleValue
-        slices = slices.map { slice in
+        return slices.map { slice in
             var s = slice
             s.percentage = totalDouble > 0
                 ? NSDecimalNumber(decimal: slice.amount).doubleValue / totalDouble * 100
                 : 0
             return s
         }
-
-        // D.4: return slices as-is; no minimum-angle inflation that caused rendering artifacts
-        return slices
     }
 
-    // MARK: - Category-colored transaction row (D.3)
+    // MARK: - Category-colored transaction row
 
     private func categoryColoredRow(_ tx: Transaction) -> some View {
         let catName = tx.direction == .income
             ? (tx.incomeCategory?.displayName ?? "Другое")
             : (tx.expenseCategory?.displayName ?? "Другое")
-        let catColor = categoryColor(catName)
+        let catColor = fineryCategoryColor(catName)
         let iconSys  = tx.direction == .income
             ? (tx.incomeCategory?.iconName  ?? "arrow.down.left")
             : (tx.expenseCategory?.iconName ?? "arrow.up.right")

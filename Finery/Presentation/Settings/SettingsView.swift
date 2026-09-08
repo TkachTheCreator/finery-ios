@@ -438,12 +438,9 @@ struct SecuritySettingsView: View {
                             .font(.system(.body))
                             .foregroundStyle(FC.ink)
                         Spacer()
-                        Toggle("", isOn: $viewModel.user.notificationsEnabled)
-                            .tint(FC.cobalt)
-                            .labelsHidden()
-                            .onChange(of: viewModel.user.notificationsEnabled) { _, _ in
-                                Task { await viewModel.save() }
-                            }
+                        SpringToggle(isOn: $viewModel.user.notificationsEnabled) {
+                            Task { await viewModel.save() }
+                        }
                     }
                     if viewModel.user.notificationsEnabled {
                         Picker("За сколько дней", selection: $viewModel.user.taxReminderDaysBefore) {
@@ -473,8 +470,7 @@ struct SecuritySettingsView: View {
                     Text(lock.biometricLabel)
                         .font(.system(.body)).foregroundStyle(FC.ink)
                     Spacer()
-                    Toggle("", isOn: Binding(get: { lock.isEnabled }, set: { lock.isEnabled = $0 }))
-                        .tint(FC.cobalt).labelsHidden()
+                    SpringToggle(isOn: Binding(get: { lock.isEnabled }, set: { lock.isEnabled = $0 }))
                 }
             } else {
                 Text("Биометрия недоступна")

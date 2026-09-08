@@ -330,22 +330,17 @@ struct AnalyticsView: View {
         VStack(alignment: .leading, spacing: 16) {
             Text(title).fLabel()
             HStack(alignment: .center, spacing: 20) {
-                Chart(Array(slices.enumerated()), id: \.offset) { idx, item in
-                    SectorMark(
-                        angle: .value("Сумма", max(item.percent, 1)),
-                        innerRadius: .ratio(0.52),
-                        angularInset: 1.5
-                    )
-                    .foregroundStyle(pieColor(idx, name: item.name))
-                    .cornerRadius(3)
-                }
-                .frame(width: 130, height: 130)
+                DonutChartView(
+                    slices: slices.map {
+                        DonutChartView.Slice(name: $0.name, value: $0.percent, color: fineryCategoryColor($0.name))
+                    }
+                )
 
                 VStack(alignment: .leading, spacing: 7) {
                     ForEach(Array(slices.prefix(6).enumerated()), id: \.offset) { idx, item in
                         HStack(spacing: 7) {
                             RoundedRectangle(cornerRadius: 2)
-                                .fill(pieColor(idx, name: item.name))
+                                .fill(fineryCategoryColor(item.name))
                                 .frame(width: 10, height: 10)
                             Text(item.name)
                                 .font(.system(.caption2, design: .default))
@@ -364,10 +359,6 @@ struct AnalyticsView: View {
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 20)
-    }
-
-    private func pieColor(_ index: Int, name: String) -> Color {
-        fineryCategoryColor(name)
     }
 
     // MARK: Helpers
@@ -597,6 +588,8 @@ extension AnalyticsView {
 struct AnalyticsDynamicsView: View {
     @State var viewModel: AnalyticsViewModel
     @State private var appeared = false
+    @State private var barChartHasAppeared = false
+    @State private var animatedBarCount = 0
 
     init(viewModel: AnalyticsViewModel) {
         _viewModel = State(wrappedValue: viewModel)
@@ -633,7 +626,11 @@ struct AnalyticsDynamicsView: View {
         }
         .navigationTitle("Динамика")
         .task {
+            let start = Date()
             await viewModel.load()
+            let elapsed = -start.timeIntervalSinceNow
+            let remaining = max(0, 0.30 - elapsed)
+            if remaining > 0 { try? await Task.sleep(for: .seconds(remaining)) }
             withAnimation(.spring(response: 0.5, dampingFraction: 0.85)) { appeared = true }
         }
     }
@@ -687,16 +684,16 @@ struct AnalyticsDynamicsView: View {
                 Text("Нет данных").font(.system(.caption)).foregroundStyle(FC.inkSecondary)
                     .frame(maxWidth: .infinity, alignment: .center).padding(.vertical, 40)
             } else {
-                Chart(viewModel.monthlyData) { item in
+                Chart(Array(viewModel.monthlyData.enumerated()), id: \.offset) { idx, item in
                     BarMark(
                         x: .value("Месяц", item.monthLabel),
-                        y: .value("Доход", NSDecimalNumber(decimal: item.income).doubleValue)
+                        y: .value("Доход", idx < animatedBarCount ? NSDecimalNumber(decimal: item.income).doubleValue : 0)
                     )
                     .foregroundStyle(FC.cobalt).cornerRadius(3)
 
                     BarMark(
                         x: .value("Месяц", item.monthLabel),
-                        y: .value("Расходы", -NSDecimalNumber(decimal: item.expenses).doubleValue)
+                        y: .value("Расходы", idx < animatedBarCount ? -NSDecimalNumber(decimal: item.expenses).doubleValue : 0)
                     )
                     .foregroundStyle(FC.expense.opacity(0.65)).cornerRadius(3)
                 }
@@ -719,6 +716,18 @@ struct AnalyticsDynamicsView: View {
                     }
                 }
                 .frame(height: 190)
+                .onAppear {
+                    guard !barChartHasAppeared else { return }
+                    barChartHasAppeared = true
+                    let count = viewModel.monthlyData.count
+                    for i in 0..<count {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3 + Double(i) * 0.1) {
+                            withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
+                                animatedBarCount = i + 1
+                            }
+                        }
+                    }
+                }
 
                 HStack(spacing: 16) {
                     legendDot(color: FC.cobalt, label: "Доходы")
@@ -825,7 +834,11 @@ struct AnalyticsCategoriesView: View {
         }
         .navigationTitle("Категории")
         .task {
+            let start = Date()
             await viewModel.load()
+            let elapsed = -start.timeIntervalSinceNow
+            let remaining = max(0, 0.30 - elapsed)
+            if remaining > 0 { try? await Task.sleep(for: .seconds(remaining)) }
             withAnimation(.spring(response: 0.5, dampingFraction: 0.85)) { appeared = true }
         }
     }
@@ -861,16 +874,11 @@ struct AnalyticsCategoriesView: View {
         VStack(alignment: .leading, spacing: 20) {
             // Pie chart
             HStack(alignment: .top, spacing: 20) {
-                Chart(Array(slices.enumerated()), id: \.offset) { idx, item in
-                    SectorMark(
-                        angle: .value("Сумма", max(item.percent, 1)),
-                        innerRadius: .ratio(0.52),
-                        angularInset: 1.5
-                    )
-                    .foregroundStyle(fineryCategoryColor(item.name))
-                    .cornerRadius(3)
-                }
-                .frame(width: 130, height: 130)
+                DonutChartView(
+                    slices: slices.map {
+                        DonutChartView.Slice(name: $0.name, value: $0.percent, color: fineryCategoryColor($0.name))
+                    }
+                )
 
                 VStack(alignment: .leading, spacing: 7) {
                     ForEach(Array(slices.prefix(6).enumerated()), id: \.offset) { idx, item in

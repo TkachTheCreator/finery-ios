@@ -236,9 +236,13 @@ struct InvoiceView: View {
 
                         // VAT toggle
                         formSection("НАЛОГ") {
-                            Toggle("Включить НДС 20%", isOn: $viewModel.includeVat)
-                                .font(.system(.subheadline, design: .rounded))
-                                .tint(FC.cobalt)
+                            HStack {
+                                Text("Включить НДС 20%")
+                                    .font(.system(.subheadline, design: .rounded))
+                                    .foregroundStyle(FC.ink)
+                                Spacer()
+                                SpringToggle(isOn: $viewModel.includeVat)
+                            }
                         }
 
                         // Total
