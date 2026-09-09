@@ -75,6 +75,7 @@
 		90E4BB00223A7EE0CDA8AB30 /* ForgotPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EC1D8CBB961AC2E1444958 /* ForgotPasswordView.swift */; };
 		91F65F1ED379AC120FFD37F5 /* AIAdvisorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD991AABB2B8D7E927E3944 /* AIAdvisorView.swift */; };
 		958DEE131FDF8A879EB71702 /* ClipboardTransactionBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5738C2C033066D32AE90C89F /* ClipboardTransactionBanner.swift */; };
+		96115D2D239863DEB4648F6C /* QuickInputGuideView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E72D84E5684FC11B2BFFDF /* QuickInputGuideView.swift */; };
 		977403F6A9A4693D5687BDD9 /* CalculateTaxUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21AE10AC2F9610FBD58E82A5 /* CalculateTaxUseCase.swift */; };
 		97CBD9CC4EFB17586DB79CA2 /* RecurringTransactionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFBD99DEC8EC7E7AE21E097B /* RecurringTransactionService.swift */; };
 		99749BD373E8E06A3CC8378B /* TaxMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82440E40D8C6C2AE2D27D8A5 /* TaxMode.swift */; };
@@ -240,6 +241,7 @@
 		C4B594F31B53AA1F9EDB46E9 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		C900F261B1963F026CD898B2 /* Client.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Client.swift; sourceTree = "<group>"; };
 		C9712285D88F65D5F9E23430 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		C9E72D84E5684FC11B2BFFDF /* QuickInputGuideView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickInputGuideView.swift; sourceTree = "<group>"; };
 		D13F20AE24B0E443A0968A6B /* CurrencyService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyService.swift; sourceTree = "<group>"; };
 		D369C24192D675392A205C4B /* TaxStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaxStatus.swift; sourceTree = "<group>"; };
 		D63DC38B29DA04BE54BB2733 /* FineryTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FineryTheme.swift; sourceTree = "<group>"; };
@@ -620,6 +622,7 @@
 			isa = PBXGroup;
 			children = (
 				9FE83955C51012112BD1C60A /* NetworkDebugView.swift */,
+				C9E72D84E5684FC11B2BFFDF /* QuickInputGuideView.swift */,
 				C9712285D88F65D5F9E23430 /* SettingsView.swift */,
 				5B9757BE2B397BAF4F9FA65C /* SettingsViewModel.swift */,
 			);
@@ -985,6 +988,7 @@
 				69EE6214CEEE4E981569C361 /* NpdForecast.swift in Sources */,
 				4DA6EEBAB8E662AE8B083851 /* PnL.swift in Sources */,
 				154314B4625FFD8511918D86 /* PreviewData.swift in Sources */,
+				96115D2D239863DEB4648F6C /* QuickInputGuideView.swift in Sources */,
 				9D3FF7AFFEF09117B8087900 /* ReceiptOCRService.swift in Sources */,
 				ED29762755D792486ED489E8 /* ReceiptPickerSheet.swift in Sources */,
 				28A712F94E9249446FC855E8 /* RecurringPickerSheet.swift in Sources */,

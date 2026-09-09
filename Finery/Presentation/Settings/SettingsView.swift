@@ -242,6 +242,10 @@ struct SettingsView: View {
                                      subtitle: "Доходы и расходы",
                                      destination: AnyView(CategoriesView()))
 
+                        settingsTile(icon: "bolt.circle", title: "Быстрый ввод",
+                                     subtitle: "Виджеты, Control Center, Back Tap",
+                                     destination: AnyView(QuickInputGuideView()))
+
                         settingsTile(icon: "info.circle", title: "О приложении",
                                      subtitle: "Версия, выход из аккаунта",
                                      destination: AnyView(AppInfoSettingsView(viewModel: viewModel)))
