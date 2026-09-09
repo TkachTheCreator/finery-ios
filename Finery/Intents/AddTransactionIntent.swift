@@ -73,14 +73,17 @@ struct AddTransactionIntent: AppIntent {
             ? (direction == .income ? "Доход" : "Расход")
             : txDescription
 
+        let incomeCategory  = direction == .income  ? VoiceInputManager.parseIncomeCategory(from: input)  : nil
+        let expenseCategory = direction == .expense ? VoiceInputManager.parseExpenseCategory(from: input) : nil
+
         let tx = Transaction(
             amount: amount,
             direction: direction,
             description: finalDescription,
             date: Date(),
             source: .voice,
-            incomeCategory:  direction == .income  ? .other : nil,
-            expenseCategory: direction == .expense ? .other : nil,
+            incomeCategory:  incomeCategory,
+            expenseCategory: expenseCategory,
             clientType:      direction == .income  ? .individual : nil,
             clientId: nil,
             notes: nil
