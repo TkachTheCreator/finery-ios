@@ -284,27 +284,68 @@ struct FineryComboWidget: Widget {
 }
 
 // MARK: - ═══════════════════════════
-// MARK:   LOCK SCREEN — accessoryRectangular
+// MARK:   LOCK SCREEN — accessoryRectangular "Добавить"
 // MARK: - ═══════════════════════════
 
 struct LockRectView: View {
     var body: some View {
-        HStack(spacing: 14) {
+        HStack(spacing: 12) {
             Image(systemName: "plus.circle.fill")
-                .font(.system(size: 30, weight: .medium))
-            VStack(alignment: .leading, spacing: 2) {
+                .font(.system(size: 38, weight: .medium))
+                .frame(width: 44)
+            VStack(alignment: .leading, spacing: 1) {
                 Text("Добавить операцию")
-                    .font(.headline)
+                    .font(.system(size: 16, weight: .bold))
                     .lineLimit(1)
-                    .minimumScaleFactor(0.85)
+                    .minimumScaleFactor(0.8)
                 Text("Finery")
                     .font(.caption2)
-                    .opacity(0.7)
+                    .opacity(0.55)
             }
             Spacer(minLength: 0)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
         .widgetURL(URL(string: "finery://add-transaction")!)
+    }
+}
+
+// MARK: - ═══════════════════════════
+// MARK:   LOCK SCREEN — accessoryRectangular "Баланс"
+// MARK: - ═══════════════════════════
+
+struct LockRectBalanceView: View {
+    let entry: FineryEntry
+
+    var body: some View {
+        HStack(alignment: .center, spacing: 0) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text("ДОХОД")
+                    .font(.system(size: 9, weight: .bold))
+                    .opacity(0.55)
+                Text(fmtAmt(entry.income))
+                    .font(.title3.weight(.bold))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.6)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+
+            Rectangle()
+                .frame(width: 0.5)
+                .padding(.vertical, 6)
+                .opacity(0.35)
+
+            VStack(alignment: .trailing, spacing: 2) {
+                Text("РАСХОД")
+                    .font(.system(size: 9, weight: .bold))
+                    .opacity(0.55)
+                Text(fmtAmt(entry.expense))
+                    .font(.system(size: 17, weight: .semibold))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
+            }
+            .frame(maxWidth: .infinity, alignment: .trailing)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
@@ -323,14 +364,16 @@ struct LockCircularView: View {
     }
 }
 
-struct LockScreenAdaptiveView: View {
-    @Environment(\.widgetFamily) var family
+// MARK: - ═══════════════════════════
+// MARK:   LOCK SCREEN WIDGET — "Добавить" (circular + rectangular)
+// MARK: - ═══════════════════════════
 
+private struct LockAddAdaptiveView: View {
+    @Environment(\.widgetFamily) var family
     var body: some View {
-        switch family {
-        case .accessoryCircular:
+        if family == .accessoryCircular {
             LockCircularView()
-        default:
+        } else {
             LockRectView()
         }
     }
@@ -340,12 +383,29 @@ struct FineryLockScreenWidget: Widget {
     let kind = "FineryLockScreen"
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: FineryProvider()) { _ in
-            LockScreenAdaptiveView()
+            LockAddAdaptiveView()
                 .containerBackground(.clear, for: .widget)
         }
         .configurationDisplayName("Finery — Добавить")
         .description("Открыть запись операции прямо с экрана блокировки")
         .supportedFamilies([.accessoryCircular, .accessoryRectangular])
+    }
+}
+
+// MARK: - ═══════════════════════════
+// MARK:   LOCK SCREEN WIDGET — "Баланс" (rectangular only)
+// MARK: - ═══════════════════════════
+
+struct FineryLockBalanceWidget: Widget {
+    let kind = "FineryLockBalance"
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: kind, provider: FineryProvider()) { entry in
+            LockRectBalanceView(entry: entry)
+                .containerBackground(.clear, for: .widget)
+        }
+        .configurationDisplayName("Finery — Баланс (блокировка)")
+        .description("Доходы и расходы за месяц на экране блокировки")
+        .supportedFamilies([.accessoryRectangular])
     }
 }
 
@@ -356,10 +416,11 @@ struct FineryLockScreenWidget: Widget {
 @main
 struct FineryWidgetBundle: WidgetBundle {
     var body: some Widget {
-        FineryQuickAddWidget()   // Home: "Добавить" small
-        FineryBalanceWidget()    // Home: "Баланс" small
-        FineryComboWidget()      // Home: "Сводка" medium
-        FineryLockScreenWidget() // Lock Screen: rectangular + circular
+        FineryQuickAddWidget()    // Home: "Добавить" small
+        FineryBalanceWidget()     // Home: "Баланс" small
+        FineryComboWidget()       // Home: "Сводка" medium
+        FineryLockScreenWidget()  // Lock Screen: + circular + rectangular
+        FineryLockBalanceWidget() // Lock Screen: баланс rectangular
     }
 }
 

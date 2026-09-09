@@ -5,6 +5,23 @@ import Foundation
 // Доступен через приложение "Команды" и Control Center без Siri capability.
 // Siri-фразы ("Hey Siri, добавь расход") — отложены до подключения Apple Developer Program.
 
+// MARK: - Shortcuts Provider
+// Регистрирует интент в Spotlight и "Командах" — пользователь видит его сразу без поиска.
+struct FineryShortcuts: AppShortcutsProvider {
+    static var appShortcuts: [AppShortcut] {
+        AppShortcut(
+            intent: AddTransactionIntent(),
+            phrases: [
+                "Добавить операцию в \(.applicationName)",
+                "Записать расход в \(.applicationName)",
+                "Записать доход в \(.applicationName)"
+            ],
+            shortTitle: "Добавить операцию",
+            systemImageName: "plus.circle.fill"
+        )
+    }
+}
+
 struct AddTransactionIntent: AppIntent {
     static let title: LocalizedStringResource = "Добавить операцию в Finery"
     static let description = IntentDescription(
