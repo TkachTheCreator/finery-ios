@@ -179,6 +179,40 @@ final class VoiceInputManager: NSObject {
         try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
     }
 
+    // MARK: - Category Parsers
+
+    nonisolated static func parseIncomeCategory(from text: String) -> IncomeCategory {
+        let t = text.lowercased()
+        if t.contains("boosty") || t.contains("бусти") || t.contains("подписк") { return .boosty }
+        if t.contains("донат") || t.contains("пожертвован")                      { return .donations }
+        if t.contains("реклам")                                                   { return .advertising }
+        if t.contains("фрилан") || t.contains("заказ") || t.contains("проект")  { return .freelance }
+        if t.contains("платформ") || t.contains("ютуб") || t.contains("youtube")
+            || t.contains("тикток") || t.contains("tiktok") || t.contains("рутуб") { return .platforms }
+        if t.contains("курс") || t.contains("обучен") || t.contains("урок") || t.contains("лекц") { return .education }
+        return .other
+    }
+
+    nonisolated static func parseExpenseCategory(from text: String) -> ExpenseCategory {
+        let t = text.lowercased()
+        if t.contains("такс") || t.contains("метро") || t.contains("автобус")
+            || t.contains("поезд") || t.contains("самолет") || t.contains("самолёт")
+            || t.contains("uber") || t.contains("убер") || t.contains("каршер") { return .transport }
+        if t.contains("еда") || t.contains("обед") || t.contains("ужин") || t.contains("завтрак")
+            || t.contains("кофе") || t.contains("кафе") || t.contains("ресторан")
+            || t.contains("продукт") || t.contains("супермаркет")               { return .food }
+        if t.contains("реклам") || t.contains("маркетинг") || t.contains("продвижен") { return .advertising }
+        if t.contains("оборудован") || t.contains("камер") || t.contains("микрофон")
+            || t.contains("техник")                                              { return .equipment }
+        if t.contains("команд") || t.contains("сотрудник") || t.contains("помощник")
+            || t.contains("монтаж") || t.contains("дизайнер")                   { return .team }
+        if t.contains("связ") || t.contains("интернет") || t.contains("симкарт")
+            || t.contains("сим-карт") || t.contains("мобильн")                  { return .communication }
+        if t.contains("инструмент") || t.contains("программ") || t.contains("сервис")
+            || t.contains("подписк")                                             { return .tools }
+        return .other
+    }
+
     // MARK: - Amount Parser
 
     nonisolated static func parseAmount(from text: String) -> Decimal? {
