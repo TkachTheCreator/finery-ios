@@ -148,6 +148,7 @@ struct RootView: View {
                 appLock.lockIfNeeded()
             } else if phase == .active {
                 checkClipboard()
+                checkControlCenterFlag()
             }
         }
         .animation(.fineryPage, value: phase)
@@ -286,6 +287,16 @@ struct RootView: View {
         .sheet(isPresented: $showChat) {
             AIAdvisorView()
         }
+    }
+
+    // MARK: Control Center flag check
+
+    private func checkControlCenterFlag() {
+        guard phase == .main else { return }
+        let ud = UserDefaults(suiteName: "group.com.tkachev.finery")
+        guard ud?.bool(forKey: "shouldShowAddTransaction") == true else { return }
+        ud?.set(false, forKey: "shouldShowAddTransaction")
+        showAddTransaction = true
     }
 
     // MARK: Clipboard bank SMS check
