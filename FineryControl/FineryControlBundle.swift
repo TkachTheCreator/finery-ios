@@ -9,7 +9,9 @@ struct OpenAddTransactionIntent: AppIntent {
     static let openAppWhenRun: Bool = true
 
     func perform() async throws -> some IntentResult {
-        .result()
+        UserDefaults(suiteName: "group.com.tkachev.finery")?
+            .set(true, forKey: "shouldShowAddTransaction")
+        return .result()
     }
 }
 
