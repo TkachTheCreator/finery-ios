@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Условия использования — Finery</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #F5F0E8;
+      --surface: #EDE8DC;
+      --border:  #C8C0B0;
+      --text:    #1A1A18;
+      --muted:   #6B6560;
+      --link:    #5C3D1E;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      font-size: 16px;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 20px 24px;
+    }
+
+    .header-inner {
+      max-width: 760px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-mark {
+      width: 36px;
+      height: 36px;
+      background: #1E1208;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .logo-mark svg { width: 22px; height: 22px; }
+
+    .site-name {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .doc-badge {
+      margin-left: auto;
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+
+    main {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 56px 24px 96px;
+    }
+
+    .doc-title {
+      font-size: clamp(26px, 5vw, 36px);
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+
+    .effective-date {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    h2 {
+      font-size: 20px;
+      font-weight: 700;
+      margin: 44px 0 14px;
+      letter-spacing: -0.01em;
+    }
+
+    p { margin-bottom: 14px; }
+    p:last-child { margin-bottom: 0; }
+
+    ul, ol {
+      padding-left: 22px;
+      margin-bottom: 14px;
+    }
+
+    li { margin-bottom: 6px; }
+
+    strong { font-weight: 600; }
+
+    a {
+      color: var(--link);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .callout {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid #8B6914;
+      border-radius: 6px;
+      padding: 16px 20px;
+      margin: 20px 0;
+      font-size: 15px;
+      color: var(--muted);
+    }
+
+    .callout strong { color: var(--text); }
+
+    .warning-box {
+      background: #FDF6E8;
+      border: 1px solid #D4A843;
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 20px 0;
+    }
+
+    .warning-box p { font-size: 15px; }
+    .warning-box p:last-child { margin-bottom: 0; }
+
+    .contact-block {
+      margin-top: 48px;
+      padding: 24px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+
+    .contact-block p { margin-bottom: 6px; }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 24px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    footer a { color: var(--muted); }
+
+    @media (max-width: 600px) {
+      main { padding: 36px 20px 72px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="https://finery.pro" class="logo-mark" aria-label="Finery">
+      <svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M5.5 11 C4.5 7 5.5 3.5 8 2.5 C11 1.5 17 2 17.5 5 C18 7.5 14 9 11 9.5" stroke="#F5F0E8" stroke-width="2" stroke-linecap="round" fill="none"/>
+        <path d="M5.5 11 C4.5 14 5.5 18 8 19 C11 20 15 18.5 16 16 C17 13.5 14 12 11 11.5" stroke="#B8965A" stroke-width="2" stroke-linecap="round" fill="none"/>
+      </svg>
+    </a>
+    <a href="https://finery.pro" class="site-name">Finery</a>
+    <span class="doc-badge">Terms of Service</span>
+  </div>
+</header>
+
+<main>
+  <h1 class="doc-title">Условия использования</h1>
+  <p class="effective-date">Дата вступления в силу: 13 сентября 2026</p>
+
+  <h2>1. Описание сервиса</h2>
+  <p>Finery — приложение для учёта доходов и расходов, предназначенное для самозанятых и фрилансеров. Приложение помогает вести учёт финансов, отслеживать налоговые обязательства и лимиты.</p>
+
+  <h2>2. Отказ от ответственности — налоговые расчёты</h2>
+  <div class="warning-box">
+    <p><strong>Важно:</strong> все расчёты налогов, лимитов и прогнозов в приложении носят справочный, информационный характер и основаны исключительно на данных, которые вы сами вносите в приложение. Finery:</p>
+    <ul style="margin-top:10px; margin-bottom:10px;">
+      <li>НЕ является бухгалтерским или налоговым консультантом</li>
+      <li>НЕ гарантирует точность расчётов при неполном или неверном вводе данных пользователем</li>
+      <li>НЕ несёт ответственности за решения, принятые на основе данных приложения, включая налоговые декларации, поданные в ФНС</li>
+    </ul>
+    <p>Мы настоятельно рекомендуем сверять расчёты с официальными данными приложения «Мой налог» (для плательщиков НПД) или с бухгалтером, особенно перед подачей отчётности.</p>
+  </div>
+
+  <h2>3. Учётная запись</h2>
+  <ul>
+    <li>Вы обязаны предоставлять достоверную информацию при регистрации</li>
+    <li>Вы несёте ответственность за сохранность своих учётных данных (пароль)</li>
+    <li>Один пользователь — одна учётная запись</li>
+  </ul>
+
+  <h2>4. Правила использования</h2>
+  <p>Вы обязуетесь не использовать приложение для:</p>
+  <ul>
+    <li>Незаконной деятельности</li>
+    <li>Попыток нарушить работу сервиса или получить несанкционированный доступ к данным других пользователей</li>
+  </ul>
+
+  <h2>5. Платные функции</h2>
+  <div class="callout">
+    <strong>Готовится к заполнению.</strong> Описание платных функций, стоимость, условия подписки, отмены и возврата средств будут добавлены после запуска монетизации.
+  </div>
+
+  <h2>6. Ограничение ответственности</h2>
+  <p>Приложение предоставляется «как есть». Мы не гарантируем бесперебойную работу сервиса и не несём ответственности за косвенные убытки, возникшие в результате использования или невозможности использования приложения.</p>
+
+  <h2>7. Прекращение использования</h2>
+  <p>Вы можете удалить учётную запись в любой момент через настройки приложения. Мы оставляем за собой право приостановить доступ при нарушении настоящих условий.</p>
+
+  <h2>8. Применимое право</h2>
+  <p>Настоящие условия регулируются законодательством Российской Федерации.</p>
+
+  <div class="contact-block">
+    <p><strong>Контакты</strong></p>
+    <p>По вопросам, связанным с условиями использования:</p>
+    <p><a href="mailto:privacy@finery.pro">privacy@finery.pro</a></p>
+  </div>
+</main>
+
+<footer>
+  <p><a href="https://finery.pro/privacy">Политика конфиденциальности</a> &nbsp;·&nbsp; &copy; 2026 Finery</p>
+</footer>
+
+</body>
+</html>
