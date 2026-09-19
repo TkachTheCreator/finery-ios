@@ -3,7 +3,7 @@ from datetime import datetime, timedelta, timezone
 
 import bcrypt as _bcrypt
 from fastapi import APIRouter, Depends, HTTPException, Request, status
-from jose import jwt
+import jwt
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -125,7 +125,8 @@ async def update_me(
 
 
 @router.post("/forgot-password", response_model=ForgotPasswordOut)
-async def forgot_password(body: ForgotPasswordIn, db: AsyncSession = Depends(get_db)):
+@limiter.limit("5/minute")
+async def forgot_password(request: Request, body: ForgotPasswordIn, db: AsyncSession = Depends(get_db)):
     # Always return 200 regardless of whether email exists (prevent user enumeration)
     await db.execute(select(User).where(User.email == body.email))
     return ForgotPasswordOut(message="Если email существует, письмо отправлено")
