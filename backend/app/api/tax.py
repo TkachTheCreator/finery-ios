@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from decimal import Decimal
 
 from fastapi import APIRouter, Depends, Query
@@ -60,7 +60,7 @@ async def tax_forecast(
     user: User = Depends(current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     year_start = datetime(now.year, 1, 1)
     thirty_days_ago = now - timedelta(days=30)
 
