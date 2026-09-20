@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.auth import current_user
 from app.core.database import get_db
+from app.models.client import Client
 from app.models.invoice import Invoice
 from app.models.user import User
 from app.schemas.invoice import InvoiceCreate, InvoiceOut
@@ -33,6 +34,13 @@ async def create_invoice(
     user: User = Depends(current_user),
     db: AsyncSession = Depends(get_db),
 ):
+    if body.client_id is not None:
+        client_result = await db.execute(
+            select(Client).where(and_(Client.id == body.client_id, Client.user_id == user.id))
+        )
+        if not client_result.scalar_one_or_none():
+            raise HTTPException(status_code=404, detail="Client not found")
+
     items_json = json.dumps([item.model_dump(mode="json") for item in body.items])
     invoice = Invoice(
         user_id=user.id,

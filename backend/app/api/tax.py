@@ -18,7 +18,7 @@ NPD_LIMIT = Decimal("2400000")
 
 @router.get("/status")
 async def tax_status(
-    year: int = Query(...),
+    year: int = Query(..., ge=2020, le=2100),
     user: User = Depends(current_user),
     db: AsyncSession = Depends(get_db),
 ):

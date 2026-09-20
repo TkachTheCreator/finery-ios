@@ -37,7 +37,6 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://85.239.41.204:8000",
         "http://localhost:3000",
         "capacitor://localhost",
         "ionic://localhost",
