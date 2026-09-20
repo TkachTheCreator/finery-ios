@@ -1,5 +1,5 @@
 from collections import defaultdict
-from datetime import datetime
+from datetime import datetime, timezone
 from decimal import Decimal
 
 from fastapi import APIRouter, Depends, Query
@@ -102,7 +102,7 @@ async def seasonal(
 
     def pct(val): return int((val - overall_avg) / overall_avg * 100) if overall_avg > 0 else 0
 
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     cur = monthly_averages[now.month - 1]
     diff = pct(cur["avg_income"])
     direction = "выше" if diff >= 0 else "ниже"
