@@ -58,7 +58,7 @@ async def top_sources(
 
 @router.get("/monthly")
 async def monthly(
-    year: int = Query(...),
+    year: int = Query(..., ge=2020, le=2100),
     user: User = Depends(current_user),
     db: AsyncSession = Depends(get_db),
 ):

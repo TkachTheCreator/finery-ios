@@ -3,19 +3,19 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Literal
 
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, Field, field_validator
 
 
 class TransactionCreate(BaseModel):
     amount: Decimal
     direction: Literal["income", "expense"]
-    description: str = ""
+    description: str = Field("", max_length=500)
     date: datetime
     source: str = "manual"
     income_category: str | None = None
     expense_category: str | None = None
-    client_type: str | None = None
-    notes: str | None = None
+    client_type: Literal["individual", "business"] | None = None
+    notes: str | None = Field(None, max_length=500)
     client_id: uuid.UUID | None = None
 
     @field_validator("amount")
@@ -29,14 +29,14 @@ class TransactionCreate(BaseModel):
 class TransactionUpdate(BaseModel):
     amount: Decimal | None = None
     direction: Literal["income", "expense"] | None = None
-    description: str | None = None
+    description: str | None = Field(None, max_length=500)
     date: datetime | None = None
     source: str | None = None
     income_category: str | None = None
     expense_category: str | None = None
-    client_type: str | None = None
+    client_type: Literal["individual", "business"] | None = None
     client_id: uuid.UUID | None = None
-    notes: str | None = None
+    notes: str | None = Field(None, max_length=500)
 
 
 class TransactionOut(BaseModel):

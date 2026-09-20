@@ -3,27 +3,27 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Literal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 ClientStatusLiteral = Literal["active", "completed"]
 
 
 class ClientCreate(BaseModel):
-    name: str
+    name: str = Field(..., max_length=200)
     email: str | None = None
     phone: str | None = None
     status: ClientStatusLiteral = "active"
-    notes: str | None = None
+    notes: str | None = Field(None, max_length=500)
 
 
 class ClientUpdate(BaseModel):
-    name: str | None = None
+    name: str | None = Field(None, max_length=200)
     email: str | None = None
     phone: str | None = None
     total_paid: Decimal | None = None
     last_payment: datetime | None = None
     status: ClientStatusLiteral | None = None
-    notes: str | None = None
+    notes: str | None = Field(None, max_length=500)
 
 
 class ClientOut(BaseModel):

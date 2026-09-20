@@ -3,22 +3,22 @@ import uuid
 from datetime import datetime
 from decimal import Decimal
 
-from pydantic import BaseModel, model_validator
+from pydantic import BaseModel, Field, model_validator
 
 
 class InvoiceItem(BaseModel):
-    name: str
+    name: str = Field(..., max_length=200)
     amount: Decimal
 
 
 class InvoiceCreate(BaseModel):
-    number: str
+    number: str = Field(..., max_length=50)
     date: datetime
     client_id: uuid.UUID | None = None
-    client_name: str = ""
+    client_name: str = Field("", max_length=200)
     items: list[InvoiceItem] = []
     include_vat: bool = False
-    executor_name: str = ""
+    executor_name: str = Field("", max_length=200)
     total: Decimal = Decimal("0")
 
 
