@@ -1,13 +1,14 @@
 import SwiftUI
 
 struct SplashView: View {
-    @State private var scale:         CGFloat = 0.3
-    @State private var opacity:       Double  = 0
-    @State private var waveScale:     CGFloat = 0
-    @State private var dotScale:      CGFloat = 0
-    @State private var chartProgress: CGFloat = 0
-    @State private var textOpacity:   Double  = 0
-    @State private var exit:          Bool    = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var scale:        CGFloat = 0.3
+    @State private var opacity:      Double  = 0
+    @State private var waveScale:    CGFloat = 0
+    @State private var dotScale:     CGFloat = 0
+    @State private var textOpacity:  Double  = 0
+    @State private var exit:         Bool    = false
+    @State private var shimmerPhase: CGFloat = -1.5
     var onFinish: () -> Void
 
     var body: some View {
@@ -16,65 +17,43 @@ struct SplashView: View {
 
             VStack(spacing: 20) {
                 ZStack(alignment: .bottomTrailing) {
-                    RoundedRectangle(cornerRadius: 26)
-                        .fill(FC.cobalt)
-                        .frame(width: 100, height: 100)
-                        .shadow(color: FC.cobalt.opacity(0.3), radius: 24, x: 0, y: 8)
-                        .overlay(
-                            Circle()
-                                .fill(FC.cobaltDark)
-                                .scaleEffect(waveScale)
-                                .opacity(waveScale > 0 ? max(0, 1 - waveScale / 2) : 0)
-                                .frame(width: 100, height: 100)
-                                .clipShape(RoundedRectangle(cornerRadius: 26))
-                        )
+                    // ── Logo square ──────────────────────────────────────
+                    ZStack {
+                        // Dark espresso background
+                        RoundedRectangle(cornerRadius: 26)
+                            .fill(FC.cobalt)
+                            .shadow(color: FC.cobalt.opacity(0.3), radius: 24, x: 0, y: 8)
 
-                    Canvas { ctx, size in
-                        let w = size.width
-                        let h = size.height
+                        // Wave pulse overlay
+                        Circle()
+                            .fill(FC.cobaltDark)
+                            .scaleEffect(waveScale)
+                            .opacity(waveScale > 0 ? max(0, 1 - waveScale / 2) : 0)
+                            .frame(width: 100, height: 100)
+                            .clipShape(RoundedRectangle(cornerRadius: 26))
 
-                        // Vertical bar of F
-                        ctx.fill(
-                            Path(roundedRect: CGRect(x: w*0.19, y: h*0.17, width: w*0.11, height: h*0.66),
-                                 cornerRadius: w*0.055),
-                            with: .color(.white))
+                        // Two-petal F logo (vectorized)
+                        FineryLogoMarkFitted()
+                            .frame(width: 78, height: 78)
 
-                        // Top horizontal bar
-                        ctx.fill(
-                            Path(roundedRect: CGRect(x: w*0.19, y: h*0.17, width: w*0.50, height: h*0.11),
-                                 cornerRadius: w*0.055),
-                            with: .color(.white))
-
-                        // Mid horizontal bar
-                        ctx.fill(
-                            Path(roundedRect: CGRect(x: w*0.19, y: h*0.42, width: w*0.34, height: h*0.10),
-                                 cornerRadius: w*0.048),
-                            with: .color(.white))
-
-                        // Growth chart (draws progressively via chartProgress)
-                        let points: [CGPoint] = [
-                            CGPoint(x: w*0.33, y: h*0.74),
-                            CGPoint(x: w*0.44, y: h*0.58),
-                            CGPoint(x: w*0.56, y: h*0.65),
-                            CGPoint(x: w*0.68, y: h*0.44),
-                            CGPoint(x: w*0.78, y: h*0.48)
-                        ]
-                        let count = points.count
-                        let progressCount = Int(CGFloat(count - 1) * chartProgress)
-                        if progressCount > 0 {
-                            var chart = Path()
-                            chart.move(to: points[0])
-                            for i in 1...min(progressCount, count - 1) {
-                                chart.addLine(to: points[i])
-                            }
-                            ctx.stroke(chart,
-                                       with: .color(Color(h: "C8FF00")),
-                                       style: StrokeStyle(lineWidth: w*0.028, lineCap: .round, lineJoin: .round))
+                        // Shimmer sweep — one diagonal pass per cycle
+                        if !reduceMotion {
+                            LinearGradient(
+                                stops: [
+                                    .init(color: .clear,                location: 0.28),
+                                    .init(color: .white.opacity(0.44),  location: 0.50),
+                                    .init(color: .clear,                location: 0.72),
+                                ],
+                                startPoint: UnitPoint(x: shimmerPhase,       y: 0),
+                                endPoint:   UnitPoint(x: shimmerPhase + 1.0, y: 1)
+                            )
+                            .clipShape(RoundedRectangle(cornerRadius: 26))
+                            .allowsHitTesting(false)
                         }
                     }
                     .frame(width: 100, height: 100)
 
-                    // Lime badge dot
+                    // Lime accent dot at bottom-trailing
                     Circle()
                         .fill(Color(h: "C8FF00"))
                         .frame(width: 14, height: 14)
@@ -103,35 +82,50 @@ struct SplashView: View {
         .onAppear { animate() }
     }
 
+    // MARK: - Animation
+
     private func animate() {
-        // 1. Logo springs in
+        if reduceMotion {
+            scale = 1.0; waveScale = 2.0; dotScale = 1.0
+            withAnimation(.easeInOut(duration: 0.3)) { opacity = 1.0; textOpacity = 1.0 }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
+                withAnimation(.easeInOut(duration: 0.25)) { exit = true }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { onFinish() }
+            }
+            return
+        }
+
+        // 1. Logo bounces in
         withAnimation(.spring(response: 0.55, dampingFraction: 0.65)) {
             scale = 1.0; opacity = 1.0
         }
-        // 2. Zoom wave inside icon
+        // 2. Wave pulse inside logo
         withAnimation(.easeOut(duration: 0.5).delay(0.4)) {
             waveScale = 2.0
         }
-        // 3. Chart line draws
-        withAnimation(.easeInOut(duration: 0.5).delay(0.45)) {
-            chartProgress = 1.0
-        }
-        // 4. Lime dot bounces in
-        withAnimation(.spring(response: 0.4, dampingFraction: 0.45).delay(0.85)) {
+        // 3. Lime dot bounces
+        withAnimation(.spring(response: 0.4, dampingFraction: 0.45).delay(0.75)) {
             dotScale = 1.0
         }
-        // 5. Tagline fades up
-        withAnimation(.easeOut(duration: 0.35).delay(0.6)) {
+        // 4. Tagline fades up
+        withAnimation(.easeOut(duration: 0.35).delay(0.55)) {
             textOpacity = 1.0
         }
+        // 5. Shimmer: two diagonal passes after logo springs in
+        //    delay 0.45s → 2 × 0.88s = 1.76s → ends at 2.21s, exit at 2.5s ✓
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.45) {
+            withAnimation(.easeInOut(duration: 0.88).repeatCount(2, autoreverses: false)) {
+                shimmerPhase = 2.5
+            }
+        }
         // 6. Exit
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.4) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
             withAnimation(.easeIn(duration: 0.35)) { exit = true }
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) { onFinish() }
         }
     }
 }
 
-#Preview {
+#Preview("Splash") {
     SplashView(onFinish: {})
 }
