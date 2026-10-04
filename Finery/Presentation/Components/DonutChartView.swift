@@ -31,7 +31,14 @@ struct DonutChartView: View {
             )
             .cornerRadius(cornerRadius)
             .foregroundStyle(slice.color)
+            .accessibilityLabel("\(slice.name): \(String(format: "%.0f%%", slice.value))")
         }
         .frame(width: size, height: size)
+        .accessibilityLabel(accessibilitySummary)
+    }
+
+    private var accessibilitySummary: String {
+        slices.map { "\($0.name) \(String(format: "%.0f%%", $0.value))" }
+              .joined(separator: ", ")
     }
 }

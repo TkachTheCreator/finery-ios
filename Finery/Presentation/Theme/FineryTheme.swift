@@ -10,8 +10,8 @@ enum FC {
 
     // Text
     static let ink           = Color(h: "1A1A1A")   // near-black primary text
-    static let inkSecondary  = Color(h: "8A8578")   // warm gray for labels/secondary
-    static let muted         = Color(h: "8A8578")   // alias for inkSecondary (backwards compat)
+    static let inkSecondary  = Color(h: "6B6560")   // warm gray — darkened for WCAG AA contrast (5.1:1 on white)
+    static let muted         = Color(h: "6B6560")   // alias for inkSecondary (backwards compat)
 
     // Brand / Interactive — ONLY for interactive elements (buttons, links, active states)
     // Warm espresso dark — replaces cold blue as primary accent throughout the app
@@ -39,6 +39,15 @@ enum FC {
     static let cobaltGlow  = Color(h: "1A1510").opacity(0.18)
     static let successGlow = Color(h: "1A6B3C").opacity(0.15)
     static let dangerGlow  = Color(h: "B03A2E").opacity(0.15)
+
+    // Badge palette — iOS Settings-style icon backgrounds (muted, warm-tinted)
+    static let badgeSage       = Color(h: "5A7D68")  // шалфейный — динамика, рост
+    static let badgeDustyBlue  = Color(h: "4A6E8A")  // пыльный синий — клиенты, профиль
+    static let badgeAmber      = Color(h: "9B7830")  // янтарный — налоги
+    static let badgeTerracotta = Color(h: "A05848")  // терракотовый — категории
+    static let badgePlum       = Color(h: "7A5492")  // сливовый — ИИ, быстрый ввод
+    static let badgeGold       = Color(h: "9B8825")  // золотистый — советы, история
+    static let badgeMuted      = Color(h: "706A62")  // нейтральный тёплый — о приложении
 }
 
 extension Color {
@@ -87,28 +96,31 @@ extension Decimal {
 // Caption  13pt  medium    — labels under values, NO all-caps
 
 extension View {
+    // Display: fixed at 60pt — hero number. Doesn't scale with Dynamic Type by design (layout constraint).
     func fDisplay() -> some View {
         self
             .font(.system(size: 60, weight: .bold, design: .rounded))
             .monospacedDigit()
     }
 
+    // title2 = 22pt default, scales with Dynamic Type
     func fTitle() -> some View {
-        self.font(.system(size: 26, weight: .semibold, design: .rounded))
+        self.font(.system(.title2, design: .rounded, weight: .semibold))
     }
 
+    // headline = 17pt default, scales with Dynamic Type
     func fHeading() -> some View {
-        self.font(.system(size: 18, weight: .semibold, design: .rounded))
+        self.font(.system(.headline, design: .rounded, weight: .semibold))
     }
 
     func fBody() -> some View {
         self.font(.system(.body, design: .rounded, weight: .regular))
     }
 
-    // Caption label — 13pt medium warm gray. No all-caps.
+    // caption = 12pt default, scales with Dynamic Type
     func fLabel() -> some View {
         self
-            .font(.system(size: 13, weight: .medium, design: .rounded))
+            .font(.system(.caption, design: .rounded, weight: .medium))
             .foregroundStyle(FC.inkSecondary)
     }
 }
@@ -176,6 +188,117 @@ struct GlassCardModifier: ViewModifier {
     }
 }
 
+
+// MARK: - Tinted Card (badge-colour tint + diagonal shimmer)
+
+struct TintedCardModifier: ViewModifier {
+    let tintColor: Color
+    var cornerRadius: CGFloat = 18
+    @State private var shimmerPhase: CGFloat = -1.5
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    func body(content: Content) -> some View {
+        content
+            .background(
+                ZStack {
+                    FC.surface
+                    tintColor.opacity(0.38)
+                }
+            )
+            .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
+            .overlay(
+                RoundedRectangle(cornerRadius: cornerRadius)
+                    .stroke(tintColor.opacity(0.38), lineWidth: 0.5)
+            )
+            .overlay(
+                LinearGradient(
+                    stops: [
+                        .init(color: .clear,               location: 0.25),
+                        .init(color: .white.opacity(reduceMotion ? 0 : 0.38), location: 0.50),
+                        .init(color: .clear,               location: 0.75),
+                    ],
+                    startPoint: UnitPoint(x: shimmerPhase,       y: 0),
+                    endPoint:   UnitPoint(x: shimmerPhase + 1.0, y: 1)
+                )
+                .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
+                .allowsHitTesting(false)
+            )
+            .task {
+                guard !reduceMotion else { return }
+                shimmerPhase = -1.5
+                let ns = UInt64(Double.random(in: 0...4) * 1_000_000_000)
+                try? await Task.sleep(nanoseconds: ns)
+                withAnimation(.linear(duration: 3.5).repeatForever(autoreverses: false)) {
+                    shimmerPhase = 2.5
+                }
+            }
+    }
+}
+
+// Shimmer-only overlay — for dark (hero) and plain-white tiles that keep their own background
+struct ShimmerOverlayModifier: ViewModifier {
+    let shimmerColor: Color
+    var cornerRadius: CGFloat = 18
+    @State private var shimmerPhase: CGFloat = -1.5
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    func body(content: Content) -> some View {
+        content
+            .overlay(
+                LinearGradient(
+                    stops: [
+                        .init(color: .clear,                                            location: 0.25),
+                        .init(color: shimmerColor.opacity(reduceMotion ? 0 : 0.38),    location: 0.50),
+                        .init(color: .clear,                                            location: 0.75),
+                    ],
+                    startPoint: UnitPoint(x: shimmerPhase,       y: 0),
+                    endPoint:   UnitPoint(x: shimmerPhase + 1.0, y: 1)
+                )
+                .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
+                .allowsHitTesting(false)
+            )
+            .task {
+                guard !reduceMotion else { return }
+                shimmerPhase = -1.5
+                let ns = UInt64(Double.random(in: 0...4) * 1_000_000_000)
+                try? await Task.sleep(nanoseconds: ns)
+                withAnimation(.linear(duration: 3.5).repeatForever(autoreverses: false)) {
+                    shimmerPhase = 2.5
+                }
+            }
+    }
+}
+
+extension View {
+    func tintedDataWidget(tint: Color, cornerRadius: CGFloat = 18) -> some View {
+        modifier(TintedCardModifier(tintColor: tint, cornerRadius: cornerRadius))
+    }
+
+    func shimmerOverlay(color: Color = .white, cornerRadius: CGFloat = 18) -> some View {
+        modifier(ShimmerOverlayModifier(shimmerColor: color, cornerRadius: cornerRadius))
+    }
+}
+
+// MARK: - Badge Icon (iOS Settings-style coloured icon badge)
+
+struct BadgeIcon: View {
+    let systemName: String
+    let badgeColor: Color
+    var badgeSize: CGFloat = 34
+    var iconSize: CGFloat  = 17
+    var iconWeight: Font.Weight = .light
+
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: badgeSize * 0.27)
+                .fill(badgeColor.opacity(0.13))
+                .frame(width: badgeSize, height: badgeSize)
+            Image(systemName: systemName)
+                .font(.system(size: iconSize, weight: iconWeight))
+                .foregroundStyle(badgeColor)
+        }
+    }
+}
 
 // MARK: - Category color palette (shared across analytics screens)
 
@@ -379,6 +502,7 @@ struct BorderTrailModifier: ViewModifier {
     var cornerRadius: CGFloat = 20
     var color: Color = FC.ivory.opacity(0.45)
     var delay: Double = 0.4
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     func body(content: Content) -> some View {
         content.overlay(
@@ -393,6 +517,7 @@ struct BorderTrailModifier: ViewModifier {
                 )
         )
         .onAppear {
+            guard !reduceMotion else { return }
             progress = 0
             withAnimation(
                 .timingCurve(0, 0.5, 0.8, 0.5, duration: 4)
