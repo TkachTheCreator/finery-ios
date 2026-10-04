@@ -186,7 +186,7 @@
 		400E887DDE95D38E6E31F0E5 /* LottieSuccessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LottieSuccessView.swift; sourceTree = "<group>"; };
 		4364BE73D18016B547D1E0B5 /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
 		44189399A774FD5E8FAE4227 /* ScreenshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotTests.swift; sourceTree = "<group>"; };
-		4549C8183DDAA6A1F4D00996 /* FineryTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = FineryTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		4549C8183DDAA6A1F4D00996 /* FineryTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FineryTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		48536D8DFB98C33EC167613E /* FineryControlBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FineryControlBundle.swift; sourceTree = "<group>"; };
 		4E2B0D520284CDD9E5311821 /* InvoicesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvoicesViewModel.swift; sourceTree = "<group>"; };
 		4E3B3F7DAC41282629E2C6B2 /* TaxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaxView.swift; sourceTree = "<group>"; };
@@ -214,7 +214,7 @@
 		8955110E03A6D16BD6E2CF68 /* SpringToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpringToggle.swift; sourceTree = "<group>"; };
 		8B38440EFFA21F1F82715A28 /* PnL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PnL.swift; sourceTree = "<group>"; };
 		8E11AB2848324149C0B3D7CB /* Invoice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Invoice.swift; sourceTree = "<group>"; };
-		8E269B3C38185B26E8B4184F /* FineryShare.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = FineryShare.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		8E269B3C38185B26E8B4184F /* FineryShare.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = FineryShare.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		8FCDD1C9C2F31381AC106478 /* TaxCalculatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaxCalculatorTests.swift; sourceTree = "<group>"; };
 		90EB6D6C94F4C5C5E5716B66 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		9286A23592206481E6E093FA /* ExpenseCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpenseCategory.swift; sourceTree = "<group>"; };
@@ -227,14 +227,14 @@
 		9BBDDAAF81E5B7A4C4D22783 /* GetMonthlyDynamicsUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetMonthlyDynamicsUseCase.swift; sourceTree = "<group>"; };
 		9DE470362E77980A05FBBA37 /* TransactionLocalRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionLocalRepository.swift; sourceTree = "<group>"; };
 		9E8A3D0228E2EE3ADAE37A86 /* FloatingTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingTabBar.swift; sourceTree = "<group>"; };
-		9F40AEF0915FDE1ADF55A664 /* Finery.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Finery.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9F40AEF0915FDE1ADF55A664 /* Finery.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Finery.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9FE83955C51012112BD1C60A /* NetworkDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkDebugView.swift; sourceTree = "<group>"; };
 		A808E46673806C37D5BF707B /* UserRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRepository.swift; sourceTree = "<group>"; };
 		A8BB4775422C9B1A7C044A2F /* AuthFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthFlowView.swift; sourceTree = "<group>"; };
 		A8F86C2EED64EC8EC4EA3257 /* ClientsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientsView.swift; sourceTree = "<group>"; };
 		AB8D7D57EA3C0EC851F0F031 /* AIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIService.swift; sourceTree = "<group>"; };
 		ACDBC4D508F240C87B80ADBB /* ReceiptPickerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptPickerSheet.swift; sourceTree = "<group>"; };
-		B0948239B5CC62ED44EAD4F7 /* FineryWidget.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = FineryWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		B0948239B5CC62ED44EAD4F7 /* FineryWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = FineryWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		B2AF7832F0FB4AA340E1AC40 /* RecurringTransaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecurringTransaction.swift; sourceTree = "<group>"; };
 		B73BE6B840255FE525903F14 /* AnalyticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsView.swift; sourceTree = "<group>"; };
 		B84589DEF693D5737501347D /* ClassifyTransactionUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassifyTransactionUseCase.swift; sourceTree = "<group>"; };
@@ -250,7 +250,7 @@
 		D63DC38B29DA04BE54BB2733 /* FineryTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FineryTheme.swift; sourceTree = "<group>"; };
 		D6594DF992676C1A5BDA9E7F /* IncomeCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IncomeCategory.swift; sourceTree = "<group>"; };
 		D6F747A35F6E89CF3EFE0629 /* UserLocalRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLocalRepository.swift; sourceTree = "<group>"; };
-		D7022D30A9327D2DFB16A4C6 /* FineryControl.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = FineryControl.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		D7022D30A9327D2DFB16A4C6 /* FineryControl.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = FineryControl.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		D785BC5D2C9E6FC774371B0E /* AppLockManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockManager.swift; sourceTree = "<group>"; };
 		D8DE02F4DE40E007481DA107 /* DonutChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DonutChartView.swift; sourceTree = "<group>"; };
 		DBA3BDDB6EC21859BC0FAF0A /* TransactionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionStore.swift; sourceTree = "<group>"; };
@@ -270,7 +270,7 @@
 		F290DAB89D8CFCE0528870E3 /* InsightRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsightRow.swift; sourceTree = "<group>"; };
 		F3A378C74CA00A2B73CAAAD8 /* FineryLogoMark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FineryLogoMark.swift; sourceTree = "<group>"; };
 		F7A7AB35CED17D75500E5AF1 /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
-		F8810F65A98B400AFE5A590F /* FineryUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = FineryUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		F8810F65A98B400AFE5A590F /* FineryUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FineryUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F9FDB18528D5474099877283 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
 		FAD991AABB2B8D7E927E3944 /* AIAdvisorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIAdvisorView.swift; sourceTree = "<group>"; };
 		FC923A07AB37977277909C3D /* TaxViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaxViewModel.swift; sourceTree = "<group>"; };
@@ -838,22 +838,18 @@
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
 					2515D379705AE448BB7D130D = {
-						DevelopmentTeam = HU22U632B9;
 						ProvisioningStyle = Automatic;
 					};
 					5C06D7CDFAC4737927523827 = {
 						TestTargetID = 2515D379705AE448BB7D130D;
 					};
 					94BD8A5289F23374F054FB09 = {
-						DevelopmentTeam = HU22U632B9;
 						ProvisioningStyle = Automatic;
 					};
 					DF31E32ADCC64C831609F20B = {
-						DevelopmentTeam = HU22U632B9;
 						ProvisioningStyle = Automatic;
 					};
 					FB3BF94C50472C3384D73E03 = {
-						DevelopmentTeam = HU22U632B9;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -1072,6 +1068,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				DEVELOPMENT_TEAM = 6CP3FXPA4J;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1091,6 +1088,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				DEVELOPMENT_TEAM = 6CP3FXPA4J;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1114,7 +1112,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = HU22U632B9;
+				DEVELOPMENT_TEAM = 6CP3FXPA4J;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_FILE = FineryWidget/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
@@ -1198,7 +1196,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = HU22U632B9;
+				DEVELOPMENT_TEAM = 6CP3FXPA4J;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_FILE = FineryShare/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
@@ -1226,7 +1224,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = HU22U632B9;
+				DEVELOPMENT_TEAM = 6CP3FXPA4J;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_FILE = FineryWidget/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
@@ -1253,7 +1251,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = HU22U632B9;
+				DEVELOPMENT_TEAM = 6CP3FXPA4J;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_FILE = FineryShare/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
@@ -1281,7 +1279,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = HU22U632B9;
+				DEVELOPMENT_TEAM = 6CP3FXPA4J;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_FILE = Finery/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
@@ -1307,7 +1305,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = HU22U632B9;
+				DEVELOPMENT_TEAM = 6CP3FXPA4J;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_FILE = FineryControl/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
@@ -1331,6 +1329,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				DEVELOPMENT_TEAM = 6CP3FXPA4J;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1354,7 +1353,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = HU22U632B9;
+				DEVELOPMENT_TEAM = 6CP3FXPA4J;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_FILE = FineryControl/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
@@ -1445,7 +1444,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = HU22U632B9;
+				DEVELOPMENT_TEAM = 6CP3FXPA4J;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_FILE = Finery/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
@@ -1468,6 +1467,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				DEVELOPMENT_TEAM = 6CP3FXPA4J;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (

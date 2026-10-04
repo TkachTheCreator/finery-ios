@@ -91,6 +91,7 @@ struct QuickAddSmallView: View {
             }
         }
         .widgetURL(URL(string: "finery://add-transaction")!)
+        .accessibilityLabel("Finery: добавить операцию")
     }
 }
 
@@ -168,6 +169,7 @@ struct BalanceSmallView: View {
             }
             .padding(14)
         }
+        .accessibilityLabel("Finery. Доход: \(fmtAmt(entry.income)), расход: \(fmtAmt(entry.expense)), налог: \(fmtAmt(entry.taxAmount))")
     }
 }
 
@@ -293,6 +295,7 @@ struct LockRectView: View {
             Image(systemName: "plus.circle.fill")
                 .font(.system(size: 38, weight: .medium))
                 .frame(width: 44)
+                .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 1) {
                 Text("Добавить операцию")
                     .font(.system(size: 16, weight: .bold))
@@ -306,6 +309,7 @@ struct LockRectView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
         .widgetURL(URL(string: "finery://add-transaction")!)
+        .accessibilityLabel("Finery: добавить операцию")
     }
 }
 
@@ -359,8 +363,10 @@ struct LockCircularView: View {
             AccessoryWidgetBackground()
             Image(systemName: "plus.circle.fill")
                 .font(.system(size: 26, weight: .medium))
+                .accessibilityHidden(true)
         }
         .widgetURL(URL(string: "finery://add-transaction")!)
+        .accessibilityLabel("Finery: добавить операцию")
     }
 }
 
