@@ -12,9 +12,17 @@ struct DashboardView: View {
     var onShowTips: (() -> Void)?
     var zoomNamespace: Namespace.ID?
 
+    private enum AnalyticsTab: Equatable { case dynamics, categories }
+
+    private var analyticsTint: Color {
+        analyticsTab == .dynamics ? FC.badgeSage : FC.badgeTerracotta
+    }
+
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var appeared          = false
     @State private var barProgress: Double = 0
     @State private var showCashFlow      = false
+    @State private var analyticsTab      = AnalyticsTab.dynamics
 
     init(
         viewModel: DashboardViewModel,
@@ -53,45 +61,38 @@ struct DashboardView: View {
                         // Row 1: Hero income (full width) — border trail on appear (Задача 4)
                         incomeHeroTile
                             .borderTrail(cornerRadius: 20, delay: 0.5)
-                            .widgetAppear(index: 0, appeared: appeared)
+                            .widgetAppear(index: 0, appeared: appeared, reduceMotion: reduceMotion)
 
                         // Row 2: Add (compact) + AI — unequal heights for bento variety
                         HStack(alignment: .top, spacing: 12) {
                             addTransactionTile
-                                .widgetAppear(index: 1, appeared: appeared)
+                                .widgetAppear(index: 1, appeared: appeared, reduceMotion: reduceMotion)
                             aiTile
-                                .widgetAppear(index: 2, appeared: appeared)
+                                .widgetAppear(index: 2, appeared: appeared, reduceMotion: reduceMotion)
                         }
 
                         // Row 3: Tax (full width, ring indicator)
                         taxTile
                             .zoomSource(id: "tax", ns: zoomNamespace)
-                            .widgetAppear(index: 3, appeared: appeared)
+                            .widgetAppear(index: 3, appeared: appeared, reduceMotion: reduceMotion)
 
-                        // Row 4: Dynamics (62%) + Clients (38%) — Bento asymmetry
+                        // Row 4: Analytics combined tile (Dynamics | Categories tabs)
                         let col1 = (geo.size.width - 40 - 12) * 0.62
                         let col2 = (geo.size.width - 40 - 12) * 0.38
+                        analyticsCombinedTile
+                            .zoomSource(id: "dynamics", ns: zoomNamespace)
+                            .widgetAppear(index: 4, appeared: appeared, reduceMotion: reduceMotion)
+
+                        // Row 5: Clients + Tips
                         HStack(alignment: .top, spacing: 12) {
-                            dynamicsTile
-                                .frame(width: col1)
-                                .zoomSource(id: "dynamics", ns: zoomNamespace)
-                                .widgetAppear(index: 4, appeared: appeared)
                             clientsTile
                                 .frame(width: col2)
                                 .zoomSource(id: "clients", ns: zoomNamespace)
-                                .widgetAppear(index: 5, appeared: appeared)
-                        }
-
-                        // Row 5: Categories (38%) + Tips (62%) — reversed bento
-                        HStack(alignment: .top, spacing: 12) {
-                            categoriesTile
-                                .frame(width: col2)
-                                .zoomSource(id: "categories", ns: zoomNamespace)
-                                .widgetAppear(index: 6, appeared: appeared)
+                                .widgetAppear(index: 5, appeared: appeared, reduceMotion: reduceMotion)
                             tipsTile
                                 .frame(width: col1)
                                 .zoomSource(id: "tips", ns: zoomNamespace)
-                                .widgetAppear(index: 7, appeared: appeared)
+                                .widgetAppear(index: 6, appeared: appeared, reduceMotion: reduceMotion)
                         }
                     }
                     .padding(.horizontal, 20)
@@ -186,9 +187,10 @@ struct DashboardView: View {
                 Image(systemName: "gearshape")
                     .font(.system(size: 18, weight: .regular))
                     .foregroundStyle(FC.ink)
-                    .frame(width: 36, height: 36)
+                    .frame(width: 44, height: 44)
                     .contentShape(Rectangle())
             }
+            .accessibilityLabel("Настройки")
         }
         .padding(.top, 16).padding(.bottom, 4)
         .offset(y: appeared ? 0 : -14)
@@ -232,11 +234,15 @@ struct DashboardView: View {
         .padding(22)
         .frame(maxWidth: .infinity, alignment: .leading)
         .heroWidget()
+        .shimmerOverlay(color: FC.ivory, cornerRadius: 20)
         .contentShape(Rectangle())
         .onTapGesture {
             HapticManager.light()
             showCashFlow = true
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Доход за \(currentMonthShort): \(viewModel.pnl?.totalIncome.rub() ?? "0 ₽"). Нажмите для деталей.")
+        .accessibilityAddTraits(.isButton)
     }
 
     private func heroMetric(label: String, value: Decimal?, align: HorizontalAlignment) -> some View {
@@ -275,21 +281,22 @@ struct DashboardView: View {
         }
         .padding(16)
         .frame(maxWidth: .infinity, minHeight: 72, alignment: .leading)  // T1: compact
-        .dataWidget()
+        .tintedDataWidget(tint: FC.badgeMuted)
         .contentShape(Rectangle())
         .onTapGesture {
             HapticManager.light()
             onShowAddTransaction?()
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Добавить операцию")
+        .accessibilityAddTraits(.isButton)
     }
 
     // MARK: - 3. AI Tile
 
     private var aiTile: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Image(systemName: "sparkles")
-                .font(.system(size: 20, weight: .regular))
-                .foregroundStyle(FC.inkSecondary)  // T0: decorative icon = secondary, not accent
+            BadgeIcon(systemName: "sparkles", badgeColor: FC.badgePlum)
 
             Spacer(minLength: 14)
 
@@ -303,12 +310,15 @@ struct DashboardView: View {
         }
         .padding(16)
         .frame(maxWidth: .infinity, minHeight: 110, alignment: .leading)
-        .dataWidget()
+        .tintedDataWidget(tint: FC.badgePlum)
         .contentShape(Rectangle())
         .onTapGesture {
             HapticManager.light()
             onShowAI?()
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("ИИ-помощник")
+        .accessibilityAddTraits(.isButton)
     }
 
     // MARK: - 4. Tax Tile (full width, ring indicator — Задача 2)
@@ -324,6 +334,7 @@ struct DashboardView: View {
                 icon: "percent",
                 title: "Налоги",
                 detail: viewModel.userType == .other ? "личный трекер" : "нет данных",
+                badgeColor: FC.badgeAmber,
                 action: onShowTax
             )
         }
@@ -343,7 +354,7 @@ struct DashboardView: View {
                         .contentTransition(.numericText())
                         .animation(.fineryNumber, value: limitPercentText)
                     Text("НПД")
-                        .font(.system(size: 9, weight: .regular, design: .rounded))
+                        .font(.system(size: 11, weight: .regular, design: .rounded))
                         .foregroundStyle(FC.inkSecondary)
                 }
             }
@@ -376,9 +387,12 @@ struct DashboardView: View {
         }
         .padding(20)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .dataWidget()
+        .tintedDataWidget(tint: FC.badgeAmber)
         .contentShape(Rectangle())
         .onTapGesture { HapticManager.impact(.medium); onShowTax?() }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Налоги")
+        .accessibilityAddTraits(.isButton)
     }
 
     private func usnTile(_ status: TaxStatus) -> some View {
@@ -417,20 +431,104 @@ struct DashboardView: View {
         }
         .padding(20)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .dataWidget()
+        .tintedDataWidget(tint: FC.badgeAmber)
         .contentShape(Rectangle())
         .onTapGesture { HapticManager.impact(.medium); onShowTax?() }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Налоги")
+        .accessibilityAddTraits(.isButton)
     }
 
-    // MARK: - 5. Dynamics Tile (T1: wider in bento)
+    // MARK: - 5. Analytics Combined Tile (Variant 2: tabs inside widget)
 
-    private var dynamicsTile: some View {
-        simpleTile(
-            icon: "chart.bar",
-            title: "Динамика",
-            detail: "за 6 месяцев",
-            action: onShowAnalyticsDynamics
-        )
+    private var analyticsCombinedTile: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(spacing: 20) {
+                analyticsTabLabel("Динамика", tab: .dynamics)
+                analyticsTabLabel("Категории", tab: .categories)
+                Spacer()
+                // Page dots — show swipe affordance
+                HStack(spacing: 5) {
+                    ForEach([AnalyticsTab.dynamics, .categories], id: \.self) { tab in
+                        Circle()
+                            .fill(analyticsTab == tab ? FC.ink : FC.border)
+                            .frame(width: 5, height: 5)
+                            .animation(.easeInOut(duration: 0.2), value: analyticsTab)
+                    }
+                }
+                .accessibilityHidden(true)
+            }
+            Group {
+                if analyticsTab == .dynamics {
+                    analyticsRowContent(icon: "chart.bar", title: "Динамика", detail: "за 6 месяцев", badgeColor: FC.badgeSage)
+                        .contentShape(Rectangle())
+                        .onTapGesture { HapticManager.light(); onShowAnalyticsDynamics?() }
+                        .transition(.asymmetric(
+                            insertion: .push(from: .leading),
+                            removal: .push(from: .trailing)
+                        ))
+                } else {
+                    analyticsRowContent(icon: "chart.pie", title: "Категории", detail: "доходы / расходы", badgeColor: FC.badgeTerracotta)
+                        .contentShape(Rectangle())
+                        .onTapGesture { HapticManager.light(); onShowAnalyticsCategories?() }
+                        .transition(.asymmetric(
+                            insertion: .push(from: .trailing),
+                            removal: .push(from: .leading)
+                        ))
+                }
+            }
+            .animation(.spring(response: 0.35, dampingFraction: 0.82), value: analyticsTab)
+            .gesture(
+                DragGesture(minimumDistance: 30, coordinateSpace: .local)
+                    .onEnded { value in
+                        let h = value.translation.width
+                        let v = value.translation.height
+                        guard abs(h) > abs(v) * 1.5, abs(h) > 40 else { return }
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            if h < 0, analyticsTab == .dynamics { analyticsTab = .categories }
+                            else if h > 0, analyticsTab == .categories { analyticsTab = .dynamics }
+                        }
+                    }
+            )
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity)
+        .tintedDataWidget(tint: analyticsTint)
+    }
+
+    private func analyticsTabLabel(_ label: String, tab: AnalyticsTab) -> some View {
+        let active = analyticsTab == tab
+        return Button {
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) { analyticsTab = tab }
+        } label: {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(label)
+                    .font(.system(size: 13, weight: active ? .semibold : .regular, design: .rounded))
+                    .foregroundStyle(active ? FC.ink : FC.inkSecondary)
+                Rectangle()
+                    .fill(active ? FC.cobalt : Color.clear)
+                    .frame(height: 1.5)
+            }
+        }
+        .buttonStyle(.plain)
+    }
+
+    private func analyticsRowContent(icon: String, title: String, detail: String, badgeColor: Color) -> some View {
+        HStack(spacing: 12) {
+            BadgeIcon(systemName: icon, badgeColor: badgeColor)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.system(size: 14, weight: .medium, design: .rounded))
+                    .foregroundStyle(FC.ink)
+                Text(detail)
+                    .font(.system(size: 12, weight: .regular, design: .rounded))
+                    .foregroundStyle(FC.inkSecondary)
+            }
+            Spacer()
+            Image(systemName: "chevron.right")
+                .font(.system(size: 11, weight: .regular))
+                .foregroundStyle(FC.border)
+        }
     }
 
     // MARK: - 6. Clients Tile (T1: narrower in bento)
@@ -441,9 +539,7 @@ struct DashboardView: View {
         let done     = clients.filter { $0.status == .completed }.count
 
         return VStack(alignment: .leading, spacing: 0) {
-            Image(systemName: "person.2")
-                .font(.system(size: 18, weight: .light))
-                .foregroundStyle(FC.inkSecondary)  // T0: secondary
+            BadgeIcon(systemName: "person.2", badgeColor: FC.badgeDustyBlue)
 
             Spacer(minLength: 12)
 
@@ -463,30 +559,20 @@ struct DashboardView: View {
         }
         .padding(16)
         .frame(maxWidth: .infinity, minHeight: 110, alignment: .leading)
-        .dataWidget()
+        .tintedDataWidget(tint: FC.badgeDustyBlue)
         .contentShape(Rectangle())
         .onTapGesture { HapticManager.impact(.medium); onShowClients?() }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Клиенты")
+        .accessibilityAddTraits(.isButton)
     }
 
-    // MARK: - 7. Categories Tile
-
-    private var categoriesTile: some View {
-        simpleTile(
-            icon: "chart.pie",
-            title: "Категории",
-            detail: "доходы / расходы",
-            action: onShowAnalyticsCategories
-        )
-    }
-
-    // MARK: - 8. Tips Tile — tap to open TipsListView
+    // MARK: - 7. Tips Tile — tap to open TipsListView
 
     private var tipsTile: some View {
         VStack(alignment: .leading, spacing: 0) {
-            HStack(spacing: 5) {
-                Image(systemName: "lightbulb")
-                    .font(.system(size: 12, weight: .regular))
-                    .foregroundStyle(FC.warning)
+            HStack(spacing: 8) {
+                BadgeIcon(systemName: "lightbulb", badgeColor: FC.badgeGold, badgeSize: 26, iconSize: 12)
                 Text("Советы")
                     .font(.system(size: 13, weight: .medium, design: .rounded))
                     .foregroundStyle(FC.inkSecondary)
@@ -529,9 +615,12 @@ struct DashboardView: View {
         }
         .padding(16)
         .frame(maxWidth: .infinity, minHeight: 110, alignment: .leading)
-        .dataWidget()
+        .tintedDataWidget(tint: FC.badgeGold)
         .contentShape(Rectangle())
         .onTapGesture { HapticManager.impact(.medium); onShowTips?() }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Советы")
+        .accessibilityAddTraits(.isButton)
     }
 
     // MARK: - Simple Tile helper
@@ -559,11 +648,9 @@ struct DashboardView: View {
         .onTapGesture { HapticManager.impact(.medium); action?() }
     }
 
-    private func fullWidthSimpleTile(icon: String, title: String, detail: String, action: (() -> Void)?) -> some View {
+    private func fullWidthSimpleTile(icon: String, title: String, detail: String, badgeColor: Color = FC.badgeMuted, action: (() -> Void)?) -> some View {
         HStack {
-            Image(systemName: icon)
-                .font(.system(size: 22, weight: .light))
-                .foregroundStyle(FC.inkSecondary)
+            BadgeIcon(systemName: icon, badgeColor: badgeColor, badgeSize: 36, iconSize: 18)
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
                     .font(.system(size: 15, weight: .medium, design: .rounded))
@@ -577,7 +664,7 @@ struct DashboardView: View {
         }
         .padding(20)
         .frame(maxWidth: .infinity)
-        .dataWidget()
+        .tintedDataWidget(tint: badgeColor)
         .contentShape(Rectangle())
         .onTapGesture { HapticManager.impact(.medium); action?() }
     }
@@ -627,15 +714,22 @@ struct DashboardView: View {
 // MARK: - Widget appear animation
 
 private extension View {
-    func widgetAppear(index: Int, appeared: Bool) -> some View {
-        self
-            .offset(y: appeared ? 0 : 36)
-            .opacity(appeared ? 1 : 0)
-            .scaleEffect(appeared ? 1 : 0.97, anchor: .top)
-            .animation(
-                .spring(response: 0.55, dampingFraction: 0.80).delay(Double(index) * 0.055),
-                value: appeared
-            )
+    @ViewBuilder
+    func widgetAppear(index: Int, appeared: Bool, reduceMotion: Bool = false) -> some View {
+        if reduceMotion {
+            self
+                .opacity(appeared ? 1 : 0)
+                .animation(.easeInOut(duration: 0.15), value: appeared)
+        } else {
+            self
+                .offset(y: appeared ? 0 : 36)
+                .opacity(appeared ? 1 : 0)
+                .scaleEffect(appeared ? 1 : 0.97, anchor: .top)
+                .animation(
+                    .spring(response: 0.55, dampingFraction: 0.80).delay(Double(index) * 0.055),
+                    value: appeared
+                )
+        }
     }
 }
 

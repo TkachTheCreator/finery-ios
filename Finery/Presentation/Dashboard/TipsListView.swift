@@ -3,6 +3,7 @@ import SwiftUI
 struct TipsListView: View {
     let insights: [Insight]
     var onShowAI: (() -> Void)?
+    var accentTint: Color = .clear
 
     @State private var expandedId: UUID? = nil
     @State private var appeared = false
@@ -10,6 +11,7 @@ struct TipsListView: View {
     var body: some View {
         ZStack {
             FC.background.ignoresSafeArea()
+            accentTint.opacity(0.08).ignoresSafeArea()
 
             if insights.isEmpty {
                 VStack(spacing: 12) {
@@ -90,22 +92,23 @@ struct TipsListView: View {
                         .padding(.horizontal, 16)
 
                     if onShowAI != nil {
-                        Button {
-                            HapticManager.light()
-                            onShowAI?()
-                        } label: {
-                            HStack(spacing: 6) {
-                                Image(systemName: "sparkles").font(.system(size: 13))
-                                Text("Уточнить у ИИ")
-                                    .font(.system(size: 13, weight: .medium, design: .rounded))
-                            }
-                            .foregroundStyle(FC.cobalt)
+                        HStack(spacing: 6) {
+                            Image(systemName: "sparkles").font(.system(size: 13))
+                            Text("Уточнить у ИИ")
+                                .font(.system(size: 13, weight: .medium, design: .rounded))
                         }
-                        .buttonStyle(.plain)
+                        .foregroundStyle(FC.cobalt)
                         .padding(.horizontal, 16)
                     }
                 }
                 .padding(.bottom, 14)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    guard onShowAI != nil else { return }
+                    HapticManager.light()
+                    onShowAI?()
+                }
                 .transition(.opacity.combined(with: .move(edge: .top)))
             }
         }
