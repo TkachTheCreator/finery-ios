@@ -9,6 +9,7 @@ struct AddTransactionView: View {
 
     @Environment(\.dismiss) private var dismiss
     @FocusState private var amountFocused: Bool
+    @ScaledMetric(relativeTo: .largeTitle) private var amountFontSize: CGFloat = 48
     @State private var showOverlay: OverlayState = .none
     @State private var showCategoryPicker = false
     @State private var showError = false
@@ -152,8 +153,9 @@ struct AddTransactionView: View {
             HStack(alignment: .firstTextBaseline, spacing: 4) {
                 TextField("0", text: $viewModel.amountText)
                     .keyboardType(.decimalPad)
-                    .font(.system(size: 48, weight: .bold, design: .rounded))
+                    .font(.system(size: amountFontSize, weight: .bold, design: .rounded))
                     .monospacedDigit()
+                    .minimumScaleFactor(0.5)
                     .foregroundStyle(FC.ink)
                     .focused($amountFocused)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -299,7 +301,7 @@ struct AddTransactionView: View {
             ZStack {
                 Circle()
                     .fill(isOCRLoading ? FC.muted.opacity(0.12) : FC.cobalt.opacity(0.10))
-                    .frame(width: 36, height: 36)
+                    .frame(width: 44, height: 44)
                     .overlay(Circle().stroke(FC.cobalt.opacity(0.25), lineWidth: 1))
                 if isOCRLoading {
                     ProgressView().scaleEffect(0.7).tint(FC.cobalt)
@@ -311,6 +313,7 @@ struct AddTransactionView: View {
             }
         }
         .disabled(isOCRLoading)
+        .accessibilityLabel("Распознать чек")
         .sheet(isPresented: $showReceiptPicker) {
             ReceiptPickerSheet { image in
                 showReceiptPicker = false
@@ -345,7 +348,7 @@ struct AddTransactionView: View {
             ZStack {
                 Circle()
                     .fill(isRecording ? FC.muted.opacity(0.18) : FC.cobalt.opacity(0.12))
-                    .frame(width: 36, height: 36)
+                    .frame(width: 44, height: 44)
                     .overlay(
                         Circle()
                             .stroke(isRecording ? FC.muted.opacity(0.5) : FC.cobalt.opacity(0.3), lineWidth: 1)
@@ -357,6 +360,7 @@ struct AddTransactionView: View {
             .scaleEffect(isRecording ? 1.1 : 1.0)
             .animation(.spring(response: 0.3), value: isRecording)
         }
+        .accessibilityLabel(isRecording ? "Остановить запись" : "Голосовой ввод")
         // Trigger on state → idle (covers both auto-stop and manual stop)
         .onChange(of: voice.isIdle) { _, isNowIdle in
             if isNowIdle { viewModel.applyVoiceResult() }

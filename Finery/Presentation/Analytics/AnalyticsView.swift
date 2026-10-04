@@ -222,6 +222,7 @@ struct AnalyticsView: View {
                     )
                     .foregroundStyle(FC.cobalt)
                     .cornerRadius(0)
+                    .accessibilityLabel("\(item.monthLabel): доход \(item.income.rub())")
 
                     BarMark(
                         x: .value("Месяц", item.monthLabel),
@@ -229,6 +230,7 @@ struct AnalyticsView: View {
                     )
                     .foregroundStyle(FC.expense.opacity(0.65))
                     .cornerRadius(0)
+                    .accessibilityLabel("\(item.monthLabel): расходы \(item.expenses.rub())")
                 }
                 .chartYAxis {
                     AxisMarks { value in
@@ -342,6 +344,7 @@ struct AnalyticsView: View {
                             RoundedRectangle(cornerRadius: 2)
                                 .fill(fineryCategoryColor(item.name))
                                 .frame(width: 10, height: 10)
+                                .accessibilityHidden(true)
                             Text(item.name)
                                 .font(.system(.caption2, design: .default))
                                 .foregroundStyle(FC.ink)
@@ -352,6 +355,8 @@ struct AnalyticsView: View {
                                 .monospacedDigit()
                                 .foregroundStyle(FC.muted)
                         }
+                        .accessibilityElement(children: .combine)
+                        .accessibilityLabel("\(item.name): \(String(format: "%.0f%%", item.percent))")
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -587,17 +592,20 @@ extension AnalyticsView {
 
 struct AnalyticsDynamicsView: View {
     @State var viewModel: AnalyticsViewModel
+    var accentTint: Color = .clear
     @State private var appeared = false
     @State private var barChartHasAppeared = false
     @State private var animatedBarCount = 0
 
-    init(viewModel: AnalyticsViewModel) {
+    init(viewModel: AnalyticsViewModel, accentTint: Color = .clear) {
         _viewModel = State(wrappedValue: viewModel)
+        self.accentTint = accentTint
     }
 
     var body: some View {
         ZStack {
             FC.background.ignoresSafeArea()
+            accentTint.opacity(0.08).ignoresSafeArea()
             if viewModel.isLoading {
                 ProgressView().tint(FC.cobalt)
             } else {
@@ -773,16 +781,19 @@ struct AnalyticsDynamicsView: View {
 
 struct AnalyticsCategoriesView: View {
     @State var viewModel: AnalyticsViewModel
+    var accentTint: Color = .clear
     @State private var showExpenses = false
     @State private var appeared = false
 
-    init(viewModel: AnalyticsViewModel) {
+    init(viewModel: AnalyticsViewModel, accentTint: Color = .clear) {
         _viewModel = State(wrappedValue: viewModel)
+        self.accentTint = accentTint
     }
 
     var body: some View {
         ZStack {
             FC.background.ignoresSafeArea()
+            accentTint.opacity(0.08).ignoresSafeArea()
             if viewModel.isLoading {
                 ProgressView().tint(FC.cobalt)
             } else {
@@ -886,6 +897,7 @@ struct AnalyticsCategoriesView: View {
                             RoundedRectangle(cornerRadius: 2)
                                 .fill(fineryCategoryColor(item.name))
                                 .frame(width: 10, height: 10)
+                                .accessibilityHidden(true)
                             Text(item.name)
                                 .font(.system(.caption2, design: .rounded))
                                 .foregroundStyle(FC.ink).lineLimit(1)
@@ -894,6 +906,8 @@ struct AnalyticsCategoriesView: View {
                                 .font(.system(.caption2, design: .rounded, weight: .semibold))
                                 .monospacedDigit().foregroundStyle(FC.inkSecondary)
                         }
+                        .accessibilityElement(children: .combine)
+                        .accessibilityLabel("\(item.name): \(String(format: "%.0f%%", item.percent))")
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)

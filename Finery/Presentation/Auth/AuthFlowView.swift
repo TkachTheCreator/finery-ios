@@ -368,6 +368,7 @@ struct AuthInputField: View {
             .keyboardType(keyboard)
             .autocorrectionDisabled()
             .textInputAutocapitalization(keyboard == .emailAddress ? .never : .words)
+            .textContentType(keyboard == .emailAddress ? .emailAddress : .name)
             .font(.system(.body, design: .rounded))
             .foregroundStyle(FC.ink)
             .tint(FC.cobalt)
@@ -403,8 +404,10 @@ private struct AuthPasswordField: View {
                     TextField("Пароль", text: $text)
                         .autocorrectionDisabled()
                         .textInputAutocapitalization(.never)
+                        .textContentType(.password)
                 } else {
                     SecureField("Пароль", text: $text)
+                        .textContentType(.password)
                 }
             }
             .font(.system(.body, design: .rounded))

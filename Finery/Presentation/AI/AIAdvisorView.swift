@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct AIAdvisorView: View {
+    var accentTint: Color = .clear
     @Environment(\.dismiss) private var dismiss
     @State private var service = AIService.shared
     @State private var inputText = ""
@@ -16,6 +17,7 @@ struct AIAdvisorView: View {
     var body: some View {
         ZStack {
             Color(h: "F5EFE0").ignoresSafeArea()
+            accentTint.opacity(0.08).ignoresSafeArea()
 
             VStack(spacing: 0) {
                 navBar
@@ -35,11 +37,12 @@ struct AIAdvisorView: View {
                 Image(systemName: "xmark")
                     .font(.system(size: 15, weight: .medium))
                     .foregroundStyle(FC.ink)
-                    .frame(width: 36, height: 36)
+                    .frame(width: 44, height: 44)
                     .background(FC.surface)
                     .clipShape(Circle())
             }
             .buttonStyle(.plain)
+            .accessibilityLabel("Закрыть")
 
             Spacer()
 
@@ -196,11 +199,12 @@ struct AIAdvisorView: View {
                     Image(systemName: "arrow.up")
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundStyle(.white)
-                        .frame(width: 40, height: 40)
+                        .frame(width: 44, height: 44)
                         .background(Circle().fill(FC.cobalt.opacity(canSend ? 1 : 0.35)))
                 }
                 .disabled(!canSend)
                 .buttonStyle(.plain)
+                .accessibilityLabel("Отправить")
             }
             .padding(.horizontal, 16)
             .padding(.top, 4)
