@@ -5,6 +5,8 @@ options:
     iOS: "18.0"
   createIntermediateGroups: true
   xcodeVersion: "16.0"
+  developmentLanguage: ru
+  knownRegions: [ru, en]
 
 packages:
   Pow:
@@ -31,6 +33,7 @@ targets:
     info:
       path: Finery/Info.plist
       properties:
+        CFBundleDevelopmentRegion: ru
         CFBundleDisplayName: Finery
         CFBundleShortVersionString: "$(MARKETING_VERSION)"
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
