@@ -11,6 +11,19 @@ struct QuickInputGuideView: View {
                 VStack(spacing: 14) {
                     headerNote
                     guideCard(
+                        icon: "mic",
+                        title: "Диктовка",
+                        subtitle: "Продиктуйте операцию прямо с клавиатуры — без нажатий",
+                        steps: [
+                            "Откройте любое поле ввода текста",
+                            "Нажмите 🎤 на клавиатуре (рядом с пробелом)",
+                            "Продиктуйте, например: «расход 500 такси»",
+                            "iOS распознаёт речь и вставит текст в поле"
+                        ],
+                        settingsURL: nil,
+                        settingsLabel: nil
+                    )
+                    guideCard(
                         icon: "square.grid.2x2",
                         title: "Виджет на рабочем столе",
                         subtitle: "Один тап — сразу форма добавления операции",
