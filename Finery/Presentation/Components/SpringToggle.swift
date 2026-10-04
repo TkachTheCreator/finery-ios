@@ -35,5 +35,8 @@ struct SpringToggle: View {
                     onChanged?()
                 }
         )
+        .accessibilityRepresentation {
+            Toggle(isOn: $isOn) { EmptyView() }
+        }
     }
 }
