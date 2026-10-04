@@ -33,7 +33,7 @@ struct AddTransactionIntent: AppIntent {
     @Parameter(
         title: "Операция",
         description: "Например: расход 500 рублей обед",
-        requestValueDialog: IntentDialog("Что добавить? Например: «расход 500 такси»")
+        requestValueDialog: IntentDialog("Что добавить? Например: «расход 500 такси». Нажмите 🎤 на клавиатуре и продиктуйте.")
     )
     var input: String
 
