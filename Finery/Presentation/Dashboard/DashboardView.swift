@@ -230,6 +230,13 @@ struct DashboardView: View {
                 }
                 heroMetric(label: "прибыль", value: viewModel.pnl?.netProfit, align: .trailing)
             }
+            if let tax = viewModel.pnl?.taxAmount, tax > 0, viewModel.userType != .other {
+                Text("Из доходов этого месяца \(tax.rub()) — налог, не тратьте")
+                    .font(.system(.caption2, design: .rounded))
+                    .foregroundStyle(FC.ivory.opacity(0.50))
+                    .padding(.top, 10)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
         }
         .padding(22)
         .frame(maxWidth: .infinity, alignment: .leading)

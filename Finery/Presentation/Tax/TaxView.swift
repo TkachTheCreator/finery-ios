@@ -66,6 +66,11 @@ struct TaxView: View {
                         noDataStub.cardAppear(appeared: appeared, delay: 0.08)
                     }
 
+                    if currentMonthCushion > 0 {
+                        cushionBanner(amount: currentMonthCushion)
+                            .cardAppear(appeared: appeared, delay: 0.34)
+                    }
+
                     Color.clear.frame(height: 40)
                 }
                 .padding(.horizontal, 16)
@@ -195,6 +200,37 @@ struct TaxView: View {
 
     private var currentYearLabel: String {
         DateFormatter().also { $0.dateFormat = "yyyy" }.string(from: Date()) + " год"
+    }
+
+    // MARK: - Tax cushion (computed, nothing stored)
+
+    private var currentMonthCushion: Decimal {
+        let svc  = SharedDataService.shared
+        guard svc.userType != .other else { return 0 }
+        let cal  = Calendar.current
+        let start = cal.date(from: cal.dateComponents([.year, .month], from: Date())) ?? Date()
+        let txs  = svc.transactions.filter { $0.date >= start }
+        return TaxCalculatorService().calculateTax(for: txs, mode: svc.taxMode)
+    }
+
+    private func cushionBanner(amount: Decimal) -> some View {
+        HStack(spacing: 12) {
+            Image(systemName: "lock.shield")
+                .font(.system(size: 18, weight: .light))
+                .foregroundStyle(FC.badgeAmber)
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Налоговая подушка")
+                    .font(.system(.subheadline, design: .rounded, weight: .semibold))
+                    .foregroundStyle(FC.ink)
+                Text("Отложи \(amount.rub()) — эта сумма уйдёт в бюджет, не тратьте её")
+                    .font(.system(.caption, design: .rounded))
+                    .foregroundStyle(FC.inkSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .dataWidget()
     }
 }
 
