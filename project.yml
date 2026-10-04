@@ -46,7 +46,6 @@ targets:
           UIApplicationSupportsMultipleScenes: false
         UISupportedInterfaceOrientations~iphone:
           - UIInterfaceOrientationPortrait
-        ANTHROPIC_API_KEY: ""
         LSApplicationQueriesSchemes:
           - mynalog
         CFBundleURLTypes:
