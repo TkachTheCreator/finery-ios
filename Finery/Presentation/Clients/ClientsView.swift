@@ -3,17 +3,21 @@ import Speech
 
 struct ClientsView: View {
     @State var viewModel: ClientsViewModel
+    var accentTint: Color = .clear
     @State private var appeared   = false
     @State private var selectedClient: Client?
     @State private var showInvoices = false
+    @State private var pendingDeleteClient: Client?
 
-    init(viewModel: ClientsViewModel) {
+    init(viewModel: ClientsViewModel, accentTint: Color = .clear) {
         _viewModel = State(wrappedValue: viewModel)
+        self.accentTint = accentTint
     }
 
     var body: some View {
         ZStack {
             FC.background.ignoresSafeArea()
+            accentTint.opacity(0.08).ignoresSafeArea()
             VStack(spacing: 0) {
                 header
                 searchBar
@@ -39,6 +43,17 @@ struct ClientsView: View {
                 try? await Task.sleep(for: .seconds(0.30))
                 withAnimation(.spring(response: 0.7, dampingFraction: 0.82)) { appeared = true }
             }
+        }
+        .confirmationDialog(
+            "Удалить клиента \"\(pendingDeleteClient?.name ?? "")\"?",
+            isPresented: Binding(get: { pendingDeleteClient != nil }, set: { if !$0 { pendingDeleteClient = nil } }),
+            titleVisibility: .visible
+        ) {
+            Button("Удалить", role: .destructive) {
+                if let c = pendingDeleteClient { Task { await viewModel.delete(c) } }
+                pendingDeleteClient = nil
+            }
+            Button("Отмена", role: .cancel) { pendingDeleteClient = nil }
         }
         .sheet(isPresented: $viewModel.showAddClient, onDismiss: { viewModel.voice.stop() }) { addClientSheet }
         .sheet(item: $selectedClient) { ClientDetailView(client: $0, viewModel: viewModel) }
@@ -69,11 +84,12 @@ struct ClientsView: View {
                 Image(systemName: "plus")
                     .font(.system(size: 15, weight: .semibold))
                     .foregroundStyle(.white)
-                    .frame(width: 36, height: 36)
+                    .frame(width: 44, height: 44)
                     .background(FC.cobalt)
                     .clipShape(Circle())
             }
             .buttonStyle(.plain)
+            .accessibilityLabel("Добавить клиента")
         }
         .padding(.horizontal, 20)
         .padding(.top, 20)
@@ -141,9 +157,9 @@ struct ClientsView: View {
                         .opacity(appeared ? 1 : 0)
                         .animation(.fineryCard.delay(Double(idx) * 0.04), value: appeared)
                         .onTapGesture { selectedClient = client }
-                        .swipeActions(edge: .trailing) {
+                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                             Button(role: .destructive) {
-                                Task { await viewModel.delete(client) }
+                                pendingDeleteClient = client
                             } label: {
                                 Label("Удалить", systemImage: "trash")
                             }
@@ -196,7 +212,7 @@ struct ClientsView: View {
 
     private func statusBadge(_ status: ClientStatus) -> some View {
         Text(status.displayName)
-            .font(.system(size: 9, weight: .semibold, design: .rounded))
+            .font(.system(size: 11, weight: .semibold, design: .rounded))
             .foregroundStyle(statusColor(status))
             .padding(.horizontal, 7)
             .padding(.vertical, 3)

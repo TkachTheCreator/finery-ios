@@ -23,6 +23,7 @@ struct TaxView: View {
                             subtitle: status.showNpdLimit
                                 ? "\(Int(status.limitUsedPercent))% лимита НПД использовано"
                                 : status.effectiveRate,
+                            badgeColor: FC.badgeAmber,
                             destination: AnyView(TaxModeDetailView(viewModel: viewModel))
                         )
                         .cardAppear(appeared: appeared, delay: 0.08)
@@ -32,6 +33,7 @@ struct TaxView: View {
                             title: "К уплате",
                             value: status.taxDue.rub(),
                             subtitle: "до 28 числа · \(status.daysUntilDeadline) дн.",
+                            badgeColor: FC.badgeGold,
                             destination: AnyView(TaxDueDetailView(status: status))
                         )
                         .cardAppear(appeared: appeared, delay: 0.16)
@@ -41,6 +43,7 @@ struct TaxView: View {
                             title: "Прогноз",
                             value: forecastPreview,
                             subtitle: "лимит НПД и кассовый разрыв",
+                            badgeColor: FC.badgeSage,
                             destination: AnyView(TaxForecastDetailView(viewModel: viewModel))
                         )
                         .cardAppear(appeared: appeared, delay: 0.22)
@@ -50,6 +53,7 @@ struct TaxView: View {
                             title: "История",
                             value: viewModel.totalIncomeYear.rub(),
                             subtitle: "доход за год",
+                            badgeColor: FC.badgeDustyBlue,
                             destination: AnyView(TaxHistoryDetailView(viewModel: viewModel))
                         )
                         .cardAppear(appeared: appeared, delay: 0.28)
@@ -81,14 +85,12 @@ struct TaxView: View {
         title: String,
         value: String,
         subtitle: String,
+        badgeColor: Color,
         destination: AnyView
     ) -> some View {
         NavigationLink(destination: destination) {
             HStack(spacing: 14) {
-                Image(systemName: icon)
-                    .font(.system(size: 20, weight: .light))
-                    .foregroundStyle(FC.inkSecondary)
-                    .frame(width: 28)
+                BadgeIcon(systemName: icon, badgeColor: badgeColor, badgeSize: 36, iconSize: 18)
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)

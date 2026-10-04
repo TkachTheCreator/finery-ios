@@ -53,11 +53,12 @@ struct InvoiceView: View {
                 Image(systemName: "plus")
                     .font(.system(size: 15, weight: .semibold))
                     .foregroundStyle(.white)
-                    .frame(width: 36, height: 36)
+                    .frame(width: 44, height: 44)
                     .background(FC.cobalt)
                     .clipShape(Circle())
             }
             .buttonStyle(.plain)
+            .accessibilityLabel("Создать счёт")
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 16)

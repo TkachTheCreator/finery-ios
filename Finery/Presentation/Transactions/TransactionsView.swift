@@ -7,6 +7,7 @@ struct TransactionsView: View {
     @State private var showAdd = false
     @State private var appeared = false
     @State private var editingTransaction: Transaction? = nil
+    @State private var pendingDeleteId: UUID?
 
     init(viewModel: TransactionsViewModel) {
         _viewModel = State(wrappedValue: viewModel)
@@ -58,6 +59,17 @@ struct TransactionsView: View {
                 viewModel: viewModel.makeEditTransactionViewModel(tx),
                 onSave: { Task { await viewModel.load() } }
             )
+        }
+        .confirmationDialog(
+            "Удалить транзакцию?",
+            isPresented: Binding(get: { pendingDeleteId != nil }, set: { if !$0 { pendingDeleteId = nil } }),
+            titleVisibility: .visible
+        ) {
+            Button("Удалить", role: .destructive) {
+                if let id = pendingDeleteId { Task { await viewModel.delete(id: id) } }
+                pendingDeleteId = nil
+            }
+            Button("Отмена", role: .cancel) { pendingDeleteId = nil }
         }
     }
 
@@ -156,9 +168,9 @@ struct TransactionsView: View {
                         .listRowBackground(Color.clear)
                         .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
                         .listRowSeparator(.hidden)
-                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                             Button(role: .destructive) {
-                                Task { await viewModel.delete(id: tx.id) }
+                                pendingDeleteId = tx.id
                             } label: {
                                 Label("Удалить", systemImage: "trash")
                             }
@@ -216,11 +228,13 @@ struct TransactionsView: View {
                     .padding(.vertical, 10)
                     .padding(.horizontal, 14)
                     .glassCardSmall()
+                    .accessibilityHidden(true)
                 }
             }
             .padding(.horizontal, 16)
             .padding(.top, 12)
         }
+        .accessibilityLabel("Загрузка операций")
     }
 
     // MARK: Empty State
