@@ -73,13 +73,8 @@ final class TaxViewModel {
                 npdForecast = nil
             }
 
-            if let status = svc.taxStatus {
-                let daysBefore = svc.currentUser?.taxReminderDaysBefore ?? 5
-                NotificationService.shared.scheduleTaxReminder(
-                    deadline: status.nextDeadline, amount: status.taxDue, daysBefore: daysBefore)
-                if status.isNearLimit {
-                    NotificationService.shared.scheduleNpdLimitWarning(usedPercent: status.limitUsedPercent)
-                }
+            if let user = svc.currentUser {
+                NotificationService.shared.rescheduleAll(user: user, status: svc.taxStatus)
             }
         } catch {
             // getMonthlyDynamics failure is non-fatal — charts stay empty

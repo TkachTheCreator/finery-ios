@@ -444,13 +444,20 @@ struct SecuritySettingsView: View {
                 Section("Биометрия") {
                     biometricRow
                 }
-                Section("Уведомления") {
+                Section {
+                    // Налоговый дедлайн
                     HStack {
-                        Text("Напоминать о налоге")
-                            .font(.system(.body))
-                            .foregroundStyle(FC.ink)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Напоминать о налоге")
+                                .font(.system(.body)).foregroundStyle(FC.ink)
+                            Text("За несколько дней до 28 числа")
+                                .font(.system(.caption)).foregroundStyle(FC.inkSecondary)
+                        }
                         Spacer()
                         SpringToggle(isOn: $viewModel.user.notificationsEnabled) {
+                            if viewModel.user.notificationsEnabled {
+                                Task { await NotificationService.shared.requestPermission() }
+                            }
                             Task { await viewModel.save() }
                         }
                     }
@@ -464,6 +471,28 @@ struct SecuritySettingsView: View {
                             Task { await viewModel.save() }
                         }
                     }
+
+                    // Лимит НПД
+                    HStack {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Предупреждать о лимите НПД")
+                                .font(.system(.body)).foregroundStyle(FC.ink)
+                            Text("Когда использовано ≥ 80% от 2 400 000 ₽")
+                                .font(.system(.caption)).foregroundStyle(FC.inkSecondary)
+                        }
+                        Spacer()
+                        SpringToggle(isOn: $viewModel.user.npdLimitNotificationEnabled) {
+                            if viewModel.user.npdLimitNotificationEnabled {
+                                Task { await NotificationService.shared.requestPermission() }
+                            }
+                            Task { await viewModel.save() }
+                        }
+                    }
+                } header: {
+                    Text("Уведомления")
+                } footer: {
+                    Text("Уведомления нужны, чтобы Finery напоминал о налоговых дедлайнах и лимитах — это поможет избежать штрафов.")
+                        .font(.system(.caption))
                 }
             }
             .listStyle(.insetGrouped)

@@ -6,6 +6,7 @@ struct User: Codable, Sendable {
     var taxMode: TaxMode
     var userType: UserType
     var notificationsEnabled: Bool
+    var npdLimitNotificationEnabled: Bool
     var taxReminderDaysBefore: Int
 
     init(
@@ -14,6 +15,7 @@ struct User: Codable, Sendable {
         taxMode: TaxMode = .npd,
         userType: UserType = .freelancer,
         notificationsEnabled: Bool = true,
+        npdLimitNotificationEnabled: Bool = true,
         taxReminderDaysBefore: Int = 5
     ) {
         self.id = id
@@ -21,6 +23,7 @@ struct User: Codable, Sendable {
         self.taxMode = taxMode
         self.userType = userType
         self.notificationsEnabled = notificationsEnabled
+        self.npdLimitNotificationEnabled = npdLimitNotificationEnabled
         self.taxReminderDaysBefore = taxReminderDaysBefore
     }
 }
