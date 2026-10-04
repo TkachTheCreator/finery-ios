@@ -136,23 +136,26 @@ struct RootView: View {
             }
         }
         .overlay {
-            if appLock.isLocked {
+            if appLock.isLocked && phase == .main {
                 LockScreenView()
                     .transition(.opacity)
                     .zIndex(100)
             }
         }
         .animation(.easeInOut(duration: 0.2), value: appLock.isLocked)
-        .onChange(of: scenePhase) { _, phase in
-            if phase == .background {
-                appLock.lockIfNeeded()
-            } else if phase == .active {
+        .onChange(of: scenePhase) { _, newPhase in
+            if newPhase == .background {
+                appLock.didEnterBackground()
+            } else if newPhase == .active {
+                appLock.didBecomeActive()
                 checkClipboard()
                 checkControlCenterFlag()
             }
         }
         .animation(.fineryPage, value: phase)
         .fontDesign(.rounded)
+        // Намеренное решение: приложение работает только в светлой теме, вся дизайн-система
+        // (Mercury-палитра) построена под светлый режим. Dark Mode не поддерживается по дизайну, не баг.
         .preferredColorScheme(.light)
         .onChange(of: SharedDataService.shared.isLoggedOut) { _, loggedOut in
             if loggedOut {
@@ -333,6 +336,7 @@ struct RootView: View {
         let welcomeSeen = UserDefaults.standard.bool(forKey: "finery_welcome_seen")
 
         if APIClient.shared.isAuthenticated {
+            appLock.lockOnLaunch()
             phase = .main
             Task { await c.dashboard.load() }
             Task { await RecurringTransactionService.shared.processIfNeeded(repository: c.transactionRepository) }
