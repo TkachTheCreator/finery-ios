@@ -94,4 +94,33 @@ struct TaxCalculatorTests {
         let day = Calendar.current.component(.day, from: deadline)
         #expect(day == 28)
     }
+
+    // MARK: - Налоговая подушка
+
+    // Подушка НПД 4% — доход от физлица 50 000 → откладываем 2 000
+    @Test func cushion_npd_4pct() {
+        let calc = TaxCalculatorService()
+        let txs = [Transaction(amount: 50_000, direction: .income,
+                               description: "Фриланс", date: Date(),
+                               source: .manual, clientType: .individual)]
+        #expect(calc.calculateTax(for: txs, mode: .npd) == 2_000)
+    }
+
+    // Подушка УСН 6% — доход 300 000 → откладываем 18 000
+    @Test func cushion_usn6() {
+        let calc = TaxCalculatorService()
+        let txs = [Transaction(amount: 300_000, direction: .income,
+                               description: "Проект", date: Date(),
+                               source: .bank, clientType: .legal)]
+        #expect(calc.calculateTax(for: txs, mode: .usn6) == 18_000)
+    }
+
+    // Подушка при нулевом доходе — всегда 0
+    @Test func cushion_zero_income() {
+        let calc = TaxCalculatorService()
+        let txs: [Transaction] = []
+        #expect(calc.calculateTax(for: txs, mode: .npd) == 0)
+        #expect(calc.calculateTax(for: txs, mode: .usn6) == 0)
+        #expect(calc.calculateTax(for: txs, mode: .usn15) == 0)
+    }
 }
