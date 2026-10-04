@@ -84,6 +84,26 @@ final class NotificationService: @unchecked Sendable {
         center.add(UNNotificationRequest(identifier: id, content: content, trigger: trigger))
     }
 
+    // MARK: - Reschedule all based on user preferences and current tax status
+
+    func rescheduleAll(user: User, status: TaxStatus?) {
+        // Tax deadline reminder
+        if user.notificationsEnabled, let s = status {
+            scheduleTaxReminder(deadline: s.nextDeadline,
+                                amount: s.taxDue,
+                                daysBefore: user.taxReminderDaysBefore)
+        } else {
+            cancel(identifier: "finery.tax.reminder")
+            cancel(identifier: "finery.setaside.reminder")
+        }
+        // НПД limit warning
+        if user.npdLimitNotificationEnabled, let s = status, s.showNpdLimit {
+            scheduleNpdLimitWarning(usedPercent: s.limitUsedPercent)
+        } else {
+            cancel(identifier: "finery.npd.warning")
+        }
+    }
+
     func scheduleNpdLimitWarning(usedPercent: Double) {
         guard usedPercent >= 80 else { return }
         let center = UNUserNotificationCenter.current()

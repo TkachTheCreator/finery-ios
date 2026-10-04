@@ -260,6 +260,9 @@ final class SharedDataService {
         async let pnlFetch = refreshPnL()
         async let taxFetch = refreshTaxStatus()
         _ = await (pnlFetch, taxFetch)
+        if let user = currentUser {
+            NotificationService.shared.rescheduleAll(user: user, status: taxStatus)
+        }
     }
 
     /// Public entry point to refresh a client's locally-cached total after a link/unlink.
