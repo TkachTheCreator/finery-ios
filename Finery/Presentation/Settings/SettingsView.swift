@@ -228,26 +228,37 @@ struct SettingsView: View {
                         // Top-level tiles — tapping each opens a sub-screen
                         settingsTile(icon: "person.circle", title: "Профиль",
                                      subtitle: viewModel.user.name.isEmpty ? "Имя, тип учёта" : viewModel.user.name,
+                                     badgeColor: FC.badgeDustyBlue,
                                      destination: AnyView(ProfileSettingsView(viewModel: viewModel)))
 
                         settingsTile(icon: "percent", title: "Налог",
                                      subtitle: viewModel.user.userType == .other ? "Личный трекер" : viewModel.user.taxMode.displayName,
+                                     badgeColor: FC.badgeAmber,
                                      destination: AnyView(TaxSettingsView(viewModel: viewModel)))
 
                         settingsTile(icon: "lock.circle", title: "Безопасность",
                                      subtitle: "Биометрия, уведомления",
+                                     badgeColor: FC.badgeSage,
                                      destination: AnyView(SecuritySettingsView(viewModel: viewModel)))
 
                         settingsTile(icon: "tag.circle", title: "Категории",
                                      subtitle: "Доходы и расходы",
+                                     badgeColor: FC.badgeTerracotta,
                                      destination: AnyView(CategoriesView()))
 
                         settingsTile(icon: "bolt.circle", title: "Быстрый ввод",
                                      subtitle: "Виджеты, Control Center, Back Tap",
+                                     badgeColor: FC.badgePlum,
                                      destination: AnyView(QuickInputGuideView()))
+
+                        settingsTile(icon: "square.and.arrow.up.circle", title: "Экспорт",
+                                     subtitle: "PDF или CSV для бухгалтера / визы",
+                                     badgeColor: FC.badgeGold,
+                                     destination: AnyView(ExportView()))
 
                         settingsTile(icon: "info.circle", title: "О приложении",
                                      subtitle: "Версия, выход из аккаунта",
+                                     badgeColor: FC.badgeMuted,
                                      destination: AnyView(AppInfoSettingsView(viewModel: viewModel)))
 
                         Color.clear.frame(height: 20)
@@ -259,13 +270,10 @@ struct SettingsView: View {
         }
     }
 
-    private func settingsTile(icon: String, title: String, subtitle: String, destination: AnyView) -> some View {
+    private func settingsTile(icon: String, title: String, subtitle: String, badgeColor: Color, destination: AnyView) -> some View {
         NavigationLink(destination: destination) {
             HStack(spacing: 14) {
-                Image(systemName: icon)
-                    .font(.system(size: 22, weight: .light))
-                    .foregroundStyle(FC.inkSecondary)
-                    .frame(width: 30)
+                BadgeIcon(systemName: icon, badgeColor: badgeColor, badgeSize: 36, iconSize: 18)
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
@@ -471,13 +479,19 @@ struct SecuritySettingsView: View {
         return Group {
             if lock.isBiometricAvailable {
                 HStack {
-                    Text(lock.biometricLabel)
-                        .font(.system(.body)).foregroundStyle(FC.ink)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Запрашивать \(lock.biometricLabel) при входе")
+                            .font(.system(.body)).foregroundStyle(FC.ink)
+                        if !lock.isBiometricReady {
+                            Text("\(lock.biometricLabel) не настроен — используется код-пароль")
+                                .font(.system(.caption)).foregroundStyle(FC.inkSecondary)
+                        }
+                    }
                     Spacer()
                     SpringToggle(isOn: Binding(get: { lock.isEnabled }, set: { lock.isEnabled = $0 }))
                 }
             } else {
-                Text("Биометрия недоступна")
+                Text("Биометрия недоступна на этом устройстве")
                     .font(.system(.body)).foregroundStyle(FC.inkSecondary)
             }
         }
