@@ -19,6 +19,7 @@ struct CashFlowDetailView: View {
     @State private var selectedPage   = 0
     @State private var monthOffset    = 0
     @State private var editingTransaction: Transaction? = nil
+    @State private var hasSwipedMonth: Bool = UserDefaults.standard.bool(forKey: "finery_cashflow_swiped")
 
     private var cal: Calendar { Calendar.current }
 
@@ -260,8 +261,22 @@ struct CashFlowDetailView: View {
                 .onEnded { value in
                     if value.translation.width < -40 { changeMonth(+1) }
                     else if value.translation.width > 40 { changeMonth(-1) }
+                    if !hasSwipedMonth {
+                        hasSwipedMonth = true
+                        UserDefaults.standard.set(true, forKey: "finery_cashflow_swiped")
+                    }
                 }
         )
+        .overlay(alignment: .bottom) {
+            if !hasSwipedMonth {
+                Text("← Свайп для смены месяца →")
+                    .font(.system(.caption2, design: .rounded))
+                    .foregroundStyle(FC.inkSecondary)
+                    .padding(.bottom, 8)
+                    .transition(.opacity)
+                    .accessibilityHidden(true)
+            }
+        }
     }
 
     // MARK: - Legend Row
