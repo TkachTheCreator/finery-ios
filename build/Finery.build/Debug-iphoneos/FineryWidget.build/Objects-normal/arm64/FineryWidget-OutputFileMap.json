@@ -1,0 +1,19 @@
+{
+  "" : {
+    "diagnostics" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/FineryWidget.build/Objects-normal/arm64/FineryWidget-primary.dia",
+    "emit-module-dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/FineryWidget.build/Objects-normal/arm64/FineryWidget-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/FineryWidget.build/Objects-normal/arm64/FineryWidget-primary-emit-module.dia",
+    "pch" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/FineryWidget.build/Objects-normal/arm64/FineryWidget-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/FineryWidget.build/Objects-normal/arm64/FineryWidget-primary.swiftdeps"
+  },
+  "/Users/danilatkacev/finery-ios/FineryWidget/FineryWidget.swift" : {
+    "const-values" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/FineryWidget.build/Objects-normal/arm64/FineryWidget.swiftconstvalues",
+    "dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/FineryWidget.build/Objects-normal/arm64/FineryWidget.d",
+    "diagnostics" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/FineryWidget.build/Objects-normal/arm64/FineryWidget.dia",
+    "index-unit-output-path" : "/Finery.build/Debug-iphoneos/FineryWidget.build/Objects-normal/arm64/FineryWidget.o",
+    "llvm-bc" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/FineryWidget.build/Objects-normal/arm64/FineryWidget.bc",
+    "object" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/FineryWidget.build/Objects-normal/arm64/FineryWidget.o",
+    "swift-dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/FineryWidget.build/Objects-normal/arm64/FineryWidget.swiftdeps",
+    "swiftmodule" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/FineryWidget.build/Objects-normal/arm64/FineryWidget~partial.swiftmodule"
+  }
+}

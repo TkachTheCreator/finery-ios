@@ -1,0 +1,86 @@
+{
+  "/Users/danilatkacev/finery-ios/Finery/Domain/Models/CashFlowForecast.swift" : {
+    "const-values" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/CashFlowForecast.swiftconstvalues",
+    "dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/CashFlowForecast.d",
+    "diagnostics" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/CashFlowForecast.dia",
+    "object" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/CashFlowForecast.o",
+    "swift-dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/CashFlowForecast.swiftdeps"
+  },
+  "/Users/danilatkacev/finery-ios/Finery/Domain/Models/Client.swift" : {
+    "const-values" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/Client.swiftconstvalues",
+    "dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/Client.d",
+    "diagnostics" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/Client.dia",
+    "object" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/Client.o",
+    "swift-dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/Client.swiftdeps"
+  },
+  "/Users/danilatkacev/finery-ios/Finery/Domain/Models/Enums/ClientType.swift" : {
+    "const-values" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/ClientType.swiftconstvalues",
+    "dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/ClientType.d",
+    "diagnostics" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/ClientType.dia",
+    "object" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/ClientType.o",
+    "swift-dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/ClientType.swiftdeps"
+  },
+  "/Users/danilatkacev/finery-ios/Finery/Domain/Services/BankSMSParser.swift" : {
+    "const-values" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/BankSMSParser.swiftconstvalues",
+    "dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/BankSMSParser.d",
+    "diagnostics" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/BankSMSParser.dia",
+    "object" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/BankSMSParser.o",
+    "swift-dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/BankSMSParser.swiftdeps"
+  },
+  "/Users/danilatkacev/finery-ios/Finery/Domain/UseCases/CalculateTaxUseCase.swift" : {
+    "const-values" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/CalculateTaxUseCase.swiftconstvalues",
+    "dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/CalculateTaxUseCase.d",
+    "diagnostics" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/CalculateTaxUseCase.dia",
+    "object" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/CalculateTaxUseCase.o",
+    "swift-dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/CalculateTaxUseCase.swiftdeps"
+  },
+  "/Users/danilatkacev/finery-ios/Finery/Domain/UseCases/ClassifyTransactionUseCase.swift" : {
+    "const-values" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/ClassifyTransactionUseCase.swiftconstvalues",
+    "dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/ClassifyTransactionUseCase.d",
+    "diagnostics" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/ClassifyTransactionUseCase.dia",
+    "object" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/ClassifyTransactionUseCase.o",
+    "swift-dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/ClassifyTransactionUseCase.swiftdeps"
+  },
+  "/Users/danilatkacev/finery-ios/Finery/Presentation/AI/ChatView.swift" : {
+    "const-values" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/ChatView.swiftconstvalues",
+    "dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/ChatView.d",
+    "diagnostics" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/ChatView.dia",
+    "object" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/ChatView.o",
+    "swift-dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/ChatView.swiftdeps"
+  },
+  "/Users/danilatkacev/finery-ios/Finery/Presentation/AddTransaction/CategoryPickerSheet.swift" : {
+    "const-values" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/CategoryPickerSheet.swiftconstvalues",
+    "dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/CategoryPickerSheet.d",
+    "diagnostics" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/CategoryPickerSheet.dia",
+    "object" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/CategoryPickerSheet.o",
+    "swift-dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/CategoryPickerSheet.swiftdeps"
+  },
+  "/Users/danilatkacev/finery-ios/Finery/Presentation/Clients/ClientsView.swift" : {
+    "const-values" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/ClientsView.swiftconstvalues",
+    "dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/ClientsView.d",
+    "diagnostics" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/ClientsView.dia",
+    "object" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/ClientsView.o",
+    "swift-dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/ClientsView.swiftdeps"
+  },
+  "/Users/danilatkacev/finery-ios/Finery/Presentation/Clients/ClientsViewModel.swift" : {
+    "const-values" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/ClientsViewModel.swiftconstvalues",
+    "dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/ClientsViewModel.d",
+    "diagnostics" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/ClientsViewModel.dia",
+    "object" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/ClientsViewModel.o",
+    "swift-dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/ClientsViewModel.swiftdeps"
+  },
+  "/Users/danilatkacev/finery-ios/Finery/Presentation/Components/ClipboardTransactionBanner.swift" : {
+    "const-values" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/ClipboardTransactionBanner.swiftconstvalues",
+    "dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/ClipboardTransactionBanner.d",
+    "diagnostics" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/ClipboardTransactionBanner.dia",
+    "object" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/ClipboardTransactionBanner.o",
+    "swift-dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/ClipboardTransactionBanner.swiftdeps"
+  },
+  "/Users/danilatkacev/finery-ios/Finery/Presentation/Dashboard/CashFlowDetailView.swift" : {
+    "const-values" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/CashFlowDetailView.swiftconstvalues",
+    "dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/CashFlowDetailView.d",
+    "diagnostics" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/CashFlowDetailView.dia",
+    "object" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/CashFlowDetailView.o",
+    "swift-dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/CashFlowDetailView.swiftdeps"
+  }
+}

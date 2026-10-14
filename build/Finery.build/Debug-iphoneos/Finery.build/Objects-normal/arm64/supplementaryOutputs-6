@@ -1,0 +1,79 @@
+{
+  "/Users/danilatkacev/finery-ios/Finery/Data/SharedDataService.swift" : {
+    "const-values" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/SharedDataService.swiftconstvalues",
+    "dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/SharedDataService.d",
+    "diagnostics" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/SharedDataService.dia",
+    "object" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/SharedDataService.o",
+    "swift-dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/SharedDataService.swiftdeps"
+  },
+  "/Users/danilatkacev/finery-ios/Finery/Data/StoreBackedTransactionRepository.swift" : {
+    "const-values" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/StoreBackedTransactionRepository.swiftconstvalues",
+    "dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/StoreBackedTransactionRepository.d",
+    "diagnostics" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/StoreBackedTransactionRepository.dia",
+    "object" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/StoreBackedTransactionRepository.o",
+    "swift-dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/StoreBackedTransactionRepository.swiftdeps"
+  },
+  "/Users/danilatkacev/finery-ios/Finery/Domain/Models/RecurringTransaction.swift" : {
+    "const-values" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/RecurringTransaction.swiftconstvalues",
+    "dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/RecurringTransaction.d",
+    "diagnostics" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/RecurringTransaction.dia",
+    "object" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/RecurringTransaction.o",
+    "swift-dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/RecurringTransaction.swiftdeps"
+  },
+  "/Users/danilatkacev/finery-ios/Finery/Domain/Models/SeasonalAnalysis.swift" : {
+    "const-values" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/SeasonalAnalysis.swiftconstvalues",
+    "dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/SeasonalAnalysis.d",
+    "diagnostics" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/SeasonalAnalysis.dia",
+    "object" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/SeasonalAnalysis.o",
+    "swift-dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/SeasonalAnalysis.swiftdeps"
+  },
+  "/Users/danilatkacev/finery-ios/Finery/Domain/Services/RecurringTransactionService.swift" : {
+    "const-values" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/RecurringTransactionService.swiftconstvalues",
+    "dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/RecurringTransactionService.d",
+    "diagnostics" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/RecurringTransactionService.dia",
+    "object" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/RecurringTransactionService.o",
+    "swift-dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/RecurringTransactionService.swiftdeps"
+  },
+  "/Users/danilatkacev/finery-ios/Finery/Presentation/AddTransaction/RecurringPickerSheet.swift" : {
+    "const-values" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/RecurringPickerSheet.swiftconstvalues",
+    "dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/RecurringPickerSheet.d",
+    "diagnostics" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/RecurringPickerSheet.dia",
+    "object" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/RecurringPickerSheet.o",
+    "swift-dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/RecurringPickerSheet.swiftdeps"
+  },
+  "/Users/danilatkacev/finery-ios/Finery/Presentation/Components/SpringToggle.swift" : {
+    "const-values" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/SpringToggle.swiftconstvalues",
+    "dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/SpringToggle.d",
+    "diagnostics" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/SpringToggle.dia",
+    "object" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/SpringToggle.o",
+    "swift-dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/SpringToggle.swiftdeps"
+  },
+  "/Users/danilatkacev/finery-ios/Finery/Presentation/Root/RootView.swift" : {
+    "const-values" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/RootView.swiftconstvalues",
+    "dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/RootView.d",
+    "diagnostics" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/RootView.dia",
+    "object" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/RootView.o",
+    "swift-dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/RootView.swiftdeps"
+  },
+  "/Users/danilatkacev/finery-ios/Finery/Presentation/Settings/SettingsView.swift" : {
+    "const-values" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/SettingsView.swiftconstvalues",
+    "dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/SettingsView.d",
+    "diagnostics" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/SettingsView.dia",
+    "object" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/SettingsView.o",
+    "swift-dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/SettingsView.swiftdeps"
+  },
+  "/Users/danilatkacev/finery-ios/Finery/Presentation/Settings/SettingsViewModel.swift" : {
+    "const-values" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/SettingsViewModel.swiftconstvalues",
+    "dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/SettingsViewModel.d",
+    "diagnostics" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/SettingsViewModel.dia",
+    "object" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/SettingsViewModel.o",
+    "swift-dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/SettingsViewModel.swiftdeps"
+  },
+  "/Users/danilatkacev/finery-ios/Finery/Presentation/Splash/SplashView.swift" : {
+    "const-values" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/SplashView.swiftconstvalues",
+    "dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/SplashView.d",
+    "diagnostics" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/SplashView.dia",
+    "object" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/SplashView.o",
+    "swift-dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/SplashView.swiftdeps"
+  }
+}

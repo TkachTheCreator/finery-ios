@@ -1,0 +1,86 @@
+{
+  "/Users/danilatkacev/finery-ios/Finery/Intents/AddTransactionIntent.swift" : {
+    "const-values" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AddTransactionIntent.swiftconstvalues",
+    "dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AddTransactionIntent.d",
+    "diagnostics" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AddTransactionIntent.dia",
+    "object" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AddTransactionIntent.o",
+    "swift-dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AddTransactionIntent.swiftdeps"
+  },
+  "/Users/danilatkacev/finery-ios/Finery/Network/AIService.swift" : {
+    "const-values" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AIService.swiftconstvalues",
+    "dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AIService.d",
+    "diagnostics" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AIService.dia",
+    "object" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AIService.o",
+    "swift-dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AIService.swiftdeps"
+  },
+  "/Users/danilatkacev/finery-ios/Finery/Network/APIClient.swift" : {
+    "const-values" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/APIClient.swiftconstvalues",
+    "dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/APIClient.d",
+    "diagnostics" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/APIClient.dia",
+    "object" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/APIClient.o",
+    "swift-dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/APIClient.swiftdeps"
+  },
+  "/Users/danilatkacev/finery-ios/Finery/Presentation/AI/AIAdvisorView.swift" : {
+    "const-values" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AIAdvisorView.swiftconstvalues",
+    "dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AIAdvisorView.d",
+    "diagnostics" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AIAdvisorView.dia",
+    "object" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AIAdvisorView.o",
+    "swift-dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AIAdvisorView.swiftdeps"
+  },
+  "/Users/danilatkacev/finery-ios/Finery/Presentation/AddTransaction/AddTransactionView.swift" : {
+    "const-values" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AddTransactionView.swiftconstvalues",
+    "dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AddTransactionView.d",
+    "diagnostics" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AddTransactionView.dia",
+    "object" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AddTransactionView.o",
+    "swift-dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AddTransactionView.swiftdeps"
+  },
+  "/Users/danilatkacev/finery-ios/Finery/Presentation/AddTransaction/AddTransactionViewModel.swift" : {
+    "const-values" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AddTransactionViewModel.swiftconstvalues",
+    "dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AddTransactionViewModel.d",
+    "diagnostics" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AddTransactionViewModel.dia",
+    "object" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AddTransactionViewModel.o",
+    "swift-dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AddTransactionViewModel.swiftdeps"
+  },
+  "/Users/danilatkacev/finery-ios/Finery/Presentation/Analytics/AnalyticsView.swift" : {
+    "const-values" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AnalyticsView.swiftconstvalues",
+    "dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AnalyticsView.d",
+    "diagnostics" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AnalyticsView.dia",
+    "object" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AnalyticsView.o",
+    "swift-dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AnalyticsView.swiftdeps"
+  },
+  "/Users/danilatkacev/finery-ios/Finery/Presentation/Analytics/AnalyticsViewModel.swift" : {
+    "const-values" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AnalyticsViewModel.swiftconstvalues",
+    "dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AnalyticsViewModel.d",
+    "diagnostics" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AnalyticsViewModel.dia",
+    "object" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AnalyticsViewModel.o",
+    "swift-dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AnalyticsViewModel.swiftdeps"
+  },
+  "/Users/danilatkacev/finery-ios/Finery/Presentation/Auth/AuthFlowView.swift" : {
+    "const-values" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AuthFlowView.swiftconstvalues",
+    "dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AuthFlowView.d",
+    "diagnostics" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AuthFlowView.dia",
+    "object" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AuthFlowView.o",
+    "swift-dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AuthFlowView.swiftdeps"
+  },
+  "/Users/danilatkacev/finery-ios/Finery/Presentation/Auth/AuthViewModel.swift" : {
+    "const-values" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AuthViewModel.swiftconstvalues",
+    "dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AuthViewModel.d",
+    "diagnostics" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AuthViewModel.dia",
+    "object" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AuthViewModel.o",
+    "swift-dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AuthViewModel.swiftdeps"
+  },
+  "/Users/danilatkacev/finery-ios/Finery/Presentation/Root/AppContainer.swift" : {
+    "const-values" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AppContainer.swiftconstvalues",
+    "dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AppContainer.d",
+    "diagnostics" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AppContainer.dia",
+    "object" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AppContainer.o",
+    "swift-dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AppContainer.swiftdeps"
+  },
+  "/Users/danilatkacev/finery-ios/Finery/Presentation/Root/AppLockManager.swift" : {
+    "const-values" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AppLockManager.swiftconstvalues",
+    "dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AppLockManager.d",
+    "diagnostics" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AppLockManager.dia",
+    "object" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AppLockManager.o",
+    "swift-dependencies" : "/Users/danilatkacev/finery-ios/build/Finery.build/Debug-iphoneos/Finery.build/Objects-normal/arm64/AppLockManager.swiftdeps"
+  }
+}

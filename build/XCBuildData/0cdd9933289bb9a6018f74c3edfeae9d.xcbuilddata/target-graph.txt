@@ -1,0 +1,21 @@
+Target dependency graph (10 targets)
+Target 'Finery' in project 'Finery'
+➜ Explicit dependency on target 'FineryWidget' in project 'Finery'
+➜ Explicit dependency on target 'FineryControl' in project 'Finery'
+➜ Explicit dependency on target 'Pow' in project 'Pow'
+➜ Explicit dependency on target 'Lottie' in project 'Lottie'
+➜ Explicit dependency on target 'Shimmer' in project 'SwiftUI-Shimmer'
+Target 'Shimmer' in project 'SwiftUI-Shimmer'
+➜ Explicit dependency on target 'Shimmer' in project 'SwiftUI-Shimmer'
+Target 'Shimmer' in project 'SwiftUI-Shimmer' (no dependencies)
+Target 'Lottie' in project 'Lottie'
+➜ Explicit dependency on target '_LottieStub' in project 'Lottie'
+Target '_LottieStub' in project 'Lottie' (no dependencies)
+Target 'Pow' in project 'Pow'
+➜ Explicit dependency on target 'Pow' in project 'Pow'
+➜ Explicit dependency on target 'Pow_Pow' in project 'Pow'
+Target 'Pow' in project 'Pow'
+➜ Explicit dependency on target 'Pow_Pow' in project 'Pow'
+Target 'Pow_Pow' in project 'Pow' (no dependencies)
+Target 'FineryControl' in project 'Finery' (no dependencies)
+Target 'FineryWidget' in project 'Finery' (no dependencies)

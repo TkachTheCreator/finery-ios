@@ -1,0 +1,2 @@
+Target dependency graph (1 target)
+Target 'FineryWidget' in project 'Finery' (no dependencies)

@@ -1,0 +1,16 @@
+{
+  "" : {
+    "const-values" : "/Users/danilatkacev/Library/Developer/Xcode/DerivedData/Finery-efyiqcwqnpcidodwrwzxaemktsxt/SourcePackages/checkouts/SwiftUI-Shimmer/build/SwiftUI-Shimmer.build/Release-iphoneos/Shimmer.build/Objects-normal/arm64/Shimmer-primary.swiftconstvalues",
+    "dependencies" : "/Users/danilatkacev/Library/Developer/Xcode/DerivedData/Finery-efyiqcwqnpcidodwrwzxaemktsxt/SourcePackages/checkouts/SwiftUI-Shimmer/build/SwiftUI-Shimmer.build/Release-iphoneos/Shimmer.build/Objects-normal/arm64/Shimmer-primary.d",
+    "diagnostics" : "/Users/danilatkacev/Library/Developer/Xcode/DerivedData/Finery-efyiqcwqnpcidodwrwzxaemktsxt/SourcePackages/checkouts/SwiftUI-Shimmer/build/SwiftUI-Shimmer.build/Release-iphoneos/Shimmer.build/Objects-normal/arm64/Shimmer-primary.dia",
+    "emit-module-dependencies" : "/Users/danilatkacev/Library/Developer/Xcode/DerivedData/Finery-efyiqcwqnpcidodwrwzxaemktsxt/SourcePackages/checkouts/SwiftUI-Shimmer/build/SwiftUI-Shimmer.build/Release-iphoneos/Shimmer.build/Objects-normal/arm64/Shimmer-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/danilatkacev/Library/Developer/Xcode/DerivedData/Finery-efyiqcwqnpcidodwrwzxaemktsxt/SourcePackages/checkouts/SwiftUI-Shimmer/build/SwiftUI-Shimmer.build/Release-iphoneos/Shimmer.build/Objects-normal/arm64/Shimmer-primary-emit-module.dia",
+    "pch" : "/Users/danilatkacev/Library/Developer/Xcode/DerivedData/Finery-efyiqcwqnpcidodwrwzxaemktsxt/SourcePackages/checkouts/SwiftUI-Shimmer/build/SwiftUI-Shimmer.build/Release-iphoneos/Shimmer.build/Objects-normal/arm64/Shimmer-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/danilatkacev/Library/Developer/Xcode/DerivedData/Finery-efyiqcwqnpcidodwrwzxaemktsxt/SourcePackages/checkouts/SwiftUI-Shimmer/build/SwiftUI-Shimmer.build/Release-iphoneos/Shimmer.build/Objects-normal/arm64/Shimmer-primary.swiftdeps"
+  },
+  "/Users/danilatkacev/Library/Developer/Xcode/DerivedData/Finery-efyiqcwqnpcidodwrwzxaemktsxt/SourcePackages/checkouts/SwiftUI-Shimmer/Sources/Shimmer/Shimmer.swift" : {
+    "index-unit-output-path" : "/SwiftUI-Shimmer.build/Release-iphoneos/Shimmer.build/Objects-normal/arm64/Shimmer.o",
+    "llvm-bc" : "/Users/danilatkacev/Library/Developer/Xcode/DerivedData/Finery-efyiqcwqnpcidodwrwzxaemktsxt/SourcePackages/checkouts/SwiftUI-Shimmer/build/SwiftUI-Shimmer.build/Release-iphoneos/Shimmer.build/Objects-normal/arm64/Shimmer.bc",
+    "object" : "/Users/danilatkacev/Library/Developer/Xcode/DerivedData/Finery-efyiqcwqnpcidodwrwzxaemktsxt/SourcePackages/checkouts/SwiftUI-Shimmer/build/SwiftUI-Shimmer.build/Release-iphoneos/Shimmer.build/Objects-normal/arm64/Shimmer.o"
+  }
+}

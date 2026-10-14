@@ -1,0 +1,87 @@
+[
+  {
+    "typeName": "FineryControl.OpenAddTransactionIntent",
+    "mangledTypeName": "13FineryControl24OpenAddTransactionIntentV",
+    "kind": "struct",
+    "file": "/Users/danilatkacev/finery-ios/FineryControl/FineryControlBundle.swift",
+    "line": 7,
+    "conformances": [
+      "AppIntents.AppIntent",
+      "AppIntents.PersistentlyIdentifiable",
+      "AppIntents._SupportsAppDependencies",
+      "Swift.Sendable",
+      "Swift.SendableMetatype",
+      "Swift.BitwiseCopyable"
+    ],
+    "allConformances": [
+      {
+        "protocolName": "AppIntents.AppIntent",
+        "conformanceDefiningModule": "FineryControl"
+      },
+      {
+        "protocolName": "AppIntents.PersistentlyIdentifiable",
+        "conformanceDefiningModule": "FineryControl"
+      },
+      {
+        "protocolName": "AppIntents._SupportsAppDependencies",
+        "conformanceDefiningModule": "FineryControl"
+      },
+      {
+        "protocolName": "Swift.Sendable",
+        "conformanceDefiningModule": "FineryControl"
+      },
+      {
+        "protocolName": "Swift.SendableMetatype",
+        "conformanceDefiningModule": "FineryControl"
+      },
+      {
+        "protocolName": "Swift.BitwiseCopyable",
+        "conformanceDefiningModule": "FineryControl"
+      }
+    ],
+    "associatedTypeAliases": [
+      {
+        "typeAliasName": "PerformResult",
+        "substitutedTypeName": "some AppIntents.IntentResult",
+        "substitutedMangledTypeName": "13FineryControl24OpenAddTransactionIntentV7performQryYaKFQOy_Qo_",
+        "opaqueTypeProtocolRequirements": [
+          "AppIntents.IntentResult"
+        ],
+        "opaqueTypeSameTypeRequirements": []
+      },
+      {
+        "typeAliasName": "SummaryContent",
+        "substitutedTypeName": "some AppIntents.ParameterSummary",
+        "substitutedMangledTypeName": "10AppIntents0A6IntentPAAE16parameterSummaryQrvpZQOy13FineryControl018OpenAddTransactionC0V_Qo_",
+        "opaqueTypeProtocolRequirements": [
+          "AppIntents.ParameterSummary"
+        ],
+        "opaqueTypeSameTypeRequirements": []
+      }
+    ],
+    "properties": [
+      {
+        "label": "title",
+        "type": "Foundation.LocalizedStringResource",
+        "mangledTypeName": "n/a - deprecated",
+        "isStatic": "true",
+        "isComputed": "false",
+        "file": "/Users/danilatkacev/finery-ios/FineryControl/FineryControlBundle.swift",
+        "line": 8,
+        "valueKind": "RawLiteral",
+        "value": "Добавить операцию в Finery"
+      },
+      {
+        "label": "openAppWhenRun",
+        "type": "Swift.Bool",
+        "mangledTypeName": "n/a - deprecated",
+        "isStatic": "true",
+        "isComputed": "false",
+        "file": "/Users/danilatkacev/finery-ios/FineryControl/FineryControlBundle.swift",
+        "line": 9,
+        "valueKind": "RawLiteral",
+        "value": "true"
+      }
+    ]
+  }
+]
